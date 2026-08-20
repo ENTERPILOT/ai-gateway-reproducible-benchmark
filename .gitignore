@@ -1,0 +1,11 @@
+# Raw output of in-progress runs (record_run.py copies finished runs into results/).
+output/
+remote/results/
+# Local Terraform state, providers and the generated SSH key — never commit.
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/bench_key.pem
+*.tar.gz
+__pycache__/
