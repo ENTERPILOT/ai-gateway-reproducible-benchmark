@@ -1,0 +1,33 @@
+{
+  "capped": 9,
+  "concurrency": 10,
+  "dialect": "chat",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "latency",
+  "mode": "nonstream",
+  "ok": 16870,
+  "requests": 16879,
+  "rps": 281.1640228907316,
+  "total_latency": {
+    "avg_ms": 35.54,
+    "max_ms": 78.71,
+    "min_ms": 13.23,
+    "p50_ms": 35.62,
+    "p90_ms": 45.55,
+    "p95_ms": 47.8,
+    "p99_ms": 53.32
+  },
+  "ttft": {
+    "avg_ms": 35.54,
+    "max_ms": 78.71,
+    "min_ms": 13.23,
+    "p50_ms": 35.62,
+    "p90_ms": 45.55,
+    "p95_ms": 47.8,
+    "p99_ms": 53.32
+  },
+  "url": "http://litellm:4000/v1/chat/completions",
+  "wall_ms": 60000
+}

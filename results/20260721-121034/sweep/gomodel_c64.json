@@ -1,0 +1,33 @@
+{
+  "capped": 63,
+  "concurrency": 64,
+  "dialect": "chat",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "throughput",
+  "mode": "nonstream",
+  "ok": 32689,
+  "requests": 32752,
+  "rps": 4085.283108942192,
+  "total_latency": {
+    "avg_ms": 15.63,
+    "max_ms": 124.43,
+    "min_ms": 0.38,
+    "p50_ms": 13.3,
+    "p90_ms": 29.27,
+    "p95_ms": 35.35,
+    "p99_ms": 49.83
+  },
+  "ttft": {
+    "avg_ms": 15.63,
+    "max_ms": 124.43,
+    "min_ms": 0.38,
+    "p50_ms": 13.3,
+    "p90_ms": 29.27,
+    "p95_ms": 35.35,
+    "p99_ms": 49.83
+  },
+  "url": "http://gomodel:8080/v1/chat/completions",
+  "wall_ms": 8001
+}

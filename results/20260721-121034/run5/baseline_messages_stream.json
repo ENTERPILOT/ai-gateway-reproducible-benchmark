@@ -1,0 +1,41 @@
+{
+  "capped": 0,
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {
+    "avg_ms": 0.02,
+    "max_ms": 13.93,
+    "min_ms": 0,
+    "p50_ms": 0,
+    "p90_ms": 0.02,
+    "p95_ms": 0.04,
+    "p99_ms": 0.35
+  },
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 20000,
+  "requests": 20000,
+  "rps": 2556.9973709273936,
+  "total_latency": {
+    "avg_ms": 3.89,
+    "max_ms": 18.98,
+    "min_ms": 0.35,
+    "p50_ms": 3.31,
+    "p90_ms": 7.26,
+    "p95_ms": 8.63,
+    "p99_ms": 11.72
+  },
+  "ttft": {
+    "avg_ms": 3.01,
+    "max_ms": 17.58,
+    "min_ms": 0.1,
+    "p50_ms": 2.53,
+    "p90_ms": 5.99,
+    "p95_ms": 7.28,
+    "p99_ms": 9.95
+  },
+  "url": "http://mock:9999/v1/messages",
+  "wall_ms": 7821
+}

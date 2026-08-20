@@ -1,0 +1,1 @@
+{"gateway":"litellm","idle_mem_mb":1009.00,"load_rps":214.8666549551382,"under_load":{"peak_mem_mb":1009.0,"avg_mem_mb":1008.5,"avg_cpu_pct":99.8,"samples":4}}

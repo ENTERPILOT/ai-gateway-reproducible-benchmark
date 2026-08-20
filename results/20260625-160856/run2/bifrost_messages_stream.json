@@ -1,0 +1,17 @@
+{
+  "capped": 10,
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 0,
+  "requests": 10,
+  "rps": 0,
+  "total_latency": {},
+  "ttft": {},
+  "url": "http://bifrost:8089/anthropic/v1/messages",
+  "wall_ms": 10002
+}

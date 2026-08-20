@@ -1,0 +1,16 @@
+{
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {
+    "HTTP 500: {\"status\":\"failure\",\"message\":\"messages is not supported by openai\"}": 300
+  },
+  "failed": 300,
+  "mode": "stream",
+  "ok": 0,
+  "requests": 300,
+  "rps": 0,
+  "total_latency": {},
+  "ttft": {},
+  "url": "http://portkey:8787/v1/messages",
+  "wall_ms": 496
+}

@@ -1,0 +1,865 @@
+{
+  "meta": {
+    "date": "2026-08-20T19:06:47Z",
+    "harness_commit": "a5b86b5",
+    "images": {
+      "gomodel": "enterpilot/gomodel:latest",
+      "litellm": "litellm/litellm:main-stable",
+      "portkey": "portkeyai/gateway:latest",
+      "bifrost": "maximhq/bifrost:latest"
+    },
+    "n_requests": 20000,
+    "max_variant_seconds": 60,
+    "concurrency": 10,
+    "repeats": 5,
+    "litellm_num_workers": 2,
+    "warmup": 100,
+    "resource_seconds": 15,
+    "rest_seconds": 5,
+    "sweep_concurrency": "1,2,4,8,16,32,64,128,256",
+    "sweep_duration_s": 8,
+    "gateways": "gomodel,litellm,portkey,bifrost",
+    "instance_type": "c7i.large",
+    "cpus": 2,
+    "kernel": "6.18.41-94.142.amzn2023.x86_64"
+  },
+  "trials": 5,
+  "latency": {
+    "baseline": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 27149.3657010207,
+        "rps_spread": [
+          26344.91849543475,
+          27950.248669169872
+        ],
+        "p50": 0.23,
+        "p90": 0.59,
+        "p99": 2.96,
+        "p99_spread": [
+          2.75,
+          3.52
+        ],
+        "ttft_p50": 0.23,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 0.0
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 2920.8769825009094,
+        "rps_spread": [
+          2714.6171352991214,
+          3042.5889320338465
+        ],
+        "p50": 2.67,
+        "p90": 6.77,
+        "p99": 11.69,
+        "p99_spread": [
+          10.58,
+          12.7
+        ],
+        "ttft_p50": 2.25,
+        "gap_p50": 0,
+        "gap_p99": 0.23,
+        "overhead_p50": 0.0
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 26206.54627864127,
+        "rps_spread": [
+          25779.05625971098,
+          26664.66055981767
+        ],
+        "p50": 0.23,
+        "p90": 0.65,
+        "p99": 2.98,
+        "p99_spread": [
+          2.85,
+          3.13
+        ],
+        "ttft_p50": 0.23,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 0.0
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 2179.768656241494,
+        "rps_spread": [
+          2140.422024317884,
+          2255.4831129414847
+        ],
+        "p50": 3.81,
+        "p90": 8.64,
+        "p99": 14.54,
+        "p99_spread": [
+          14.52,
+          15.58
+        ],
+        "ttft_p50": 3.18,
+        "gap_p50": 0,
+        "gap_p99": 0.3,
+        "overhead_p50": 0.0
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 26150.084337486875,
+        "rps_spread": [
+          25854.948824653417,
+          26911.36952508505
+        ],
+        "p50": 0.22,
+        "p90": 0.62,
+        "p99": 3.01,
+        "p99_spread": [
+          2.83,
+          3.19
+        ],
+        "ttft_p50": 0.22,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 0.0
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 2151.129175733679,
+        "rps_spread": [
+          2128.2747649679827,
+          2195.0814613893385
+        ],
+        "p50": 3.76,
+        "p90": 9.03,
+        "p99": 15.47,
+        "p99_spread": [
+          14.47,
+          16.21
+        ],
+        "ttft_p50": 3.09,
+        "gap_p50": 0,
+        "gap_p99": 0.26,
+        "overhead_p50": 0.0
+      }
+    },
+    "gomodel": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 4057.6079398519078,
+        "rps_spread": [
+          3929.4831373550805,
+          4102.714203834777
+        ],
+        "p50": 2.06,
+        "p90": 4.48,
+        "p99": 7.79,
+        "p99_spread": [
+          7.38,
+          7.98
+        ],
+        "ttft_p50": 2.06,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 1.83
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 1548.951448260442,
+        "rps_spread": [
+          1537.844318492934,
+          1646.0061425510733
+        ],
+        "p50": 5.87,
+        "p90": 10.72,
+        "p99": 16.13,
+        "p99_spread": [
+          15.6,
+          16.28
+        ],
+        "ttft_p50": 5.6,
+        "gap_p50": 0,
+        "gap_p99": 0.08,
+        "overhead_p50": 3.2
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 2619.7231537715434,
+        "rps_spread": [
+          2601.4311249926204,
+          2703.3024073271667
+        ],
+        "p50": 3.02,
+        "p90": 7.09,
+        "p99": 16.23,
+        "p99_spread": [
+          15.18,
+          18.21
+        ],
+        "ttft_p50": 3.02,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 2.79
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 1512.2215990924935,
+        "rps_spread": [
+          1502.4307686929408,
+          1615.5793734967317
+        ],
+        "p50": 5.9,
+        "p90": 11.09,
+        "p99": 17.74,
+        "p99_spread": [
+          16.08,
+          18.57
+        ],
+        "ttft_p50": 5.6,
+        "gap_p50": 0,
+        "gap_p99": 0.05,
+        "overhead_p50": 2.0900000000000003
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 3994.466988156483,
+        "rps_spread": [
+          3946.7180909720487,
+          4049.446876585545
+        ],
+        "p50": 2.09,
+        "p90": 4.52,
+        "p99": 7.81,
+        "p99_spread": [
+          7.65,
+          8.3
+        ],
+        "ttft_p50": 2.09,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 1.8699999999999999
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 934.6222829928979,
+        "rps_spread": [
+          932.6505736973277,
+          953.6239172381676
+        ],
+        "p50": 9.71,
+        "p90": 17.67,
+        "p99": 27.18,
+        "p99_spread": [
+          25.73,
+          27.44
+        ],
+        "ttft_p50": 8.67,
+        "gap_p50": 0,
+        "gap_p99": 0.34,
+        "overhead_p50": 5.950000000000001
+      }
+    },
+    "litellm": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 80581,
+        "failed": 0,
+        "rps": 276.1482834300529,
+        "rps_spread": [
+          238.21104591426075,
+          281.1640228907316
+        ],
+        "p50": 35.85,
+        "p90": 46.64,
+        "p99": 53.32,
+        "p99_spread": [
+          47.82,
+          71.41
+        ],
+        "ttft_p50": 35.85,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 35.620000000000005
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 20532,
+        "failed": 0,
+        "rps": 68.53160783994237,
+        "rps_spread": [
+          67.88206520810856,
+          68.94887755479189
+        ],
+        "p50": 142.95,
+        "p90": 159.23,
+        "p99": 193.9,
+        "p99_spread": [
+          186,
+          281.78
+        ],
+        "ttft_p50": 142.94,
+        "gap_p50": 0,
+        "gap_p99": 0,
+        "overhead_p50": 140.28
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 79218,
+        "failed": 0,
+        "rps": 264.51504459428446,
+        "rps_spread": [
+          257.37784709288246,
+          274.32747189711654
+        ],
+        "p50": 38.45,
+        "p90": 54.63,
+        "p99": 61.48,
+        "p99_spread": [
+          49.57,
+          79.37
+        ],
+        "ttft_p50": 38.45,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 38.220000000000006
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 54442,
+        "failed": 0,
+        "rps": 185.3654546608202,
+        "rps_spread": [
+          159.88068889608027,
+          194.24601262792552
+        ],
+        "p50": 55.12,
+        "p90": 79.09,
+        "p99": 90.55,
+        "p99_spread": [
+          73.93,
+          107.29
+        ],
+        "ttft_p50": 55.09,
+        "gap_p50": 0,
+        "gap_p99": 0.01,
+        "overhead_p50": 51.309999999999995
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 68843,
+        "failed": 0,
+        "rps": 237.59573955595607,
+        "rps_spread": [
+          198.86483642740225,
+          241.88158793192028
+        ],
+        "p50": 43.92,
+        "p90": 52.28,
+        "p99": 58.14,
+        "p99_spread": [
+          52.92,
+          68.69
+        ],
+        "ttft_p50": 43.92,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 43.7
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 41328,
+        "failed": 0,
+        "rps": 137.89726059737302,
+        "rps_spread": [
+          134.38236836714168,
+          140.48230448308
+        ],
+        "p50": 50.91,
+        "p90": 115.49,
+        "p99": 126.78,
+        "p99_spread": [
+          100.88,
+          133.13
+        ],
+        "ttft_p50": 18.94,
+        "gap_p50": 0.85,
+        "gap_p99": 8.77,
+        "overhead_p50": 47.15
+      }
+    },
+    "portkey": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 898.8206413790159,
+        "rps_spread": [
+          891.1388250253731,
+          907.7464354887451
+        ],
+        "p50": 9.14,
+        "p90": 14.97,
+        "p99": 29.37,
+        "p99_spread": [
+          28.14,
+          29.43
+        ],
+        "ttft_p50": 9.14,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 8.91
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 346.9055365905506,
+        "rps_spread": [
+          345.21800073754207,
+          347.88855246369906
+        ],
+        "p50": 27.95,
+        "p90": 31.66,
+        "p99": 44.25,
+        "p99_spread": [
+          42.87,
+          44.45
+        ],
+        "ttft_p50": 27.93,
+        "gap_p50": 0,
+        "gap_p99": 0,
+        "overhead_p50": 25.28
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 946.168929654314,
+        "rps_spread": [
+          941.9022208322492,
+          960.1379263017907
+        ],
+        "p50": 9.13,
+        "p90": 13.63,
+        "p99": 27.76,
+        "p99_spread": [
+          27.06,
+          28.51
+        ],
+        "ttft_p50": 9.13,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 8.9
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 346.8003864063361,
+        "rps_spread": [
+          345.766110702611,
+          347.4212877802637
+        ],
+        "p50": 27.98,
+        "p90": 31.59,
+        "p99": 44.02,
+        "p99_spread": [
+          42.94,
+          44.07
+        ],
+        "ttft_p50": 27.96,
+        "gap_p50": 0,
+        "gap_p99": 0,
+        "overhead_p50": 24.17
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 0,
+        "failed": 100000,
+        "rps": 0,
+        "rps_spread": [
+          0,
+          0
+        ],
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p99_spread": [
+          null,
+          null
+        ],
+        "ttft_p50": null,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": null
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 0,
+        "failed": 100000,
+        "rps": 0,
+        "rps_spread": [
+          0,
+          0
+        ],
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p99_spread": [
+          null,
+          null
+        ],
+        "ttft_p50": null,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": null
+      }
+    },
+    "bifrost": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 2541.2618350054713,
+        "rps_spread": [
+          2500.388182764986,
+          2557.4778878166485
+        ],
+        "p50": 3.04,
+        "p90": 7.78,
+        "p99": 19.23,
+        "p99_spread": [
+          17.02,
+          20.85
+        ],
+        "ttft_p50": 3.04,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 2.81
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 627.3336199403585,
+        "rps_spread": [
+          622.363228923602,
+          631.3509328523656
+        ],
+        "p50": 15.25,
+        "p90": 24.15,
+        "p99": 34.56,
+        "p99_spread": [
+          33.94,
+          36.48
+        ],
+        "ttft_p50": 12.56,
+        "gap_p50": 0.02,
+        "gap_p99": 2.13,
+        "overhead_p50": 12.58
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 2473.2120855922913,
+        "rps_spread": [
+          2410.987211662366,
+          2505.757689613852
+        ],
+        "p50": 3.13,
+        "p90": 7.98,
+        "p99": 19.88,
+        "p99_spread": [
+          19.11,
+          22.13
+        ],
+        "ttft_p50": 3.13,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 2.9
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 24850,
+        "failed": 50,
+        "rps": 82.8187038302968,
+        "rps_spread": [
+          82.80660952473083,
+          82.83283225958388
+        ],
+        "p50": 17.99,
+        "p90": 30.01,
+        "p99": 48.59,
+        "p99_spread": [
+          46.27,
+          49.69
+        ],
+        "ttft_p50": 15.56,
+        "gap_p50": 0.02,
+        "gap_p99": 1.78,
+        "overhead_p50": 14.179999999999998
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 2355.3722784013826,
+        "rps_spread": [
+          2309.774245273002,
+          2398.6329920012786
+        ],
+        "p50": 3.03,
+        "p90": 7.95,
+        "p99": 26.54,
+        "p99_spread": [
+          23.99,
+          28.69
+        ],
+        "ttft_p50": 3.03,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 2.8099999999999996
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 0,
+        "failed": 50,
+        "rps": 0,
+        "rps_spread": [
+          0,
+          0
+        ],
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p99_spread": [
+          null,
+          null
+        ],
+        "ttft_p50": null,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": null
+      }
+    }
+  },
+  "capacity": {
+    "baseline": {
+      "peak_rps": 27798.92339213051,
+      "peak_c": 64,
+      "knee_c": 8,
+      "curve": {
+        "1": 14242.361391558641,
+        "2": 21372.49439357169,
+        "4": 26306.79039077095,
+        "8": 27735.8882932031,
+        "16": 27730.513212883812,
+        "32": 26964.05212732991,
+        "64": 27798.92339213051,
+        "128": 27063.094113255287,
+        "256": 26291.55465332333
+      }
+    },
+    "gomodel": {
+      "peak_rps": 4211.704188324018,
+      "peak_c": 16,
+      "knee_c": 4,
+      "curve": {
+        "1": 2306.793834305543,
+        "2": 3528.795174242164,
+        "4": 4089.563393733539,
+        "8": 4163.4578465352415,
+        "16": 4211.704188324018,
+        "32": 3991.6100616088866,
+        "64": 3980.59273929247,
+        "128": 3688.5062789434146,
+        "256": 3328.8740640322103
+      }
+    },
+    "litellm": {
+      "peak_rps": 275.8357263368868,
+      "peak_c": 4,
+      "knee_c": 2,
+      "curve": {
+        "1": 207.461377693295,
+        "2": 274.6110181113601,
+        "4": 275.8357263368868,
+        "8": 266.45878445498664,
+        "16": 236.34717328148955,
+        "32": 268.8097022591818,
+        "64": 273.1614781645949,
+        "128": 247.36292114717455,
+        "256": 266.6183850034927
+      }
+    },
+    "portkey": {
+      "peak_rps": 982.3140746708822,
+      "peak_c": 8,
+      "knee_c": 2,
+      "curve": {
+        "1": 685.5932584890177,
+        "2": 952.2303041874169,
+        "4": 955.212943946659,
+        "8": 982.3140746708822,
+        "16": 969.8081429763009,
+        "32": 945.5895728096602,
+        "64": 949.5324635369025,
+        "128": 883.853333853,
+        "256": 886.7335719600201
+      }
+    },
+    "bifrost": {
+      "peak_rps": 2623.9179077763474,
+      "peak_c": 8,
+      "knee_c": 4,
+      "curve": {
+        "1": 1690.2015831192755,
+        "2": 2264.769744259943,
+        "4": 2605.974363932121,
+        "8": 2623.9179077763474,
+        "16": 2582.038138606651,
+        "32": 2573.9064780762396,
+        "64": 2549.86761275183,
+        "128": 2531.377711412456,
+        "256": 2554.437514704113
+      }
+    }
+  },
+  "resources": {
+    "gomodel": {
+      "image": {
+        "gateway": "gomodel",
+        "image": "enterpilot/gomodel:latest",
+        "size_bytes": 40775607,
+        "size_mb": 38.9,
+        "compressed_bytes": 14812354,
+        "compressed_mb": 14.1,
+        "digest": "enterpilot/gomodel@sha256:395097b75c6f1bcff5d732da328825507e93355daaac6d32874691fc9fbc2a82"
+      },
+      "resources": {
+        "gateway": "gomodel",
+        "idle_mem_mb": 98.44,
+        "load_rps": 4140.344440662526,
+        "under_load": {
+          "peak_mem_mb": 60.1,
+          "avg_mem_mb": 58.8,
+          "avg_cpu_pct": 98.4,
+          "samples": 7
+        }
+      },
+      "startup": {
+        "gateway": "gomodel",
+        "startup_s": 0.758,
+        "ready": 1
+      },
+      "rps_per_cpu_pct": 42.07667114494436
+    },
+    "litellm": {
+      "image": {
+        "gateway": "litellm",
+        "image": "litellm/litellm:main-stable",
+        "size_bytes": 1186627631,
+        "size_mb": 1131.7,
+        "compressed_bytes": 371099496,
+        "compressed_mb": 353.9,
+        "digest": "litellm/litellm@sha256:468c25f35f3e5ec4e414974f00deab93337b1b4d9953cabcfd3722e59415f834"
+      },
+      "resources": {
+        "gateway": "litellm",
+        "idle_mem_mb": 2092.03,
+        "load_rps": 258.25440896548434,
+        "under_load": {
+          "peak_mem_mb": 2092.0,
+          "avg_mem_mb": 2091.2,
+          "avg_cpu_pct": 183.0,
+          "samples": 5
+        }
+      },
+      "startup": {
+        "gateway": "litellm",
+        "startup_s": 26.503,
+        "ready": 1
+      },
+      "rps_per_cpu_pct": 1.4112262784999146
+    },
+    "portkey": {
+      "image": {
+        "gateway": "portkey",
+        "image": "portkeyai/gateway:latest",
+        "size_bytes": 185997410,
+        "size_mb": 177.4,
+        "compressed_bytes": 60703338,
+        "compressed_mb": 57.9,
+        "digest": "portkeyai/gateway@sha256:97f094d9c8a764cbfaa2a7138c0017b247ca923bb06db1b4c13b7f8a33b5200d"
+      },
+      "resources": {
+        "gateway": "portkey",
+        "idle_mem_mb": 120.1,
+        "load_rps": 961.7052960976994,
+        "under_load": {
+          "peak_mem_mb": 110.0,
+          "avg_mem_mb": 105.7,
+          "avg_cpu_pct": 114.4,
+          "samples": 7
+        }
+      },
+      "startup": {
+        "gateway": "portkey",
+        "startup_s": 0.987,
+        "ready": 1
+      },
+      "rps_per_cpu_pct": 8.40651482602884
+    },
+    "bifrost": {
+      "image": {
+        "gateway": "bifrost",
+        "image": "maximhq/bifrost:latest",
+        "size_bytes": 259082970,
+        "size_mb": 247.1,
+        "compressed_bytes": 84228404,
+        "compressed_mb": 80.3,
+        "digest": "maximhq/bifrost@sha256:ef8e686b3588884066ec3d0e57f3fc15136b11047ad94678adefe5a9573539af"
+      },
+      "resources": {
+        "gateway": "bifrost",
+        "idle_mem_mb": 220.7,
+        "load_rps": 2507.8566949046412,
+        "under_load": {
+          "peak_mem_mb": 179.5,
+          "avg_mem_mb": 161.3,
+          "avg_cpu_pct": 119.6,
+          "samples": 7
+        }
+      },
+      "startup": {
+        "gateway": "bifrost",
+        "startup_s": 6.712,
+        "ready": 1
+      },
+      "rps_per_cpu_pct": 20.96870146241339
+    }
+  }
+}

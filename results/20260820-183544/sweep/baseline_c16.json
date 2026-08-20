@@ -1,0 +1,33 @@
+{
+  "capped": 16,
+  "concurrency": 16,
+  "dialect": "chat",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "throughput",
+  "mode": "nonstream",
+  "ok": 221849,
+  "requests": 221865,
+  "rps": 27730.513212883812,
+  "total_latency": {
+    "avg_ms": 0.57,
+    "max_ms": 29.15,
+    "min_ms": 0.03,
+    "p50_ms": 0.36,
+    "p90_ms": 1.22,
+    "p95_ms": 1.83,
+    "p99_ms": 3.71
+  },
+  "ttft": {
+    "avg_ms": 0.57,
+    "max_ms": 29.15,
+    "min_ms": 0.03,
+    "p50_ms": 0.36,
+    "p90_ms": 1.22,
+    "p95_ms": 1.83,
+    "p99_ms": 3.71
+  },
+  "url": "http://mock:9999/v1/chat/completions",
+  "wall_ms": 8000
+}

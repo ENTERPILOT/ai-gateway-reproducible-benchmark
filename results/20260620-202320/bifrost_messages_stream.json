@@ -1,0 +1,30 @@
+{
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {},
+  "failed": 0,
+  "mode": "stream",
+  "ok": 300,
+  "requests": 300,
+  "rps": 6.597339925875438,
+  "total_latency": {
+    "avg_ms": 12.92,
+    "max_ms": 95.97,
+    "min_ms": 6.97,
+    "p50_ms": 8.93,
+    "p90_ms": 22.13,
+    "p95_ms": 25.73,
+    "p99_ms": 81.5
+  },
+  "ttft": {
+    "avg_ms": 10.26,
+    "max_ms": 93.69,
+    "min_ms": 4.73,
+    "p50_ms": 6.26,
+    "p90_ms": 19.48,
+    "p95_ms": 23.23,
+    "p99_ms": 79.17
+  },
+  "url": "http://bifrost:8089/anthropic/v1/messages",
+  "wall_ms": 45472
+}
