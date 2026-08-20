@@ -8,10 +8,6 @@ Every gateway runs from its latest public Docker image, one at a time, against t
 in-memory mock backend. The numbers are therefore **gateway overhead** (routing, translation,
 streaming), not model or network latency.
 
-> Moved here from the [GoModel repository](https://github.com/ENTERPILOT/GoModel)
-> (`docs/2026-06-25_aws_gateway_benchmark`) on 20 August 2026. The runs from June and
-> July 2026 were made with that original harness and are kept in the history below.
-
 <!-- history:start -->
 ![History chart](results/charts/history.svg)
 
@@ -26,6 +22,10 @@ Latest run — `20260820-183544` · 2026-08-20 · AWS **c7i.large** (2 vCPU) · 
 
 All 5 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
 <!-- history:end -->
+
+> Moved here from the [GoModel repository](https://github.com/ENTERPILOT/GoModel)
+> (`docs/2026-06-25_aws_gateway_benchmark`) on 20 August 2026. The runs from June and
+> July 2026 were made with that original harness and are kept in the history above.
 
 ## Run it
 
