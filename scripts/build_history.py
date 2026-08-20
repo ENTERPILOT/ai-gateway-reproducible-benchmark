@@ -23,6 +23,10 @@ ROOT = os.path.dirname(HERE)
 RESULTS = os.path.join(ROOT, "results")
 README = os.path.join(ROOT, "README.md")
 MARK_START, MARK_END = "<!-- history:start -->", "<!-- history:end -->"
+# Shown under the chart in README.md; a fixed fact about where the history comes from.
+MOVE_NOTE = ("> Moved here from the [GoModel repository](https://github.com/ENTERPILOT/GoModel)\n"
+             "> (`docs/2026-06-25_aws_gateway_benchmark`) on 20 August 2026. The runs from June and\n"
+             "> July 2026 were made with that original harness and are part of the history.")
 
 GATEWAYS = ["gomodel", "bifrost", "portkey", "litellm"]
 LABEL = {"gomodel": "GoModel", "bifrost": "Bifrost", "portkey": "Portkey", "litellm": "LiteLLM"}
@@ -281,6 +285,7 @@ def update_readme(latest, n_runs):
         return
     block = "\n".join([MARK_START,
                        "![History chart](results/charts/history.svg)", "",
+                       MOVE_NOTE, "",
                        f"Latest run — {run_caption(latest)}", "",
                        run_table(latest), "",
                        f"All {n_runs} runs: [results/HISTORY.md](results/HISTORY.md) · "
