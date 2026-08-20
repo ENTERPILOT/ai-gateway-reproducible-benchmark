@@ -1,0 +1,10 @@
+{
+  "n_requests": 300,
+  "concurrency": 10,
+  "warmup": 100,
+  "resource_seconds": 15,
+  "gateways": "gomodel,litellm,portkey,bifrost",
+  "instance_type": "t2.micro",
+  "cpus": 1,
+  "kernel": "6.1.174-217.345.amzn2023.x86_64"
+}

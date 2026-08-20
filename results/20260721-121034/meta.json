@@ -1,0 +1,16 @@
+{
+  "n_requests": 20000,
+  "max_variant_seconds": 60,
+  "concurrency": 10,
+  "repeats": 5,
+  "litellm_num_workers": 2,
+  "warmup": 100,
+  "resource_seconds": 15,
+  "rest_seconds": 5,
+  "sweep_concurrency": "1,2,4,8,16,32,64,128,256",
+  "sweep_duration_s": 8,
+  "gateways": "gomodel,litellm,portkey,bifrost",
+  "instance_type": "c7i.large",
+  "cpus": 2,
+  "kernel": "6.1.176-221.367.amzn2023.x86_64"
+}

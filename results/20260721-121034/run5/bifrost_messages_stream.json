@@ -1,0 +1,19 @@
+{
+  "capped": 10,
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {
+    "Post \"http://bifrost:8089/anthropic/v1/messages\": context deadline exceeded": 10
+  },
+  "failed": 10,
+  "inter_chunk": {},
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 0,
+  "requests": 20,
+  "rps": 0,
+  "total_latency": {},
+  "ttft": {},
+  "url": "http://bifrost:8089/anthropic/v1/messages",
+  "wall_ms": 60021
+}

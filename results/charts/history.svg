@@ -1,0 +1,229 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 628" width="1080" height="628" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">
+<style>.ttl{font-size:13px;font-weight:600;fill:#0b0b0b}.sub{font-size:10.5px;fill:#52514e}.tick{font-size:10.5px;fill:#52514e}.lbl{font-size:11px;fill:#0b0b0b}.lg{font-size:12px;fill:#0b0b0b}.grid{stroke:#e6e6e3;stroke-width:1}.axis{stroke:#c3c2b7;stroke-width:1}.line{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.dot{stroke:#fcfcfb;stroke-width:2}.h1{font-size:17px;font-weight:700;fill:#0b0b0b}</style>
+<rect width="1080" height="628" fill="#fcfcfb"/>
+<text x="16" y="26" class="h1">AI gateway benchmark over time</text>
+<text x="16" y="42" class="sub">3 runs on AWS c7i.large · 2026-06-25 → 2026-07-21 · latest public Docker image of each gateway · same mock backend, so numbers are gateway overhead</text>
+<g transform="translate(16,64)"><circle cx="6" cy="-4" r="5" fill="#2a78d6"/><text x="16" y="0" class="lg">GoModel</text></g><g transform="translate(126,64)"><circle cx="6" cy="-4" r="5" fill="#eb6834"/><text x="16" y="0" class="lg">Bifrost</text></g><g transform="translate(236,64)"><circle cx="6" cy="-4" r="5" fill="#1baf7a"/><text x="16" y="0" class="lg">Portkey</text></g><g transform="translate(346,64)"><circle cx="6" cy="-4" r="5" fill="#eda100"/><text x="16" y="0" class="lg">LiteLLM</text></g>
+<text x="60.0" y="104" class="ttl">Latency p50 · chat, non-stream</text>
+<text x="60.0" y="119" class="sub">ms · log scale · lower is better</text>
+<line x1="60.0" y1="316.0" x2="295.3333333333333" y2="316.0" class="grid"/>
+<text x="54.0" y="319.0" class="tick" text-anchor="end">1</text>
+<line x1="60.0" y1="283.4" x2="295.3333333333333" y2="283.4" class="grid"/>
+<text x="54.0" y="286.4" class="tick" text-anchor="end">2</text>
+<line x1="60.0" y1="240.3" x2="295.3333333333333" y2="240.3" class="grid"/>
+<text x="54.0" y="243.3" class="tick" text-anchor="end">5</text>
+<line x1="60.0" y1="207.7" x2="295.3333333333333" y2="207.7" class="grid"/>
+<text x="54.0" y="210.7" class="tick" text-anchor="end">10</text>
+<line x1="60.0" y1="175.1" x2="295.3333333333333" y2="175.1" class="grid"/>
+<text x="54.0" y="178.1" class="tick" text-anchor="end">20</text>
+<line x1="60.0" y1="132.0" x2="295.3333333333333" y2="132.0" class="grid"/>
+<text x="54.0" y="135.0" class="tick" text-anchor="end">50</text>
+<line x1="60.0" y1="316" x2="295.3333333333333" y2="316" class="axis"/>
+<text x="60.0" y="332" class="tick" text-anchor="middle">Jun 25 16:08</text>
+<text x="177.7" y="332" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="295.3" y="332" class="tick" text-anchor="middle">Jul 21</text>
+<path d="M60.0,279.8 L177.7,288.0 L295.3,279.1" class="line" stroke="#2a78d6"/>
+<circle cx="60.0" cy="279.8" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="177.7" cy="288.0" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="295.3" cy="279.1" r="4" fill="#2a78d6" class="dot"/>
+<path d="M60.0,265.8 L177.7,272.7 L295.3,262.9" class="line" stroke="#eb6834"/>
+<circle cx="60.0" cy="265.8" r="4" fill="#eb6834" class="dot"/>
+<circle cx="177.7" cy="272.7" r="4" fill="#eb6834" class="dot"/>
+<circle cx="295.3" cy="262.9" r="4" fill="#eb6834" class="dot"/>
+<path d="M60.0,201.6 L177.7,209.1 L295.3,207.1" class="line" stroke="#1baf7a"/>
+<circle cx="60.0" cy="201.6" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="177.7" cy="209.1" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="295.3" cy="207.1" r="4" fill="#1baf7a" class="dot"/>
+<path d="M60.0,137.5 L177.7,155.2 L295.3,144.0" class="line" stroke="#eda100"/>
+<circle cx="60.0" cy="137.5" r="4" fill="#eda100" class="dot"/>
+<circle cx="177.7" cy="155.2" r="4" fill="#eda100" class="dot"/>
+<circle cx="295.3" cy="144.0" r="4" fill="#eda100" class="dot"/>
+<text x="303.3333333333333" y="148.0" class="lbl"><tspan fill="#eda100">●</tspan> 38.8</text>
+<text x="303.3333333333333" y="211.1" class="lbl"><tspan fill="#1baf7a">●</tspan> 10.1</text>
+<text x="303.3333333333333" y="266.9" class="lbl"><tspan fill="#eb6834">●</tspan> 3.09</text>
+<text x="303.3333333333333" y="283.1" class="lbl"><tspan fill="#2a78d6">●</tspan> 2.19</text>
+<text x="409.3333333333333" y="104" class="ttl">Latency p99 · chat, non-stream</text>
+<text x="409.3333333333333" y="119" class="sub">ms · log scale · lower is better</text>
+<line x1="409.3333333333333" y1="316.0" x2="644.6666666666666" y2="316.0" class="grid"/>
+<text x="403.3333333333333" y="319.0" class="tick" text-anchor="end">5</text>
+<line x1="409.3333333333333" y1="273.4" x2="644.6666666666666" y2="273.4" class="grid"/>
+<text x="403.3333333333333" y="276.4" class="tick" text-anchor="end">10</text>
+<line x1="409.3333333333333" y1="230.9" x2="644.6666666666666" y2="230.9" class="grid"/>
+<text x="403.3333333333333" y="233.9" class="tick" text-anchor="end">20</text>
+<line x1="409.3333333333333" y1="174.6" x2="644.6666666666666" y2="174.6" class="grid"/>
+<text x="403.3333333333333" y="177.6" class="tick" text-anchor="end">50</text>
+<line x1="409.3333333333333" y1="132.0" x2="644.6666666666666" y2="132.0" class="grid"/>
+<text x="403.3333333333333" y="135.0" class="tick" text-anchor="end">100</text>
+<line x1="409.3333333333333" y1="316" x2="644.6666666666666" y2="316" class="axis"/>
+<text x="409.3" y="332" class="tick" text-anchor="middle">Jun 25 16:08</text>
+<text x="527.0" y="332" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="644.7" y="332" class="tick" text-anchor="middle">Jul 21</text>
+<path d="M409.3,284.9 L527.0,296.4 L644.7,284.9" class="line" stroke="#2a78d6"/>
+<circle cx="409.3" cy="284.9" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="527.0" cy="296.4" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="644.7" cy="284.9" r="4" fill="#2a78d6" class="dot"/>
+<path d="M409.3,227.8 L527.0,236.4 L644.7,228.3" class="line" stroke="#eb6834"/>
+<circle cx="409.3" cy="227.8" r="4" fill="#eb6834" class="dot"/>
+<circle cx="527.0" cy="236.4" r="4" fill="#eb6834" class="dot"/>
+<circle cx="644.7" cy="228.3" r="4" fill="#eb6834" class="dot"/>
+<path d="M409.3,195.7 L527.0,204.9 L644.7,201.9" class="line" stroke="#1baf7a"/>
+<circle cx="409.3" cy="195.7" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="527.0" cy="204.9" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="644.7" cy="201.9" r="4" fill="#1baf7a" class="dot"/>
+<path d="M409.3,161.6 L527.0,189.4 L644.7,169.6" class="line" stroke="#eda100"/>
+<circle cx="409.3" cy="161.6" r="4" fill="#eda100" class="dot"/>
+<circle cx="527.0" cy="189.4" r="4" fill="#eda100" class="dot"/>
+<circle cx="644.7" cy="169.6" r="4" fill="#eda100" class="dot"/>
+<text x="652.6666666666666" y="173.6" class="lbl"><tspan fill="#eda100">●</tspan> 54.2</text>
+<text x="652.6666666666666" y="205.9" class="lbl"><tspan fill="#1baf7a">●</tspan> 32.0</text>
+<text x="652.6666666666666" y="232.3" class="lbl"><tspan fill="#eb6834">●</tspan> 20.9</text>
+<text x="652.6666666666666" y="288.9" class="lbl"><tspan fill="#2a78d6">●</tspan> 8.30</text>
+<text x="758.6666666666666" y="104" class="ttl">Peak throughput</text>
+<text x="758.6666666666666" y="119" class="sub">req/s · log scale · higher is better</text>
+<line x1="758.6666666666666" y1="316.0" x2="994.0" y2="316.0" class="grid"/>
+<text x="752.6666666666666" y="319.0" class="tick" text-anchor="end">200</text>
+<line x1="758.6666666666666" y1="263.6" x2="994.0" y2="263.6" class="grid"/>
+<text x="752.6666666666666" y="266.6" class="tick" text-anchor="end">500</text>
+<line x1="758.6666666666666" y1="224.0" x2="994.0" y2="224.0" class="grid"/>
+<text x="752.6666666666666" y="227.0" class="tick" text-anchor="end">1k</text>
+<line x1="758.6666666666666" y1="184.4" x2="994.0" y2="184.4" class="grid"/>
+<text x="752.6666666666666" y="187.4" class="tick" text-anchor="end">2k</text>
+<line x1="758.6666666666666" y1="132.0" x2="994.0" y2="132.0" class="grid"/>
+<text x="752.6666666666666" y="135.0" class="tick" text-anchor="end">5k</text>
+<line x1="758.6666666666666" y1="316" x2="994.0" y2="316" class="axis"/>
+<text x="758.7" y="332" class="tick" text-anchor="middle">Jun 25 16:08</text>
+<text x="876.3" y="332" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="994.0" y="332" class="tick" text-anchor="middle">Jul 21</text>
+<path d="M758.7,141.9 L876.3,132.8 L994.0,142.6" class="line" stroke="#2a78d6"/>
+<circle cx="758.7" cy="141.9" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="876.3" cy="132.8" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="994.0" cy="142.6" r="4" fill="#2a78d6" class="dot"/>
+<path d="M758.7,168.0 L876.3,159.5 L994.0,170.8" class="line" stroke="#eb6834"/>
+<circle cx="758.7" cy="168.0" r="4" fill="#eb6834" class="dot"/>
+<circle cx="876.3" cy="159.5" r="4" fill="#eb6834" class="dot"/>
+<circle cx="994.0" cy="170.8" r="4" fill="#eb6834" class="dot"/>
+<path d="M758.7,239.8 L876.3,227.2 L994.0,231.1" class="line" stroke="#1baf7a"/>
+<circle cx="758.7" cy="239.8" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="876.3" cy="227.2" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="994.0" cy="231.1" r="4" fill="#1baf7a" class="dot"/>
+<path d="M758.7,309.7 L876.3,288.5 L994.0,300.0" class="line" stroke="#eda100"/>
+<circle cx="758.7" cy="309.7" r="4" fill="#eda100" class="dot"/>
+<circle cx="876.3" cy="288.5" r="4" fill="#eda100" class="dot"/>
+<circle cx="994.0" cy="300.0" r="4" fill="#eda100" class="dot"/>
+<text x="1002.0" y="146.6" class="lbl"><tspan fill="#2a78d6">●</tspan> 4,154</text>
+<text x="1002.0" y="174.8" class="lbl"><tspan fill="#eb6834">●</tspan> 2,534</text>
+<text x="1002.0" y="235.1" class="lbl"><tspan fill="#1baf7a">●</tspan> 883</text>
+<text x="1002.0" y="304.0" class="lbl"><tspan fill="#eda100">●</tspan> 265</text>
+<text x="60.0" y="366" class="ttl">Peak RAM under load</text>
+<text x="60.0" y="381" class="sub">MB · log scale · lower is better</text>
+<line x1="60.0" y1="578.0" x2="295.3333333333333" y2="578.0" class="grid"/>
+<text x="54.0" y="581.0" class="tick" text-anchor="end">20</text>
+<line x1="60.0" y1="547.5" x2="295.3333333333333" y2="547.5" class="grid"/>
+<text x="54.0" y="550.5" class="tick" text-anchor="end">50</text>
+<line x1="60.0" y1="524.4" x2="295.3333333333333" y2="524.4" class="grid"/>
+<text x="54.0" y="527.4" class="tick" text-anchor="end">100</text>
+<line x1="60.0" y1="501.3" x2="295.3333333333333" y2="501.3" class="grid"/>
+<text x="54.0" y="504.3" class="tick" text-anchor="end">200</text>
+<line x1="60.0" y1="470.7" x2="295.3333333333333" y2="470.7" class="grid"/>
+<text x="54.0" y="473.7" class="tick" text-anchor="end">500</text>
+<line x1="60.0" y1="447.6" x2="295.3333333333333" y2="447.6" class="grid"/>
+<text x="54.0" y="450.6" class="tick" text-anchor="end">1k</text>
+<line x1="60.0" y1="424.5" x2="295.3333333333333" y2="424.5" class="grid"/>
+<text x="54.0" y="427.5" class="tick" text-anchor="end">2k</text>
+<line x1="60.0" y1="394.0" x2="295.3333333333333" y2="394.0" class="grid"/>
+<text x="54.0" y="397.0" class="tick" text-anchor="end">5k</text>
+<line x1="60.0" y1="578" x2="295.3333333333333" y2="578" class="axis"/>
+<text x="60.0" y="594" class="tick" text-anchor="middle">Jun 25 16:08</text>
+<text x="177.7" y="594" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="295.3" y="594" class="tick" text-anchor="middle">Jul 21</text>
+<path d="M60.0,560.2 L177.7,557.5 L295.3,555.2" class="line" stroke="#2a78d6"/>
+<circle cx="60.0" cy="560.2" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="177.7" cy="557.5" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="295.3" cy="555.2" r="4" fill="#2a78d6" class="dot"/>
+<path d="M60.0,514.3 L177.7,512.4 L295.3,502.2" class="line" stroke="#eb6834"/>
+<circle cx="60.0" cy="514.3" r="4" fill="#eb6834" class="dot"/>
+<circle cx="177.7" cy="512.4" r="4" fill="#eb6834" class="dot"/>
+<circle cx="295.3" cy="502.2" r="4" fill="#eb6834" class="dot"/>
+<path d="M60.0,519.9 L177.7,520.6 L295.3,520.9" class="line" stroke="#1baf7a"/>
+<circle cx="60.0" cy="519.9" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="177.7" cy="520.6" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="295.3" cy="520.9" r="4" fill="#1baf7a" class="dot"/>
+<path d="M60.0,447.3 L177.7,420.3 L295.3,420.4" class="line" stroke="#eda100"/>
+<circle cx="60.0" cy="447.3" r="4" fill="#eda100" class="dot"/>
+<circle cx="177.7" cy="420.3" r="4" fill="#eda100" class="dot"/>
+<circle cx="295.3" cy="420.4" r="4" fill="#eda100" class="dot"/>
+<text x="303.3333333333333" y="424.4" class="lbl"><tspan fill="#eda100">●</tspan> 2,264</text>
+<text x="303.3333333333333" y="506.2" class="lbl"><tspan fill="#eb6834">●</tspan> 195</text>
+<text x="303.3333333333333" y="524.9" class="lbl"><tspan fill="#1baf7a">●</tspan> 111</text>
+<text x="303.3333333333333" y="559.2" class="lbl"><tspan fill="#2a78d6">●</tspan> 39.7</text>
+<text x="409.3333333333333" y="366" class="ttl">Cold start to first 200</text>
+<text x="409.3333333333333" y="381" class="sub">s · log scale · lower is better</text>
+<line x1="409.3333333333333" y1="578.0" x2="644.6666666666666" y2="578.0" class="grid"/>
+<text x="403.3333333333333" y="581.0" class="tick" text-anchor="end">0.5</text>
+<line x1="409.3333333333333" y1="550.3" x2="644.6666666666666" y2="550.3" class="grid"/>
+<text x="403.3333333333333" y="553.3" class="tick" text-anchor="end">1</text>
+<line x1="409.3333333333333" y1="522.6" x2="644.6666666666666" y2="522.6" class="grid"/>
+<text x="403.3333333333333" y="525.6" class="tick" text-anchor="end">2</text>
+<line x1="409.3333333333333" y1="486.0" x2="644.6666666666666" y2="486.0" class="grid"/>
+<text x="403.3333333333333" y="489.0" class="tick" text-anchor="end">5</text>
+<line x1="409.3333333333333" y1="458.3" x2="644.6666666666666" y2="458.3" class="grid"/>
+<text x="403.3333333333333" y="461.3" class="tick" text-anchor="end">10</text>
+<line x1="409.3333333333333" y1="430.6" x2="644.6666666666666" y2="430.6" class="grid"/>
+<text x="403.3333333333333" y="433.6" class="tick" text-anchor="end">20</text>
+<line x1="409.3333333333333" y1="394.0" x2="644.6666666666666" y2="394.0" class="grid"/>
+<text x="403.3333333333333" y="397.0" class="tick" text-anchor="end">50</text>
+<line x1="409.3333333333333" y1="578" x2="644.6666666666666" y2="578" class="axis"/>
+<text x="409.3" y="594" class="tick" text-anchor="middle">Jun 25 16:08</text>
+<text x="527.0" y="594" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="644.7" y="594" class="tick" text-anchor="middle">Jul 21</text>
+<path d="M409.3,567.2 L527.0,573.3 L644.7,569.1" class="line" stroke="#2a78d6"/>
+<circle cx="409.3" cy="567.2" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="527.0" cy="573.3" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="644.7" cy="569.1" r="4" fill="#2a78d6" class="dot"/>
+<path d="M409.3,474.1 L527.0,472.2 L644.7,484.0" class="line" stroke="#eb6834"/>
+<circle cx="409.3" cy="474.1" r="4" fill="#eb6834" class="dot"/>
+<circle cx="527.0" cy="472.2" r="4" fill="#eb6834" class="dot"/>
+<circle cx="644.7" cy="484.0" r="4" fill="#eb6834" class="dot"/>
+<path d="M409.3,547.5 L527.0,548.4 L644.7,546.9" class="line" stroke="#1baf7a"/>
+<circle cx="409.3" cy="547.5" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="527.0" cy="548.4" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="644.7" cy="546.9" r="4" fill="#1baf7a" class="dot"/>
+<path d="M409.3,442.6 L527.0,420.9 L644.7,415.9" class="line" stroke="#eda100"/>
+<circle cx="409.3" cy="442.6" r="4" fill="#eda100" class="dot"/>
+<circle cx="527.0" cy="420.9" r="4" fill="#eda100" class="dot"/>
+<circle cx="644.7" cy="415.9" r="4" fill="#eda100" class="dot"/>
+<text x="652.6666666666666" y="419.9" class="lbl"><tspan fill="#eda100">●</tspan> 28.9</text>
+<text x="652.6666666666666" y="488.0" class="lbl"><tspan fill="#eb6834">●</tspan> 5.25</text>
+<text x="652.6666666666666" y="550.9" class="lbl"><tspan fill="#1baf7a">●</tspan> 1.09</text>
+<text x="652.6666666666666" y="573.1" class="lbl"><tspan fill="#2a78d6">●</tspan> 0.62</text>
+<text x="758.6666666666666" y="366" class="ttl">Image size, compressed</text>
+<text x="758.6666666666666" y="381" class="sub">MB · log scale · lower is better</text>
+<line x1="758.6666666666666" y1="578.0" x2="994.0" y2="578.0" class="grid"/>
+<text x="752.6666666666666" y="581.0" class="tick" text-anchor="end">10</text>
+<line x1="758.6666666666666" y1="545.4" x2="994.0" y2="545.4" class="grid"/>
+<text x="752.6666666666666" y="548.4" class="tick" text-anchor="end">20</text>
+<line x1="758.6666666666666" y1="502.3" x2="994.0" y2="502.3" class="grid"/>
+<text x="752.6666666666666" y="505.3" class="tick" text-anchor="end">50</text>
+<line x1="758.6666666666666" y1="469.7" x2="994.0" y2="469.7" class="grid"/>
+<text x="752.6666666666666" y="472.7" class="tick" text-anchor="end">100</text>
+<line x1="758.6666666666666" y1="437.1" x2="994.0" y2="437.1" class="grid"/>
+<text x="752.6666666666666" y="440.1" class="tick" text-anchor="end">200</text>
+<line x1="758.6666666666666" y1="394.0" x2="994.0" y2="394.0" class="grid"/>
+<text x="752.6666666666666" y="397.0" class="tick" text-anchor="end">500</text>
+<line x1="758.6666666666666" y1="578" x2="994.0" y2="578" class="axis"/>
+<text x="758.7" y="594" class="tick" text-anchor="middle">Jun 25 16:08</text>
+<text x="876.3" y="594" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="994.0" y="594" class="tick" text-anchor="middle">Jul 21</text>
+<path d="M994.0,553.6" class="line" stroke="#2a78d6"/>
+<circle cx="994.0" cy="553.6" r="4" fill="#2a78d6" class="dot"/>
+<path d="M994.0,480.8" class="line" stroke="#eb6834"/>
+<circle cx="994.0" cy="480.8" r="4" fill="#eb6834" class="dot"/>
+<path d="M994.0,495.4" class="line" stroke="#1baf7a"/>
+<circle cx="994.0" cy="495.4" r="4" fill="#1baf7a" class="dot"/>
+<path d="M994.0,412.9" class="line" stroke="#eda100"/>
+<circle cx="994.0" cy="412.9" r="4" fill="#eda100" class="dot"/>
+<text x="1002.0" y="416.9" class="lbl"><tspan fill="#eda100">●</tspan> 334</text>
+<text x="1002.0" y="484.8" class="lbl"><tspan fill="#eb6834">●</tspan> 79.0</text>
+<text x="1002.0" y="499.4" class="lbl"><tspan fill="#1baf7a">●</tspan> 57.9</text>
+<text x="1002.0" y="557.6" class="lbl"><tspan fill="#2a78d6">●</tspan> 16.8</text>
+</svg>

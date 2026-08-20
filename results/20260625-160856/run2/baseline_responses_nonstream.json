@@ -1,0 +1,33 @@
+{
+  "capped": 0,
+  "concurrency": 10,
+  "dialect": "responses",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "latency",
+  "mode": "nonstream",
+  "ok": 8000,
+  "requests": 8000,
+  "rps": 22846.614614919967,
+  "total_latency": {
+    "avg_ms": 0.42,
+    "max_ms": 10.06,
+    "min_ms": 0.05,
+    "p50_ms": 0.33,
+    "p90_ms": 0.7,
+    "p95_ms": 1.15,
+    "p99_ms": 2.45
+  },
+  "ttft": {
+    "avg_ms": 0.42,
+    "max_ms": 10.06,
+    "min_ms": 0.05,
+    "p50_ms": 0.33,
+    "p90_ms": 0.7,
+    "p95_ms": 1.15,
+    "p99_ms": 2.45
+  },
+  "url": "http://mock:9999/v1/responses",
+  "wall_ms": 350
+}
