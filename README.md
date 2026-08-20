@@ -8,7 +8,13 @@ Every gateway runs from its latest public Docker image, one at a time, against t
 in-memory mock backend. The numbers are therefore **gateway overhead** (routing, translation,
 streaming), not model or network latency.
 
+> Moved here from the [GoModel repository](https://github.com/ENTERPILOT/GoModel)
+> (`docs/2026-06-25_aws_gateway_benchmark`) on 20 August 2026. The runs from June and
+> July 2026 were made with that original harness and are kept in the history below.
+
 <!-- history:start -->
+![History chart](results/charts/history.svg)
+
 Latest run — `20260820-183544` · 2026-08-20 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
 
 | Gateway | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
@@ -17,8 +23,6 @@ Latest run — `20260820-183544` · 2026-08-20 · AWS **c7i.large** (2 vCPU) · 
 | Bifrost | `maximhq/bifrost:latest` | 3.04 | 19.23 | 2,624 | 179.5 | 6.71 | 80.3 | 5/6 |
 | Portkey | `portkeyai/gateway:latest` | 9.14 | 29.37 | 982 | 110.0 | 0.99 | 57.9 | 4/6 |
 | LiteLLM | `litellm/litellm:main-stable` | 35.85 | 53.32 | 276 | 2,092 | 26.50 | 353.9 | 6/6 |
-
-![History chart](results/charts/history.svg)
 
 All 5 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
 <!-- history:end -->

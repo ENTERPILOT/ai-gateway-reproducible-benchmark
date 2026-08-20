@@ -280,9 +280,9 @@ def update_readme(latest, n_runs):
     if MARK_START not in text or MARK_END not in text:
         return
     block = "\n".join([MARK_START,
+                       "![History chart](results/charts/history.svg)", "",
                        f"Latest run — {run_caption(latest)}", "",
                        run_table(latest), "",
-                       "![History chart](results/charts/history.svg)", "",
                        f"All {n_runs} runs: [results/HISTORY.md](results/HISTORY.md) · "
                        "machine-readable: [results/history.json](results/history.json)",
                        MARK_END])
