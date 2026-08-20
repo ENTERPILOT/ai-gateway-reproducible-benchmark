@@ -9,18 +9,18 @@ in-memory mock backend. The numbers are therefore **gateway overhead** (routing,
 streaming), not model or network latency.
 
 <!-- history:start -->
-Latest run — `20260721-121034` · 2026-07-21 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
+Latest run — `20260820-183544` · 2026-08-20 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
 
 | Gateway | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
 |---|---|--:|--:|--:|--:|--:|--:|:-:|
-| GoModel | `gomodel-bench:local` | 2.19 | 8.30 | 4,154 | 39.7 | 0.62 | 16.8 | 6/6 |
-| Bifrost | `maximhq/bifrost:latest` | 3.09 | 20.85 | 2,534 | 194.6 | 5.25 | 79.0 | 5/6 |
-| Portkey | `portkeyai/gateway:latest` | 10.13 | 32.02 | 883 | 110.9 | 1.09 | 57.9 | 4/6 |
-| LiteLLM | `ghcr.io/berriai/litellm:main-stable` | 38.78 | 54.18 | 265 | 2,264 | 28.93 | 334.2 | 6/6 |
+| GoModel | `enterpilot/gomodel:latest` | 2.06 | 7.79 | 4,212 | 60.1 | 0.76 | 14.1 | 6/6 |
+| Bifrost | `maximhq/bifrost:latest` | 3.04 | 19.23 | 2,624 | 179.5 | 6.71 | 80.3 | 5/6 |
+| Portkey | `portkeyai/gateway:latest` | 9.14 | 29.37 | 982 | 110.0 | 0.99 | 57.9 | 4/6 |
+| LiteLLM | `litellm/litellm:main-stable` | 35.85 | 53.32 | 276 | 2,092 | 26.50 | 353.9 | 6/6 |
 
 ![History chart](results/charts/history.svg)
 
-All 4 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
+All 5 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
 <!-- history:end -->
 
 ## Run it

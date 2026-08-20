@@ -1,0 +1,33 @@
+{
+  "capped": 256,
+  "concurrency": 256,
+  "dialect": "chat",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "throughput",
+  "mode": "nonstream",
+  "ok": 20451,
+  "requests": 20707,
+  "rps": 2554.437514704113,
+  "total_latency": {
+    "avg_ms": 98.94,
+    "max_ms": 632.25,
+    "min_ms": 0.52,
+    "p50_ms": 93.73,
+    "p90_ms": 189.4,
+    "p95_ms": 224.45,
+    "p99_ms": 310.48
+  },
+  "ttft": {
+    "avg_ms": 98.94,
+    "max_ms": 632.25,
+    "min_ms": 0.52,
+    "p50_ms": 93.73,
+    "p90_ms": 189.4,
+    "p95_ms": 224.45,
+    "p99_ms": 310.48
+  },
+  "url": "http://bifrost:8089/v1/chat/completions",
+  "wall_ms": 8006
+}

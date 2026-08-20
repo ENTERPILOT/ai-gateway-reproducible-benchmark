@@ -1,0 +1,43 @@
+{
+  "capped": 10,
+  "concurrency": 10,
+  "dialect": "responses",
+  "errors": {
+    "Post \"http://bifrost:8089/v1/responses\": context deadline exceeded": 10
+  },
+  "failed": 10,
+  "inter_chunk": {
+    "avg_ms": 0.08,
+    "max_ms": 33.61,
+    "min_ms": 0,
+    "p50_ms": 0.02,
+    "p90_ms": 0.06,
+    "p95_ms": 0.14,
+    "p99_ms": 1.81
+  },
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 4970,
+  "requests": 4990,
+  "rps": 82.83283225958388,
+  "total_latency": {
+    "avg_ms": 19.81,
+    "max_ms": 145.81,
+    "min_ms": 3.39,
+    "p50_ms": 18.2,
+    "p90_ms": 30.01,
+    "p95_ms": 35.81,
+    "p99_ms": 48.59
+  },
+  "ttft": {
+    "avg_ms": 17.11,
+    "max_ms": 144.1,
+    "min_ms": 2.25,
+    "p50_ms": 15.78,
+    "p90_ms": 26.22,
+    "p95_ms": 31.3,
+    "p99_ms": 43.37
+  },
+  "url": "http://bifrost:8089/v1/responses",
+  "wall_ms": 60000
+}
