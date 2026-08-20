@@ -1,0 +1,41 @@
+{
+  "capped": 10,
+  "concurrency": 10,
+  "dialect": "chat",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {
+    "avg_ms": 0,
+    "max_ms": 0.95,
+    "min_ms": 0,
+    "p50_ms": 0,
+    "p90_ms": 0,
+    "p95_ms": 0,
+    "p99_ms": 0
+  },
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 3324,
+  "requests": 3334,
+  "rps": 332.3740467055126,
+  "total_latency": {
+    "avg_ms": 30.03,
+    "max_ms": 61.18,
+    "min_ms": 25.68,
+    "p50_ms": 28.73,
+    "p90_ms": 34.04,
+    "p95_ms": 38.46,
+    "p99_ms": 50.37
+  },
+  "ttft": {
+    "avg_ms": 30.01,
+    "max_ms": 61.17,
+    "min_ms": 25.67,
+    "p50_ms": 28.71,
+    "p90_ms": 34.03,
+    "p95_ms": 38.44,
+    "p99_ms": 50.34
+  },
+  "url": "http://portkey:8787/v1/chat/completions",
+  "wall_ms": 10000
+}

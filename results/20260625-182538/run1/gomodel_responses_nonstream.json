@@ -1,0 +1,33 @@
+{
+  "capped": 0,
+  "concurrency": 10,
+  "dialect": "responses",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "latency",
+  "mode": "nonstream",
+  "ok": 8000,
+  "requests": 8000,
+  "rps": 4268.680586911609,
+  "total_latency": {
+    "avg_ms": 2.33,
+    "max_ms": 14.65,
+    "min_ms": 0.35,
+    "p50_ms": 1.98,
+    "p90_ms": 4.15,
+    "p95_ms": 5.08,
+    "p99_ms": 7.31
+  },
+  "ttft": {
+    "avg_ms": 2.33,
+    "max_ms": 14.65,
+    "min_ms": 0.35,
+    "p50_ms": 1.98,
+    "p90_ms": 4.15,
+    "p95_ms": 5.08,
+    "p99_ms": 7.31
+  },
+  "url": "http://gomodel:8080/v1/responses",
+  "wall_ms": 1874
+}

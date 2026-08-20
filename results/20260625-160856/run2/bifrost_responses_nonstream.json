@@ -1,0 +1,33 @@
+{
+  "capped": 0,
+  "concurrency": 10,
+  "dialect": "responses",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "latency",
+  "mode": "nonstream",
+  "ok": 8000,
+  "requests": 8000,
+  "rps": 2533.7412109394845,
+  "total_latency": {
+    "avg_ms": 3.93,
+    "max_ms": 46.98,
+    "min_ms": 0.55,
+    "p50_ms": 3.3,
+    "p90_ms": 7.33,
+    "p95_ms": 9.33,
+    "p99_ms": 16.11
+  },
+  "ttft": {
+    "avg_ms": 3.93,
+    "max_ms": 46.98,
+    "min_ms": 0.55,
+    "p50_ms": 3.3,
+    "p90_ms": 7.33,
+    "p95_ms": 9.33,
+    "p99_ms": 16.11
+  },
+  "url": "http://bifrost:8089/v1/responses",
+  "wall_ms": 3157
+}
