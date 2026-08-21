@@ -134,7 +134,8 @@ def main():
     runs = run_dirs(rd)
     present = sorted({os.path.basename(p).split("_")[0]
                       for p in glob.glob(os.path.join(runs[0], "*_*_*.json"))})
-    targets = [t for t in TARGETS if t in present]
+    # Known targets in their usual order, then anything new under gateways/.
+    targets = [t for t in TARGETS if t in present] + sorted(p for p in present if p not in TARGETS)
 
     summary = {"meta": meta, "trials": len(runs), "latency": {}, "capacity": {}, "resources": {}}
 
@@ -177,7 +178,7 @@ def main():
 
     # ── Capacity sweep ─────────────────────────────────────────────────────────
     print("CAPACITY  (chat non-stream; sustained req/s by concurrency)")
-    sweep_targets = [t for t in TARGETS if sweep_curve(rd, t)]
+    sweep_targets = [t for t in targets if sweep_curve(rd, t)]
     if sweep_targets:
         concs = sorted({c for t in sweep_targets for c in sweep_curve(rd, t)})
         hdrc = f"{'target':9} " + " ".join(f"c{c:>6}" for c in concs) + f" {'peak':>8} {'@c':>4} {'knee':>5}"
@@ -256,7 +257,7 @@ def write_markdown(rd, meta, runs, targets):
     L.append("")
 
     # capacity
-    sweep_targets = [t for t in TARGETS if sweep_curve(rd, t)]
+    sweep_targets = [t for t in targets if sweep_curve(rd, t)]
     if sweep_targets:
         concs = sorted({c for t in sweep_targets for c in sweep_curve(rd, t)})
         L.append("## Capacity (chat non-stream, sustained req/s by concurrency)\n")

@@ -106,16 +106,32 @@ if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
 - **Parity:** retries off everywhere, GoModel's circuit breaker off, LiteLLM at its
   recommended one worker per vCPU, per-variant warm-up before measuring.
 
-Gateway-specific configuration lives in [`remote/configs/`](remote/configs) and
-[`remote/docker-compose.yml`](remote/docker-compose.yml); the load generator and mock are
-in [`remote/bench-tools/`](remote/bench-tools).
+Everything specific to one gateway lives in its own folder under
+[`remote/gateways/`](remote/gateways): the compose service (image, ports, environment), a
+`gateway.env` describing how the harness talks to it (default image, port, model name, extra
+request headers, where it serves the Anthropic Messages dialect), and any config file it
+needs. The load generator and mock are in [`remote/bench-tools/`](remote/bench-tools).
+
+### Add a gateway
+
+1. Create `remote/gateways/<name>/` with a `compose.yml` (one service named `<name>`, in
+   profile `<name>`, using `${<NAME>_IMAGE:?}` and `${<NAME>_HOST_PORT:-<port>}`), a
+   `gateway.env` (copy one of the existing ones), and any config file.
+2. Add `gateways/<name>/compose.yml` to the `include:` list in `remote/compose.yml`.
+
+`run-on-instance.sh` discovers the folder, and the tables and chart pick the gateway up on
+the next recorded run. `GATEWAYS="gomodel <name>" ./run.sh` runs a subset.
 
 ## Layout
 
 ```
 run.sh                  orchestrator: terraform apply -> run -> collect -> record -> destroy
 terraform/              one EC2 instance, SSH key, security group
-remote/                 everything shipped to the instance (compose file, configs, bench tools)
+remote/                 everything shipped to the instance
+  compose.yml           shared mock backend + include of every gateway
+  gateways/<name>/      one folder per gateway: compose.yml, gateway.env, config file
+  bench-tools/          Go mock backend + load generator (one small image)
+  run-on-instance.sh    the benchmark itself: latency trials, capacity sweep, footprint
 scripts/summarize.py    raw JSON -> summary.json / summary.md for one run
 scripts/record_run.py   copy a run into results/ and rebuild the history
 scripts/build_history.py results/*/summary.json -> history.json, charts, README tables

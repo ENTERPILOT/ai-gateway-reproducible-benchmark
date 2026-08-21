@@ -1,0 +1,12 @@
+# Portkey OSS gateway. Routing is per request (see HEADERS in gateway.env).
+services:
+  portkey:
+    profiles: ["portkey"]
+    image: ${PORTKEY_IMAGE:?set by run-on-instance.sh}
+    depends_on: [mock]
+    ports:
+      - "${PORTKEY_HOST_PORT:-8787}:8787"
+    environment:
+      # Allow the mock service hostname through Portkey's SSRF/private-IP filter.
+      - TRUSTED_CUSTOM_HOSTS=mock
+    restart: "no"

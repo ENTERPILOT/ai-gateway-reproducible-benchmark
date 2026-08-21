@@ -1,0 +1,29 @@
+# Benchmark topology: a shared mock backend plus exactly one gateway at a time.
+#
+# Each gateway lives in its own folder under gateways/<name>/ with a compose.yml
+# (the service, in a profile of the same name), a gateway.env (how the harness
+# talks to it) and any config file it needs. The mock has no profile, so it is
+# always up; the load generator runs separately via `docker run --network benchnet`.
+#
+#   docker compose --profile gomodel up -d   # mock + gomodel
+#
+# To add a gateway: create gateways/<name>/ and list its compose.yml below.
+include:
+  - gateways/gomodel/compose.yml
+  - gateways/litellm/compose.yml
+  - gateways/portkey/compose.yml
+  - gateways/bifrost/compose.yml
+
+networks:
+  default:
+    name: benchnet
+
+services:
+  mock:
+    image: ${BENCH_TOOLS_IMAGE:-bench-tools:local}
+    command: ["/mock"]
+    environment:
+      - MOCK_PORT=9999
+    ports:
+      - "9999:9999"   # published so the runner can record a no-gateway baseline
+    restart: "no"

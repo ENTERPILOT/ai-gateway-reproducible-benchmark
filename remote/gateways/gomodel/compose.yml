@@ -1,0 +1,32 @@
+# GoModel, configured entirely through environment variables.
+# ${GOMODEL_IMAGE} / ${GOMODEL_HOST_PORT} are exported by run-on-instance.sh from gateway.env.
+services:
+  gomodel:
+    profiles: ["gomodel"]
+    image: ${GOMODEL_IMAGE:?set by run-on-instance.sh}
+    depends_on: [mock]
+    ports:
+      - "${GOMODEL_HOST_PORT:-8080}:8080"
+    environment:
+      - PORT=8080
+      - GOMODEL_MASTER_KEY=
+      - OPENAI_API_KEY=sk-bench-test-key
+      - OPENAI_BASE_URL=http://mock:9999/v1
+      - LOGGING_ENABLED=false
+      - USAGE_ENABLED=false
+      - METRICS_ENABLED=false
+      - SWAGGER_ENABLED=false
+      - PPROF_ENABLED=false
+      - ENABLE_PASSTHROUGH_ROUTES=false
+      # Config parity with the no-retry / no-breaker peers (LiteLLM, Bifrost):
+      #  - retries off (default is 3).
+      #  - circuit breaker effectively disabled. It has no on/off env, so set an
+      #    unreachable failure threshold. Under the c=128 sweep a few transient
+      #    upstream errors would otherwise trip the default breaker (threshold 5)
+      #    and blanket-503 every request. No other gateway has a breaker.
+      - RETRY_MAX_RETRIES=0
+      - CIRCUIT_BREAKER_FAILURE_THRESHOLD=1000000000
+      - STORAGE_TYPE=sqlite
+      - SQLITE_PATH=/app/data/gomodel-bench.db
+      - GOMODEL_CACHE_DIR=/app/.cache
+    restart: "no"

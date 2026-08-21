@@ -32,6 +32,25 @@ GATEWAYS = ["gomodel", "bifrost", "portkey", "litellm"]
 LABEL = {"gomodel": "GoModel", "bifrost": "Bifrost", "portkey": "Portkey", "litellm": "LiteLLM"}
 # Fixed categorical hue per gateway (never cycled), validated for CVD separation.
 COLOR = {"gomodel": "#2a78d6", "bifrost": "#eb6834", "portkey": "#1baf7a", "litellm": "#eda100"}
+EXTRA_COLORS = ["#e87ba4", "#008300", "#4a3aa7", "#e34948"]
+
+
+def label(gw):
+    return LABEL.get(gw, gw.capitalize())
+
+
+def color(gw):
+    """Known gateways keep their hue; a new gateways/<name>/ gets the next free one."""
+    if gw not in COLOR:
+        n = len(COLOR) - len(LABEL)
+        COLOR[gw] = EXTRA_COLORS[n] if n < len(EXTRA_COLORS) else "#52514e"
+    return COLOR[gw]
+
+
+def ordered(names):
+    """Known gateways first, in their usual order, then anything new alphabetically."""
+    names = set(names)
+    return [g for g in GATEWAYS if g in names] + sorted(g for g in names if g not in GATEWAYS)
 
 # (key, panel title, unit, lower-is-better)
 METRICS = [
@@ -81,7 +100,7 @@ def record(stamp, summary):
         "harness_commit": meta.get("harness_commit"),
         "gateways": {},
     }
-    for gw in GATEWAYS:
+    for gw in ordered(g for g in (summary.get("latency") or {}) if g != "baseline"):
         lat = (summary.get("latency") or {}).get(gw)
         if not lat:
             continue
@@ -149,7 +168,7 @@ def panel(x0, y0, w, h, title, unit, runs, key, lower_better):
     pw, ph = w - pad_l - pad_r, h - pad_t - pad_b
 
     series = {}
-    for gw in GATEWAYS:
+    for gw in ordered(g for r in runs for g in r["gateways"]):
         pts = [(i, r["gateways"].get(gw, {}).get(key)) for i, r in enumerate(runs)]
         pts = [(i, v) for i, v in pts if isinstance(v, (int, float)) and v > 0]
         if pts:
@@ -192,9 +211,9 @@ def panel(x0, y0, w, h, title, unit, runs, key, lower_better):
     ends = []
     for gw, pts in series.items():
         path = " ".join(f'{"M" if k == 0 else "L"}{lx(i):.1f},{ly(v):.1f}' for k, (i, v) in enumerate(pts))
-        out.append(f'<path d="{path}" class="line" stroke="{COLOR[gw]}"/>')
+        out.append(f'<path d="{path}" class="line" stroke="{color(gw)}"/>')
         for i, v in pts:
-            out.append(f'<circle cx="{lx(i):.1f}" cy="{ly(v):.1f}" r="4" fill="{COLOR[gw]}" class="dot"/>')
+            out.append(f'<circle cx="{lx(i):.1f}" cy="{ly(v):.1f}" r="4" fill="{color(gw)}" class="dot"/>')
         i, v = pts[-1]
         ends.append([ly(v), gw, v, lx(i)])
     ends.sort()
@@ -204,7 +223,7 @@ def panel(x0, y0, w, h, title, unit, runs, key, lower_better):
         ends[k][0] = min(ends[k][0], ends[k + 1][0] - 13)
     for y, gw, v, x in ends:
         out.append(f'<text x="{px + pw + 8}" y="{y + 4:.1f}" class="lbl">'
-                   f'<tspan fill="{COLOR[gw]}">●</tspan> {fmt(v, 2 if v < 10 else 1 if v < 100 else 0)}</text>')
+                   f'<tspan fill="{color(gw)}">●</tspan> {fmt(v, 2 if v < 10 else 1 if v < 100 else 0)}</text>')
     return "\n".join(out)
 
 
@@ -214,9 +233,9 @@ def build_svg(runs, instance_type, path):
     top = 88
     H = top + rows * PH + 16
     legend = "".join(
-        f'<g transform="translate({16 + k * 110},64)"><circle cx="6" cy="-4" r="5" fill="{COLOR[gw]}"/>'
-        f'<text x="16" y="0" class="lg">{LABEL[gw]}</text></g>'
-        for k, gw in enumerate(GATEWAYS) if any(gw in r["gateways"] for r in runs))
+        f'<g transform="translate({16 + k * 110},64)"><circle cx="6" cy="-4" r="5" fill="{color(gw)}"/>'
+        f'<text x="16" y="0" class="lg">{label(gw)}</text></g>'
+        for k, gw in enumerate(ordered(g for r in runs for g in r["gateways"])))
     first, last = short_date(runs[0]["date"]), short_date(runs[-1]["date"])
     sub = (f"{len(runs)} run{'s' if len(runs) != 1 else ''} on AWS {instance_type} · {first} → {last} · "
            "latest public Docker image of each gateway · same mock backend, so numbers are gateway overhead")
@@ -245,12 +264,9 @@ def build_svg(runs, instance_type, path):
 def run_table(rec):
     L = ["| Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |",
          "|---|---|---|--:|--:|--:|--:|--:|--:|:-:|"]
-    for gw in GATEWAYS:
-        g = rec["gateways"].get(gw)
-        if not g:
-            continue
+    for gw, g in rec["gateways"].items():
         img = (g.get("image") or "?").split("@")[0]
-        L.append(f"| {LABEL[gw]} | {g.get('version') or '—'} | `{img}` | {fmt(g['chat_p50_ms'], 2)} | {fmt(g['chat_p99_ms'], 2)} | "
+        L.append(f"| {label(gw)} | {g.get('version') or '—'} | `{img}` | {fmt(g['chat_p50_ms'], 2)} | {fmt(g['chat_p99_ms'], 2)} | "
                  f"{fmt(g['peak_rps'], 0)} | {fmt(g['peak_mem_mb'])} | {fmt(g['startup_s'], 2)} | "
                  f"{fmt(g['image_mb'])} | {g['variants_served']} |")
     return "\n".join(L)
