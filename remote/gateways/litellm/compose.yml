@@ -1,0 +1,15 @@
+# LiteLLM proxy with config.yaml (model -> mock, retries and spend logs off).
+services:
+  litellm:
+    profiles: ["litellm"]
+    image: ${LITELLM_IMAGE:?set by run-on-instance.sh}
+    depends_on: [mock]
+    ports:
+      - "${LITELLM_HOST_PORT:-4000}:4000"
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    # LiteLLM's own recommendation is one worker per CPU core. run-on-instance.sh
+    # sets LITELLM_NUM_WORKERS=$(nproc) so this matches the box, giving LiteLLM
+    # the same multi-core access the Go gateways get for free.
+    command: ["--config", "/app/config.yaml", "--port", "4000", "--num_workers", "${LITELLM_NUM_WORKERS:-1}"]
+    restart: "no"

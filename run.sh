@@ -38,8 +38,7 @@ INSTANCE_TYPE="${INSTANCE_TYPE:-c7i.large}"  # 2 vCPU, non-burstable (stable tai
 N="${N:-20000}"
 C="${C:-10}"
 REPEATS="${REPEATS:-5}"
-GATEWAYS="${GATEWAYS:-gomodel litellm portkey bifrost}"
-GOMODEL_IMAGE="${GOMODEL_IMAGE:-enterpilot/gomodel:latest}"
+GATEWAYS="${GATEWAYS:-$(ls "$REMOTE_DIR/gateways" | tr '\n' ' ' | sed 's/ $//')}"
 GOMODEL_SOURCE="${GOMODEL_SOURCE:-}"   # path to a GoModel checkout; builds + ships a local image
 IMAGE_TAR="${TMPDIR:-/tmp}/gomodel-bench-amd64.tar.gz"
 POLL_MAX="${POLL_MAX:-400}"            # 400 * 15s = 100 min ceiling (a default run takes ~75 min)
@@ -162,7 +161,7 @@ fi
 # ── 1. Optionally build GoModel from source ───────────────────────
 if [[ -n "$GOMODEL_SOURCE" ]]; then
   command -v docker >/dev/null || { err "docker required to build GoModel from source"; exit 1; }
-  GOMODEL_IMAGE="gomodel-bench:local"
+  export GOMODEL_IMAGE="gomodel-bench:local"
   log "Building GoModel image from $GOMODEL_SOURCE (linux/amd64)"
   docker buildx build --platform linux/amd64 -t "$GOMODEL_IMAGE" --load "$GOMODEL_SOURCE"
   log "Saving image -> $IMAGE_TAR"
@@ -209,9 +208,12 @@ if [[ -n "$GOMODEL_SOURCE" ]]; then
   rssh 'gunzip -c ~/gomodel-bench-amd64.tar.gz | docker load'
 fi
 
-# Forward all benchmark knobs to the instance (only the ones that are set).
-REMOTE_ENV="N=$N C=$C REPEATS=$REPEATS GATEWAYS='$GATEWAYS' GOMODEL_IMAGE=$GOMODEL_IMAGE HARNESS_COMMIT=$HARNESS_COMMIT"
-for v in LITELLM_IMAGE PORTKEY_IMAGE BIFROST_IMAGE MAX_VARIANT_SECONDS SWEEP_CONCURRENCY SWEEP_DURATION RESOURCE_SECONDS REST_SECONDS WARMUP WARMUP_VARIANT; do
+# Forward the benchmark knobs to the instance: the core ones always, the optional
+# tuning knobs and any <GATEWAY>_IMAGE / <GATEWAY>_HOST_PORT override only when set
+# (defaults live in remote/gateways/<name>/gateway.env).
+REMOTE_ENV="N=$N C=$C REPEATS=$REPEATS GATEWAYS='$GATEWAYS' HARNESS_COMMIT=$HARNESS_COMMIT"
+for v in MAX_VARIANT_SECONDS SWEEP_CONCURRENCY SWEEP_DURATION RESOURCE_SECONDS REST_SECONDS WARMUP WARMUP_VARIANT \
+         $(env | grep -oE '^[A-Z][A-Z0-9_]*_(IMAGE|HOST_PORT)=' | tr -d '='); do
   if [[ -n "${!v:-}" ]]; then REMOTE_ENV="$REMOTE_ENV $v='${!v}'"; fi
 done
 

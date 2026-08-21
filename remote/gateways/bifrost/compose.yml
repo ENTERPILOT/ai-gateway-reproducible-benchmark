@@ -1,0 +1,15 @@
+# Bifrost with config.json (openai + anthropic providers -> mock, private network allowed).
+services:
+  bifrost:
+    profiles: ["bifrost"]
+    image: ${BIFROST_IMAGE:?set by run-on-instance.sh}
+    depends_on: [mock]
+    ports:
+      - "${BIFROST_HOST_PORT:-8089}:8089"
+    environment:
+      - APP_PORT=8089
+      - APP_HOST=0.0.0.0       # bind all interfaces (default binds localhost)
+    volumes:
+      # Provider config; /app/data stays writable for Bifrost's sqlite config store.
+      - ./config.json:/app/data/config.json:ro
+    restart: "no"

@@ -16,6 +16,10 @@
 #            concurrency level — true capacity, not latency-coupled), and CPU/mem
 #            under sustained load.
 #
+# Gateways are discovered from gateways/<name>/: a compose.yml (the service, in a
+# profile of the same name), a gateway.env (image, port, model, headers, paths)
+# and any config file the gateway needs. See gw_load for the contract.
+#
 # Results are written as JSON to ./results/ for the orchestrator to collect.
 #
 # NOTE: deliberately NOT `set -e`. This is a resilient benchmark harness — a
@@ -27,6 +31,7 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 RESULTS_DIR="$SCRIPT_DIR/results"
+GATEWAYS_DIR="$SCRIPT_DIR/gateways"
 COMPOSE=(docker compose -p bench)
 
 # Load knobs. Defaults target a non-burstable box (c7i.large); see ../run.sh.
@@ -43,22 +48,18 @@ REST_SECONDS="${REST_SECONDS:-5}"           # settle gap between targets (cooldo
 MAX_VARIANT_SECONDS="${MAX_VARIANT_SECONDS:-60}"
 SWEEP_CONCURRENCY="${SWEEP_CONCURRENCY:-1 2 4 8 16 32 64 128 256}"  # capacity-sweep points
 SWEEP_DURATION="${SWEEP_DURATION:-8}"       # seconds of sustained load per sweep point
-GATEWAYS="${GATEWAYS:-gomodel litellm portkey bifrost}"
+GATEWAYS="${GATEWAYS:-$(ls "$GATEWAYS_DIR")}"  # every gateways/<name>/ unless narrowed
+BENCH_TOOLS_IMAGE="${BENCH_TOOLS_IMAGE:-bench-tools:local}"
 # LiteLLM recommends one worker per CPU core; match the box so it isn't pinned to a
 # single core while the Go gateways use all of them. Exported for docker-compose's
-# ${LITELLM_NUM_WORKERS} substitution. (Per-variant warmup already warms each
-# dialect; with >1 worker the warmup also spreads across workers.)
+# ${LITELLM_NUM_WORKERS} substitution.
 export LITELLM_NUM_WORKERS="${LITELLM_NUM_WORKERS:-$(nproc 2>/dev/null || echo 1)}"
-
-# Gateway images. Every gateway runs from its public "latest" image (pulled on
-# this host) unless overridden; ../run.sh forwards *_IMAGE overrides. Exported
-# for docker-compose's ${GOMODEL_IMAGE} etc. substitution.
-export GOMODEL_IMAGE="${GOMODEL_IMAGE:-enterpilot/gomodel:latest}"
-export LITELLM_IMAGE="${LITELLM_IMAGE:-litellm/litellm:main-stable}"
-export PORTKEY_IMAGE="${PORTKEY_IMAGE:-portkeyai/gateway:latest}"
-export BIFROST_IMAGE="${BIFROST_IMAGE:-maximhq/bifrost:latest}"
+export BENCH_TOOLS_IMAGE
 
 AUTH="sk-bench-test-key"
+
+# The six benchmark variants: dialect|mode. Paths come from dialect_path.
+VARIANTS=("chat|nonstream" "chat|stream" "responses|nonstream" "responses|stream" "messages|nonstream" "messages|stream")
 
 log() { printf '\n\033[1;34m>>> %s\033[0m\n' "$*"; }
 
@@ -74,94 +75,98 @@ shuffle() {
     | sort -k1,1n | cut -f2- | tr '\n' ' '
 }
 
-# svc:internal port  +  any extra loadgen headers (Portkey routing).
-gw_port() { case "$1" in gomodel) echo 8080;; litellm) echo 4000;; portkey) echo 8787;; bifrost) echo 8089;; mock) echo 9999;; esac; }
-# Host-published port, used only for readiness/cold-start probes from this host.
-# Overridable (<GATEWAY>_HOST_PORT, see docker-compose.yml) when a default is taken.
-export GOMODEL_HOST_PORT="${GOMODEL_HOST_PORT:-8080}" LITELLM_HOST_PORT="${LITELLM_HOST_PORT:-4000}"
-export PORTKEY_HOST_PORT="${PORTKEY_HOST_PORT:-8787}" BIFROST_HOST_PORT="${BIFROST_HOST_PORT:-8089}"
-gw_host_port() { case "$1" in gomodel) echo "$GOMODEL_HOST_PORT";; litellm) echo "$LITELLM_HOST_PORT";; portkey) echo "$PORTKEY_HOST_PORT";; bifrost) echo "$BIFROST_HOST_PORT";; esac; }
+# json_num FILE KEY: first numeric value of "KEY" in a loadgen summary, or empty.
+json_num() { grep -o "\"$2\": *[0-9.]*" "$1" 2>/dev/null | head -1 | grep -o '[0-9.]*$' || true; }
 
-# gw_headers fills the global HDRS array with loadgen -H args for the target.
-HDRS=()
-gw_headers() {
-  HDRS=()
-  case "$1" in
-    portkey)
-      HDRS=(-H 'x-portkey-provider: openai' -H 'x-portkey-custom-host: http://mock:9999/v1')
-      ;;
-  esac
+# ── the gateway contract ───────────────────────────────────────────
+# gw_load NAME sources gateways/NAME/gateway.env and exposes the loaded gateway as:
+#   NAME, SERVICE (compose service; "mock" for the baseline), IMAGE, PORT (in-network),
+#   HOST_PORT (published on this host, for probes), MODEL, MESSAGES_PATH, HDR_ARGS
+#   (extra "-H 'Name: value'" pairs for loadgen and curl).
+# Overrides: <NAME>_IMAGE and <NAME>_HOST_PORT env vars (uppercased name). They are
+# exported so the gateway's compose.yml sees the same values.
+gw_load() {
+  NAME="$1"; SERVICE="$1"; IMAGE=""; PORT=""; MODEL="gpt-4o-mini"; MESSAGES_PATH="/v1/messages"
+  local HEADERS=(); HDR_ARGS=()
+  if [[ "$NAME" == "baseline" ]]; then SERVICE="mock"; PORT=9999; HOST_PORT=9999; return 0; fi
+  [[ -f "$GATEWAYS_DIR/$NAME/gateway.env" ]] || { echo "  ERROR: no gateways/$NAME/gateway.env" >&2; return 1; }
+  # shellcheck disable=SC1090
+  . "$GATEWAYS_DIR/$NAME/gateway.env"
+  local up var; up="$(printf '%s' "$NAME" | tr 'a-z-' 'A-Z_')"
+  var="${up}_IMAGE";     IMAGE="${!var:-$IMAGE}"
+  var="${up}_HOST_PORT"; HOST_PORT="${!var:-$PORT}"
+  export "${up}_IMAGE=$IMAGE" "${up}_HOST_PORT=$HOST_PORT"
+  local h; for h in ${HEADERS[@]+"${HEADERS[@]}"}; do HDR_ARGS+=(-H "$h"); done
 }
 
-# Model name per gateway. Bifrost routes by an explicit "provider/model" prefix.
-gw_model() { case "$1" in bifrost) echo "openai/gpt-4o-mini";; *) echo "gpt-4o-mini";; esac; }
+dialect_path() {  # dialect -> request path on the loaded gateway
+  case "$1" in chat) echo /v1/chat/completions;; responses) echo /v1/responses;; messages) echo "$MESSAGES_PATH";; esac
+}
+gw_url() { echo "http://${SERVICE}:${PORT}$(dialect_path "${1:-chat}")"; }  # in-network URL
 
-# Path per (gateway, dialect). Bifrost exposes Anthropic Messages under /anthropic/v1/messages.
-gw_path() {  # target dialect default_path
-  if [[ "$1" == "bifrost" && "$2" == "messages" ]]; then echo "/anthropic/v1/messages"; else echo "$3"; fi
+# loadgen ARGS...: run the load generator against the loaded gateway. It runs in a
+# throwaway container on the shared benchnet network so it can reach gateways and
+# the mock by service name; the JSON summary comes back on stdout.
+loadgen() {
+  docker run --rm --network benchnet "$BENCH_TOOLS_IMAGE" /loadgen \
+    -model "$MODEL" -auth "$AUTH" -json - "$@" ${HDR_ARGS[@]+"${HDR_ARGS[@]}"}
 }
 
-# The six benchmark variants: dialect | mode | path
-VARIANTS=(
-  "chat|nonstream|/v1/chat/completions"
-  "chat|stream|/v1/chat/completions"
-  "responses|nonstream|/v1/responses"
-  "responses|stream|/v1/responses"
-  "messages|nonstream|/v1/messages"
-  "messages|stream|/v1/messages"
-)
+# probe: HTTP status of a real chat request to the loaded gateway via its host port.
+probe() {
+  curl -s -o /dev/null -w '%{http_code}' -m 5 -X POST \
+    "http://localhost:${HOST_PORT}/v1/chat/completions" \
+    -H 'Content-Type: application/json' -H "Authorization: Bearer $AUTH" ${HDR_ARGS[@]+"${HDR_ARGS[@]}"} \
+    -d "{\"model\":\"$MODEL\",\"messages\":[{\"role\":\"user\",\"content\":\"ping\"}]}" 2>/dev/null || echo 000
+}
 
-BENCH_TOOLS_IMAGE="${BENCH_TOOLS_IMAGE:-bench-tools:local}"
+gw_up()   { "${COMPOSE[@]}" --profile "$NAME" up -d "$NAME" >/dev/null 2>&1 || true; }
+# Remove only this gateway's container — NOT `compose down`, which would also
+# tear down the profile-less mock and break the next baseline.
+gw_down() { "${COMPOSE[@]}" --profile "$NAME" rm -sf "$NAME" >/dev/null 2>&1 || true; }
+all_profiles() { local d; for d in "$GATEWAYS_DIR"/*/; do printf -- '--profile %s ' "$(basename "$d")"; done; }
 
-# loadgen runs in a throwaway container on the shared benchnet network so it can
-# reach gateways/mock by service name. JSON summary comes back on stdout.
-run_variant() {
-  local target="$1" svc="$2" spec="$3" outfile="$4"
-  local dialect mode path
-  IFS='|' read -r dialect mode path <<< "$spec"
-  path="$(gw_path "$target" "$dialect" "$path")"
-  local port; port="$(gw_port "$svc")"
-  local url="http://${svc}:${port}${path}"
+wait_ready() {  # poll the loaded gateway until HTTP 200 (up to tries*2s)
+  local tries="${1:-60}" code
+  for ((i=0;i<tries;i++)); do
+    code="$(probe)"; [[ "$code" == "200" ]] && return 0
+    sleep 2
+  done
+  echo "  WARN: $NAME did not return 200 within $((tries*2))s (last code: ${code:-?})" >&2
+  return 1
+}
 
-  local base=(-url "$url" -dialect "$dialect" -model "$(gw_model "$target")" -c "$C" -auth "$AUTH" -json -)
-  [[ "$mode" == "stream" ]] && base+=(-stream)
-  [[ "$MAX_VARIANT_SECONDS" -gt 0 ]] && base+=(-max-wall "${MAX_VARIANT_SECONDS}s")
-  gw_headers "$target"
-  if [[ ${#HDRS[@]} -gt 0 ]]; then base+=("${HDRS[@]}"); fi
+warmup_gateway() { loadgen -url "$(gw_url chat)" -dialect chat -n "$WARMUP" -c "$C" >/dev/null 2>&1 || true; }
+
+# ── measurements ───────────────────────────────────────────────────
+run_variant() {  # dialect|mode outfile -> one latency measurement of the loaded gateway
+  local dialect mode; IFS='|' read -r dialect mode <<< "$1"
+  local outfile="$2"
+  local args=(-url "$(gw_url "$dialect")" -dialect "$dialect" -c "$C")
+  [[ "$mode" == "stream" ]] && args+=(-stream)
+  [[ "$MAX_VARIANT_SECONDS" -gt 0 ]] && args+=(-max-wall "${MAX_VARIANT_SECONDS}s")
 
   # Per-variant warmup: warm THIS exact dialect+mode before measuring. Python
   # gateways (LiteLLM) lazily import per-dialect translation modules on first use,
   # so a chat-only warmup leaves responses/messages cold and inflates their tails.
   if [[ "$WARMUP_VARIANT" -gt 0 ]]; then
-    docker run --rm --network benchnet "$BENCH_TOOLS_IMAGE" /loadgen \
-      "${base[@]}" -n "$WARMUP_VARIANT" >/dev/null 2>&1 || true
+    loadgen "${args[@]}" -n "$WARMUP_VARIANT" >/dev/null 2>&1 || true
   fi
-
-  docker run --rm --network benchnet "$BENCH_TOOLS_IMAGE" /loadgen \
-    "${base[@]}" -n "$N" > "$outfile" 2>/dev/null || true
-
-  # `|| true`: a single empty/missing summary must never abort the whole run.
-  local ok fail
-  ok="$(grep -o '"ok": *[0-9]*' "$outfile" 2>/dev/null | head -1 | grep -o '[0-9]*' || true)"
-  fail="$(grep -o '"failed": *[0-9]*' "$outfile" 2>/dev/null | head -1 | grep -o '[0-9]*' || true)"
-  printf '    %-8s %-10s %-9s ok=%-6s failed=%s\n' "$target" "$dialect" "$mode" "${ok:-?}" "${fail:-?}"
+  loadgen "${args[@]}" -n "$N" > "$outfile" 2>/dev/null || true
+  printf '    %-8s %-10s %-9s ok=%-6s failed=%s\n' "$NAME" "$dialect" "$mode" \
+    "$(json_num "$outfile" ok)" "$(json_num "$outfile" failed)"
 }
 
 # run_sweep drives a throughput-vs-concurrency sweep (chat, non-stream) so we can
 # read each gateway's saturation point — sustained req/s at each concurrency, via
 # loadgen's time-boxed mode (not the latency pass's fixed-N, latency-coupled rps).
 run_sweep() {
-  local label="$1" svc="$2" port; port="$(gw_port "$svc")"
-  local url="http://${svc}:${port}/v1/chat/completions"
   mkdir -p "$RESULTS_DIR/sweep"
-  gw_headers "$label"; local hdr=(); [[ ${#HDRS[@]} -gt 0 ]] && hdr=("${HDRS[@]}")
+  local cc out
   for cc in $SWEEP_CONCURRENCY; do
-    local args=(-url "$url" -dialect chat -model "$(gw_model "$label")" -c "$cc" -duration "${SWEEP_DURATION}s" -auth "$AUTH" -json -)
-    [[ ${#hdr[@]} -gt 0 ]] && args+=("${hdr[@]}")
-    docker run --rm --network benchnet "$BENCH_TOOLS_IMAGE" /loadgen "${args[@]}" \
-      > "$RESULTS_DIR/sweep/${label}_c${cc}.json" 2>/dev/null || true
-    local rps; rps="$(grep -o '"rps": *[0-9.]*' "$RESULTS_DIR/sweep/${label}_c${cc}.json" 2>/dev/null | head -1 | grep -o '[0-9.]*' || true)"
-    printf '    sweep %-8s c=%-4s rps=%s\n' "$label" "$cc" "${rps:-?}"
+    out="$RESULTS_DIR/sweep/${NAME}_c${cc}.json"
+    loadgen -url "$(gw_url chat)" -dialect chat -c "$cc" -duration "${SWEEP_DURATION}s" > "$out" 2>/dev/null || true
+    printf '    sweep %-8s c=%-4s rps=%s\n' "$NAME" "$cc" "$(json_num "$out" rps)"
   done
 }
 
@@ -179,7 +184,7 @@ function tomib(s,  v){ v=s; gsub(/[^0-9.]/,"",v); v=v+0;
   m=tomib(mem); if (m>0) printf "%.2f,%s\n", m, cpu }'
 
 SAMPLER_PID=""
-start_sampler() {
+start_sampler() {  # container csv: sample mem/cpu while the container runs
   local cname="$1" csv="$2"
   echo "mem_mb,cpu_pct" > "$csv"
   (
@@ -190,18 +195,6 @@ start_sampler() {
   ) &
   SAMPLER_PID=$!
 }
-
-# Drive sustained chat load at a gateway for ~RESOURCE_SECONDS so the sampler
-# captures the container under genuine pressure. Writes loadgen's summary to
-# $3 so the achieved rps shares the exact window the CPU sample covers (lets
-# summarize.py compute a self-consistent rps-per-CPU% efficiency).
-sustained_load() {
-  local gw="$1" hostport="$2" outfile="$3"
-  local args=(-url "http://${gw}:${hostport}/v1/chat/completions" -dialect chat -model "$(gw_model "$gw")" -duration "${RESOURCE_SECONDS}s" -c "$C" -auth "$AUTH" -json -)
-  gw_headers "$gw"; if [[ ${#HDRS[@]} -gt 0 ]]; then args+=("${HDRS[@]}"); fi
-  docker run --rm --network benchnet "$BENCH_TOOLS_IMAGE" /loadgen "${args[@]}" > "$outfile" 2>/dev/null || true
-}
-
 stop_sampler() {
   [[ -n "$SAMPLER_PID" ]] && kill "$SAMPLER_PID" 2>/dev/null || true
   [[ -n "$SAMPLER_PID" ]] && wait "$SAMPLER_PID" 2>/dev/null || true
@@ -217,92 +210,73 @@ summarize_resources() {  # csv -> json {peak_mem_mb, avg_mem_mb, avg_cpu_pct, sa
     }' "$1"
 }
 
-record_image() {  # gateway image_ref -> results/<gw>_image.json (size, digest, version)
-  local gw="$1" ref="$2"
-  local size digest compressed
-  size="$(docker image inspect "$ref" --format '{{.Size}}' 2>/dev/null || echo 0)"
-  digest="$(docker image inspect "$ref" --format '{{if .RepoDigests}}{{index .RepoDigests 0}}{{else}}{{.Id}}{{end}}' 2>/dev/null || echo unknown)"
+record_image() {  # -> results/<gw>_image.json (size, digest, version) for the loaded gateway
+  local size digest compressed version
+  size="$(docker image inspect "$IMAGE" --format '{{.Size}}' 2>/dev/null || echo 0)"
+  digest="$(docker image inspect "$IMAGE" --format '{{if .RepoDigests}}{{index .RepoDigests 0}}{{else}}{{.Id}}{{end}}' 2>/dev/null || echo unknown)"
   # Compressed size = what you actually pull/store: gzip the saved image (uniform
-  # across the locally-built gomodel image and the pulled competitor images).
-  compressed="$(docker save "$ref" 2>/dev/null | gzip -c | wc -c | tr -d ' ' || echo 0)"
+  # across locally built and pulled images).
+  compressed="$(docker save "$IMAGE" 2>/dev/null | gzip -c | wc -c | tr -d ' ' || echo 0)"
   # Release version: OCI label, else the x.y.z tag sharing this digest on Docker Hub.
-  local version; version="$("$SCRIPT_DIR/resolve-version.sh" "$ref" "$digest" 2>/dev/null || true)"
+  version="$("$SCRIPT_DIR/resolve-version.sh" "$IMAGE" "$digest" 2>/dev/null || true)"
   printf '{"gateway":"%s","image":"%s","version":"%s","size_bytes":%s,"size_mb":%.1f,"compressed_bytes":%s,"compressed_mb":%.1f,"digest":"%s"}\n' \
-    "$gw" "$ref" "$version" "${size:-0}" "$(awk "BEGIN{print ${size:-0}/1048576}")" \
+    "$NAME" "$IMAGE" "$version" "${size:-0}" "$(awk "BEGIN{print ${size:-0}/1048576}")" \
     "${compressed:-0}" "$(awk "BEGIN{print ${compressed:-0}/1048576}")" "$digest" \
-    > "$RESULTS_DIR/${gw}_image.json"
-  echo "    image: ${gw} ${ref} version=${version:-unknown}"
+    > "$RESULTS_DIR/${NAME}_image.json"
+  echo "    image: ${NAME} ${IMAGE} version=${version:-unknown}"
 }
 
-wait_ready() {  # gateway host_port -> poll a real chat request until HTTP 200
-  local target="$1" hostport="$2" tries="${3:-60}"
-  gw_headers "$target"
-  local hdr=(); if [[ ${#HDRS[@]} -gt 0 ]]; then hdr=("${HDRS[@]}"); fi
-  local code
-  for ((i=0;i<tries;i++)); do
-    code="$(curl -s -o /dev/null -w '%{http_code}' -m 5 -X POST \
-      "http://localhost:${hostport}/v1/chat/completions" \
-      -H 'Content-Type: application/json' -H "Authorization: Bearer $AUTH" ${hdr[@]+"${hdr[@]}"} \
-      -d "{\"model\":\"$(gw_model "$target")\",\"messages\":[{\"role\":\"user\",\"content\":\"ping\"}]}" 2>/dev/null || echo 000)"
-    [[ "$code" == "200" ]] && return 0
-    sleep 2
-  done
-  echo "  WARN: $target did not return 200 within $((tries*2))s (last code: ${code:-?})" >&2
-  return 1
-}
-
-# bring a gateway up and time cold-start latency (compose up -> first HTTP 200).
+# Bring the loaded gateway up and time cold start (compose up -> first HTTP 200).
 # Leaves the gateway running. Writes results/<gw>_startup.json.
 measure_startup() {
-  local gw="$1" hostport; hostport="$(gw_host_port "$gw")"
-  local t0 t1 code ready=0
-  gw_headers "$gw"; local hdr=(); [[ ${#HDRS[@]} -gt 0 ]] && hdr=("${HDRS[@]}")
+  local t0 t1 ready=0
   t0="$(epoch)"
-  "${COMPOSE[@]}" --profile "$gw" up -d "$gw" >/dev/null 2>&1 || true
+  gw_up
   for ((i=0;i<600;i++)); do  # up to ~120s, 0.2s resolution
-    code="$(curl -s -o /dev/null -w '%{http_code}' -m 5 -X POST \
-      "http://localhost:${hostport}/v1/chat/completions" \
-      -H 'Content-Type: application/json' -H "Authorization: Bearer $AUTH" ${hdr[@]+"${hdr[@]}"} \
-      -d "{\"model\":\"$(gw_model "$gw")\",\"messages\":[{\"role\":\"user\",\"content\":\"ping\"}]}" 2>/dev/null || echo 000)"
-    [[ "$code" == "200" ]] && { ready=1; break; }
+    [[ "$(probe)" == "200" ]] && { ready=1; break; }
     sleep 0.2
   done
   t1="$(epoch)"
   local elapsed; elapsed="$(awk -v a="$t0" -v b="$t1" 'BEGIN{printf "%.3f", b-a}')"
-  printf '{"gateway":"%s","startup_s":%s,"ready":%s}\n' "$gw" "$elapsed" "$ready" \
-    > "$RESULTS_DIR/${gw}_startup.json"
-  echo "    startup: ${gw} ${elapsed}s (ready=$ready)"
+  printf '{"gateway":"%s","startup_s":%s,"ready":%s}\n' "$NAME" "$elapsed" "$ready" \
+    > "$RESULTS_DIR/${NAME}_startup.json"
+  echo "    startup: ${NAME} ${elapsed}s (ready=$ready)"
 }
 
-warmup_gateway() {
-  local gw="$1" hostport; hostport="$(gw_port "$gw")"
-  local warm_args=(-url "http://${gw}:${hostport}/v1/chat/completions" -dialect chat -model "$(gw_model "$gw")" -n "$WARMUP" -c "$C" -auth "$AUTH" -json -)
-  gw_headers "$gw"; if [[ ${#HDRS[@]} -gt 0 ]]; then warm_args+=("${HDRS[@]}"); fi
-  docker run --rm --network benchnet "$BENCH_TOOLS_IMAGE" /loadgen "${warm_args[@]}" >/dev/null 2>&1 || true
+# Sustained chat load for RESOURCE_SECONDS while the sampler watches the container,
+# so CPU/mem are captured under genuine pressure. loadgen's summary is kept so the
+# achieved rps shares the exact window the CPU sample covers (summarize.py derives
+# a self-consistent rps-per-CPU% efficiency from it).
+measure_resources() {
+  local cname="bench-${NAME}-1"
+  local csv="$RESULTS_DIR/${NAME}_resources.csv" load_json="$RESULTS_DIR/${NAME}_sustained.json"
+  local idle_mem res
+  idle_mem="$(docker stats --no-stream --format '{{.MemUsage}};0' "$cname" 2>/dev/null | awk "$STAT_AWK" | cut -d, -f1 || true)"
+  start_sampler "$cname" "$csv"
+  loadgen -url "$(gw_url chat)" -dialect chat -duration "${RESOURCE_SECONDS}s" -c "$C" > "$load_json" 2>/dev/null || true
+  stop_sampler
+  res="$(summarize_resources "$csv")"
+  printf '{"gateway":"%s","idle_mem_mb":%s,"load_rps":%s,"under_load":%s}\n' \
+    "$NAME" "${idle_mem:-0}" "$(json_num "$load_json" rps | sed 's/^$/0/')" "$res" > "$RESULTS_DIR/${NAME}_resources.json"
+  echo "    resources: idle=${idle_mem:-0}MiB load_rps=$(json_num "$load_json" rps) $res"
 }
-
-image_ref() { case "$1" in
-  gomodel) echo "$GOMODEL_IMAGE";;
-  litellm) echo "$LITELLM_IMAGE";;
-  portkey) echo "$PORTKEY_IMAGE";;
-  bifrost) echo "$BIFROST_IMAGE";;
-esac; }
 
 # ── Build the bench-tools image ────────────────────────────────────
 log "Building bench-tools image"
 docker build -q -t "$BENCH_TOOLS_IMAGE" ./bench-tools >/dev/null
 
-# ── Pull the gateway images up front (digests recorded per gateway) ────
+# ── Validate gateways, pull their images (digests recorded per gateway) ──
 # A locally built tag (GOMODEL_SOURCE=... in ../run.sh) fails to pull and is
 # used as-is; everything else resolves to the registry's current "latest".
 for gw in $GATEWAYS; do
-  ref="$(image_ref "$gw")"
-  docker pull -q "$ref" 2>/dev/null || docker image inspect "$ref" >/dev/null 2>&1 \
-    || echo "  WARN: image $ref for $gw is neither pullable nor present locally" >&2
+  gw_load "$gw" || exit 1
+  docker pull -q "$IMAGE" 2>/dev/null || docker image inspect "$IMAGE" >/dev/null 2>&1 \
+    || echo "  WARN: image $IMAGE for $NAME is neither pullable nor present locally" >&2
 done
 
 # ── Clean any leftover state, then bring up the shared mock ────────
-"${COMPOSE[@]}" --profile gomodel --profile litellm --profile portkey --profile bifrost down -v >/dev/null 2>&1 || true
+# shellcheck disable=SC2046
+"${COMPOSE[@]}" $(all_profiles) down -v >/dev/null 2>&1 || true
 log "Starting mock backend"
 "${COMPOSE[@]}" up -d mock
 sleep 2
@@ -314,23 +288,14 @@ for r in $(seq 1 "$REPEATS"); do
   ORDER="$(shuffle "baseline $GATEWAYS" "$((r * 7919 + RANDOM))")"
   log "Latency trial ${r}/${REPEATS}  (order: ${ORDER})"
   for t in $ORDER; do
-    if [[ "$t" == "baseline" ]]; then
-      for spec in "${VARIANTS[@]}"; do
-        IFS='|' read -r dialect mode _ <<< "$spec"
-        run_variant "baseline" "mock" "$spec" "$RUN_DIR/baseline_${dialect}_${mode}.json"
-      done
-    else
-      "${COMPOSE[@]}" --profile "$t" up -d "$t" >/dev/null 2>&1 || true
-      wait_ready "$t" "$(gw_host_port "$t")" || true
-      warmup_gateway "$t"
-      for spec in "${VARIANTS[@]}"; do
-        IFS='|' read -r dialect mode _ <<< "$spec"
-        run_variant "$t" "$t" "$spec" "$RUN_DIR/${t}_${dialect}_${mode}.json"
-      done
-      # Remove only this gateway's container — NOT `compose down`, which would
-      # also tear down the profile-less mock and break the next baseline.
-      "${COMPOSE[@]}" --profile "$t" rm -sf "$t" >/dev/null 2>&1 || true
+    gw_load "$t"
+    if [[ "$t" != "baseline" ]]; then
+      gw_up; wait_ready || true; warmup_gateway
     fi
+    for spec in "${VARIANTS[@]}"; do
+      run_variant "$spec" "$RUN_DIR/${t}_${spec%%|*}_${spec##*|}.json"
+    done
+    [[ "$t" != "baseline" ]] && gw_down
     sleep "$REST_SECONDS"
   done
 done
@@ -338,32 +303,17 @@ done
 # ── PASS B: capacity sweep + startup + footprint, once, randomized ─
 log "Capacity + footprint pass"
 "${COMPOSE[@]}" up -d mock >/dev/null 2>&1 || true  # ensure the shared mock is up
-# Baseline capacity ceiling first (mock is already up, no gateway lifecycle).
-run_sweep "baseline" "mock"
+gw_load baseline; run_sweep   # capacity ceiling of the mock itself, no gateway lifecycle
 
 for gw in $(shuffle "$GATEWAYS"); do
-  ref="$(image_ref "$gw")"
-  log "Capacity: $gw  (image: $ref)"
-  measure_startup "$gw"          # brings the gateway up + times cold start
-  record_image "$gw" "$ref"
-  warmup_gateway "$gw"
-  run_sweep "$gw" "$gw"
-
-  cname="bench-${gw}-1"
-  csv="$RESULTS_DIR/${gw}_resources.csv"
-  load_json="$RESULTS_DIR/${gw}_sustained.json"
-  idle_mem="$(docker stats --no-stream --format '{{.MemUsage}};0' "$cname" 2>/dev/null | awk "$STAT_AWK" | cut -d, -f1 || true)"
-  start_sampler "$cname" "$csv"
-  sustained_load "$gw" "$(gw_port "$gw")" "$load_json"
-  stop_sampler
-
-  res="$(summarize_resources "$csv")"
-  load_rps="$(grep -o '"rps": *[0-9.]*' "$load_json" 2>/dev/null | head -1 | grep -o '[0-9.]*' || true)"
-  printf '{"gateway":"%s","idle_mem_mb":%s,"load_rps":%s,"under_load":%s}\n' \
-    "$gw" "${idle_mem:-0}" "${load_rps:-0}" "$res" > "$RESULTS_DIR/${gw}_resources.json"
-  echo "    resources: idle=${idle_mem:-0}MiB load_rps=${load_rps:-0} $res"
-
-  "${COMPOSE[@]}" --profile "$gw" rm -sf "$gw" >/dev/null 2>&1 || true
+  gw_load "$gw"
+  log "Capacity: $NAME  (image: $IMAGE)"
+  measure_startup          # brings the gateway up + times cold start
+  record_image
+  warmup_gateway
+  run_sweep
+  measure_resources
+  gw_down
   sleep "$REST_SECONDS"
 done
 
@@ -373,11 +323,12 @@ done
 IMDS_TOKEN="$(curl -s -m 2 -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 60' 2>/dev/null || true)"
 INSTANCE_TYPE_META="$(curl -s -m 2 -H "X-aws-ec2-metadata-token: $IMDS_TOKEN" http://169.254.169.254/latest/meta-data/instance-type 2>/dev/null || true)"
 [[ "$INSTANCE_TYPE_META" == *"<"* || -z "$INSTANCE_TYPE_META" ]] && INSTANCE_TYPE_META="unknown"
+IMAGES_JSON="$(first=1; for gw in $GATEWAYS; do gw_load "$gw"; [[ $first == 1 ]] || printf ', '; first=0; printf '"%s": "%s"' "$NAME" "$IMAGE"; done)"
 cat > "$RESULTS_DIR/meta.json" <<JSON
 {
   "date": "$(date -u +%FT%TZ)",
   "harness_commit": "${HARNESS_COMMIT:-unknown}",
-  "images": {$(first=1; for gw in $GATEWAYS; do [[ $first == 1 ]] || printf ', '; first=0; printf '"%s": "%s"' "$gw" "$(image_ref "$gw")"; done)},
+  "images": {$IMAGES_JSON},
   "n_requests": $N,
   "max_variant_seconds": $MAX_VARIANT_SECONDS,
   "concurrency": $C,
@@ -388,7 +339,7 @@ cat > "$RESULTS_DIR/meta.json" <<JSON
   "rest_seconds": $REST_SECONDS,
   "sweep_concurrency": "$(echo "$SWEEP_CONCURRENCY" | tr ' ' ',')",
   "sweep_duration_s": $SWEEP_DURATION,
-  "gateways": "$(echo "$GATEWAYS" | tr ' ' ',')",
+  "gateways": "$(echo $GATEWAYS | tr ' ' ',')",
   "instance_type": "$INSTANCE_TYPE_META",
   "cpus": $(nproc 2>/dev/null || echo 1),
   "kernel": "$(uname -r)"
