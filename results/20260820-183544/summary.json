@@ -753,6 +753,7 @@
       "image": {
         "gateway": "gomodel",
         "image": "enterpilot/gomodel:latest",
+        "version": "0.1.79",
         "size_bytes": 40775607,
         "size_mb": 38.9,
         "compressed_bytes": 14812354,
@@ -781,6 +782,7 @@
       "image": {
         "gateway": "litellm",
         "image": "litellm/litellm:main-stable",
+        "version": "1.97.0",
         "size_bytes": 1186627631,
         "size_mb": 1131.7,
         "compressed_bytes": 371099496,
@@ -809,6 +811,7 @@
       "image": {
         "gateway": "portkey",
         "image": "portkeyai/gateway:latest",
+        "version": "1.15.2",
         "size_bytes": 185997410,
         "size_mb": 177.4,
         "compressed_bytes": 60703338,
@@ -837,6 +840,7 @@
       "image": {
         "gateway": "bifrost",
         "image": "maximhq/bifrost:latest",
+        "version": "1.6.11",
         "size_bytes": 259082970,
         "size_mb": 247.1,
         "compressed_bytes": 84228404,

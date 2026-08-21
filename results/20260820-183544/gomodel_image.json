@@ -1,1 +1,1 @@
-{"gateway":"gomodel","image":"enterpilot/gomodel:latest","size_bytes":40775607,"size_mb":38.9,"compressed_bytes":14812354,"compressed_mb":14.1,"digest":"enterpilot/gomodel@sha256:395097b75c6f1bcff5d732da328825507e93355daaac6d32874691fc9fbc2a82"}
+{"gateway": "gomodel", "image": "enterpilot/gomodel:latest", "version": "0.1.79", "size_bytes": 40775607, "size_mb": 38.9, "compressed_bytes": 14812354, "compressed_mb": 14.1, "digest": "enterpilot/gomodel@sha256:395097b75c6f1bcff5d732da328825507e93355daaac6d32874691fc9fbc2a82"}

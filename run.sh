@@ -46,7 +46,7 @@ POLL_MAX="${POLL_MAX:-400}"            # 400 * 15s = 100 min ceiling (a default 
 
 STAMP="$(date -u +%Y%m%d-%H%M%S)"
 OUT_DIR="$SCRIPT_DIR/output/$STAMP"
-HARNESS_COMMIT="$(git -C "$SCRIPT_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+HARNESS_COMMIT="$(git -C "$SCRIPT_DIR" describe --always --dirty 2>/dev/null || echo unknown)"
 
 log()  { printf '\n\033[1;34m>>> %s\033[0m\n' "$*"; }
 err()  { printf '\033[1;31m!!! %s\033[0m\n' "$*" >&2; }
@@ -65,6 +65,9 @@ destroy() {
 
 command -v "$TF" >/dev/null || { err "terraform not found (set TERRAFORM=/path/to/terraform)"; exit 1; }
 command -v python3 >/dev/null || { err "python3 required to summarize results"; exit 1; }
+if [[ "$HARNESS_COMMIT" == *-dirty ]]; then
+  err "uncommitted harness changes — the run will be recorded as harness_commit=$HARNESS_COMMIT; commit first if you intend to publish it"
+fi
 
 # ── SSH helpers ────────────────────────────────────────────────────
 load_instance() {  # from terraform outputs
