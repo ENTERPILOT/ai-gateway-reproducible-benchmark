@@ -90,6 +90,7 @@ def record(stamp, summary):
         variants = {k: v for k, v in lat.items() if v and v.get("ok")}
         rec["gateways"][gw] = {
             "image": (res.get("image") or {}).get("image"),
+            "version": (res.get("image") or {}).get("version") or None,
             "digest": (res.get("image") or {}).get("digest"),
             "image_mb": dig(res, "image", "compressed_mb"),
             "startup_s": dig(res, "startup", "startup_s"),
@@ -242,14 +243,14 @@ def build_svg(runs, instance_type, path):
 
 # ── Markdown ──────────────────────────────────────────────────────────────────
 def run_table(rec):
-    L = ["| Gateway | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |",
-         "|---|---|--:|--:|--:|--:|--:|--:|:-:|"]
+    L = ["| Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |",
+         "|---|---|---|--:|--:|--:|--:|--:|--:|:-:|"]
     for gw in GATEWAYS:
         g = rec["gateways"].get(gw)
         if not g:
             continue
         img = (g.get("image") or "?").split("@")[0]
-        L.append(f"| {LABEL[gw]} | `{img}` | {fmt(g['chat_p50_ms'], 2)} | {fmt(g['chat_p99_ms'], 2)} | "
+        L.append(f"| {LABEL[gw]} | {g.get('version') or '—'} | `{img}` | {fmt(g['chat_p50_ms'], 2)} | {fmt(g['chat_p99_ms'], 2)} | "
                  f"{fmt(g['peak_rps'], 0)} | {fmt(g['peak_mem_mb'])} | {fmt(g['startup_s'], 2)} | "
                  f"{fmt(g['image_mb'])} | {g['variants_served']} |")
     return "\n".join(L)

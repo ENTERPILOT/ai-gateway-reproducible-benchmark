@@ -17,12 +17,12 @@ streaming), not model or network latency.
 
 Latest run — `20260820-183544` · 2026-08-20 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
 
-| Gateway | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
-|---|---|--:|--:|--:|--:|--:|--:|:-:|
-| GoModel | `enterpilot/gomodel:latest` | 2.06 | 7.79 | 4,212 | 60.1 | 0.76 | 14.1 | 6/6 |
-| Bifrost | `maximhq/bifrost:latest` | 3.04 | 19.23 | 2,624 | 179.5 | 6.71 | 80.3 | 5/6 |
-| Portkey | `portkeyai/gateway:latest` | 9.14 | 29.37 | 982 | 110.0 | 0.99 | 57.9 | 4/6 |
-| LiteLLM | `litellm/litellm:main-stable` | 35.85 | 53.32 | 276 | 2,092 | 26.50 | 353.9 | 6/6 |
+| Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
+|---|---|---|--:|--:|--:|--:|--:|--:|:-:|
+| GoModel | 0.1.79 | `enterpilot/gomodel:latest` | 2.06 | 7.79 | 4,212 | 60.1 | 0.76 | 14.1 | 6/6 |
+| Bifrost | 1.6.11 | `maximhq/bifrost:latest` | 3.04 | 19.23 | 2,624 | 179.5 | 6.71 | 80.3 | 5/6 |
+| Portkey | 1.15.2 | `portkeyai/gateway:latest` | 9.14 | 29.37 | 982 | 110.0 | 0.99 | 57.9 | 4/6 |
+| LiteLLM | 1.97.0 | `litellm/litellm:main-stable` | 35.85 | 53.32 | 276 | 2,092 | 26.50 | 353.9 | 6/6 |
 
 All 5 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
 <!-- history:end -->
@@ -42,6 +42,24 @@ That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~
 copies the results into `results/<timestamp>/`, regenerates the chart and tables, and
 destroys the instance. Commit the new `results/` directory to publish your run.
 
+### Pick the gateway versions
+
+By default every gateway runs from its current public image. To benchmark specific
+releases, pass the image tags you want; the versions each run actually used are recorded
+in `results/<timestamp>/*_image.json` (tag, resolved version, digest) and shown in the
+tables above:
+
+```bash
+GOMODEL_IMAGE=enterpilot/gomodel:0.1.79 \
+LITELLM_IMAGE=litellm/litellm:v1.97.0 \
+PORTKEY_IMAGE=portkeyai/gateway:1.15.2 \
+BIFROST_IMAGE=maximhq/bifrost:v1.6.11 \
+./run.sh
+```
+
+Those are the versions of the latest recorded run, so this command repeats it on the same
+gateway releases. Use `image@sha256:…` from the `*_image.json` files for a byte-exact pin.
+
 > **Cost:** `c7i.large` is not free tier — about `$0.09`/hour, so well under `$1` per run.
 > The instance is destroyed on exit even on failure. If you pass `KEEP=1` or the teardown
 > fails, destroy it yourself: `cd terraform && terraform destroy -auto-approve`.
@@ -57,7 +75,7 @@ Useful knobs (all env vars):
 |---|---|---|
 | `N` / `C` / `REPEATS` | `20000` / `10` / `5` | requests per variant, concurrency, latency trials |
 | `GATEWAYS` | `gomodel litellm portkey bifrost` | subset to run |
-| `GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE` | `enterpilot/gomodel:latest`, `litellm/litellm:main-stable`, `portkeyai/gateway:latest`, `maximhq/bifrost:latest` | pin an image or digest |
+| `GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE` | `enterpilot/gomodel:latest`, `litellm/litellm:main-stable`, `portkeyai/gateway:latest`, `maximhq/bifrost:latest` | gateway versions to benchmark (tag or digest) |
 | `GOMODEL_SOURCE` | – | path to a GoModel checkout: build and benchmark that instead of the published image |
 | `INSTANCE_TYPE` / `REGION` | `c7i.large` / `us-east-1` | hardware; `t2.micro` is free tier but burstable |
 | `KEEP` | `0` | `1` leaves the instance running |

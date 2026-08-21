@@ -217,7 +217,7 @@ summarize_resources() {  # csv -> json {peak_mem_mb, avg_mem_mb, avg_cpu_pct, sa
     }' "$1"
 }
 
-record_image() {  # gateway image_ref -> results/<gw>_image.json
+record_image() {  # gateway image_ref -> results/<gw>_image.json (size, digest, version)
   local gw="$1" ref="$2"
   local size digest compressed
   size="$(docker image inspect "$ref" --format '{{.Size}}' 2>/dev/null || echo 0)"
@@ -225,10 +225,13 @@ record_image() {  # gateway image_ref -> results/<gw>_image.json
   # Compressed size = what you actually pull/store: gzip the saved image (uniform
   # across the locally-built gomodel image and the pulled competitor images).
   compressed="$(docker save "$ref" 2>/dev/null | gzip -c | wc -c | tr -d ' ' || echo 0)"
-  printf '{"gateway":"%s","image":"%s","size_bytes":%s,"size_mb":%.1f,"compressed_bytes":%s,"compressed_mb":%.1f,"digest":"%s"}\n' \
-    "$gw" "$ref" "${size:-0}" "$(awk "BEGIN{print ${size:-0}/1048576}")" \
+  # Release version: OCI label, else the x.y.z tag sharing this digest on Docker Hub.
+  local version; version="$("$SCRIPT_DIR/resolve-version.sh" "$ref" "$digest" 2>/dev/null || true)"
+  printf '{"gateway":"%s","image":"%s","version":"%s","size_bytes":%s,"size_mb":%.1f,"compressed_bytes":%s,"compressed_mb":%.1f,"digest":"%s"}\n' \
+    "$gw" "$ref" "$version" "${size:-0}" "$(awk "BEGIN{print ${size:-0}/1048576}")" \
     "${compressed:-0}" "$(awk "BEGIN{print ${compressed:-0}/1048576}")" "$digest" \
     > "$RESULTS_DIR/${gw}_image.json"
+  echo "    image: ${gw} ${ref} version=${version:-unknown}"
 }
 
 wait_ready() {  # gateway host_port -> poll a real chat request until HTTP 200
