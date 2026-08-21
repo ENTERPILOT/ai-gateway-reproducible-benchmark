@@ -104,7 +104,9 @@ if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
 - **Footprint:** compressed image size, cold start to the first HTTP 200, idle and peak RSS
   and average CPU under sustained load.
 - **Parity:** retries off everywhere, GoModel's circuit breaker off, LiteLLM at its
-  recommended one worker per vCPU, per-variant warm-up before measuring.
+  recommended one worker per vCPU, per-variant warm-up before measuring. Per-request
+  logging is off on every gateway (GoModel's audit log and usage tracking, Bifrost's
+  request logs, LiteLLM's spend logs), so the numbers are routing overhead only.
 
 Everything specific to one gateway lives in its own folder under
 [`remote/gateways/`](remote/gateways): the compose service (image, ports, environment), a
