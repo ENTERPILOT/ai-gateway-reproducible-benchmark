@@ -18,6 +18,7 @@ services:
       - SWAGGER_ENABLED=false
       - PPROF_ENABLED=false
       - ENABLE_PASSTHROUGH_ROUTES=false
+      - MODEL_LIST_URL=off
       # Config parity with the no-retry / no-breaker peers (LiteLLM, Bifrost):
       #  - retries off (default is 3).
       #  - circuit breaker effectively disabled. It has no on/off env, so set an
