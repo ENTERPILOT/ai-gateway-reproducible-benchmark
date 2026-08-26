@@ -35,6 +35,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -202,6 +203,14 @@ func merge(base map[string]any, extra map[string]any) map[string]any {
 
 // ---------- OpenAI Chat Completions ----------
 
+// Response ids are unique per response, like a real provider's. Gateways key
+// their request/spend logs on the upstream id (LiteLLM's LiteLLM_SpendLogs uses
+// it as primary key), so a constant id would silently collapse their logging to
+// a single row and hide the cost of logging from the benchmark.
+var idSeq atomic.Uint64
+
+func nextID(prefix string) string { return fmt.Sprintf("%s-%d", prefix, idSeq.Add(1)) }
+
 func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 	e, ok := begin(w, r)
 	if !ok {
@@ -216,7 +225,7 @@ func handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 
 func nonStreamChatCompletion(w http.ResponseWriter, e *entry) {
 	resp := merge(map[string]any{
-		"id":      "chatcmpl-bench-001",
+		"id":      nextID("chatcmpl-bench"),
 		"object":  "chat.completion",
 		"created": time.Now().Unix(),
 		"model":   "gpt-4o-mini",
@@ -237,11 +246,12 @@ func streamChatCompletion(w http.ResponseWriter, e *entry) {
 	}
 	setStreamResp(e, "chat.completion.chunk")
 	now := time.Now().Unix()
-	send(w, flusher, "", fmt.Sprintf(`{"id":"chatcmpl-bench-001","object":"chat.completion.chunk","created":%d,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}`, now))
+	id := nextID("chatcmpl-bench")
+	send(w, flusher, "", fmt.Sprintf(`{"id":"%s","object":"chat.completion.chunk","created":%d,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}`, id, now))
 	for _, tok := range streamTokens {
-		send(w, flusher, "", fmt.Sprintf(`{"id":"chatcmpl-bench-001","object":"chat.completion.chunk","created":%d,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":%q},"finish_reason":null}]}`, now, tok))
+		send(w, flusher, "", fmt.Sprintf(`{"id":"%s","object":"chat.completion.chunk","created":%d,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":%q},"finish_reason":null}]}`, id, now, tok))
 	}
-	send(w, flusher, "", fmt.Sprintf(`{"id":"chatcmpl-bench-001","object":"chat.completion.chunk","created":%d,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":25,"completion_tokens":35,"total_tokens":60}}`, now))
+	send(w, flusher, "", fmt.Sprintf(`{"id":"%s","object":"chat.completion.chunk","created":%d,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":25,"completion_tokens":35,"total_tokens":60}}`, id, now))
 	send(w, flusher, "", "[DONE]")
 }
 
@@ -260,11 +270,12 @@ func handleResponses(w http.ResponseWriter, r *http.Request) {
 }
 
 func nonStreamResponses(w http.ResponseWriter, e *entry) {
+	rid, mid := nextID("resp-bench"), nextID("msg-bench")
 	resp := merge(map[string]any{
-		"id": "resp-bench-001", "object": "response", "created_at": time.Now().Unix(),
+		"id": rid, "object": "response", "created_at": time.Now().Unix(),
 		"model": "gpt-4o-mini", "status": "completed",
 		"output": []map[string]any{{
-			"type": "message", "id": "msg-bench-001", "role": "assistant",
+			"type": "message", "id": mid, "role": "assistant",
 			"content": []map[string]any{{"type": "output_text", "text": fullText()}},
 		}},
 		"usage": map[string]any{"input_tokens": 25, "output_tokens": 35, "total_tokens": 60},
@@ -279,16 +290,17 @@ func streamResponses(w http.ResponseWriter, e *entry) {
 	}
 	setStreamResp(e, "response.*")
 	now := time.Now().Unix()
-	send(w, flusher, "response.created", mustJSON(map[string]any{"id": "resp-bench-001", "object": "response", "created_at": now, "model": "gpt-4o-mini", "status": "in_progress", "output": []any{}}))
-	send(w, flusher, "response.output_item.added", mustJSON(map[string]any{"type": "message", "id": "msg-bench-001", "role": "assistant", "content": []any{}}))
+	rid, mid := nextID("resp-bench"), nextID("msg-bench")
+	send(w, flusher, "response.created", mustJSON(map[string]any{"id": rid, "object": "response", "created_at": now, "model": "gpt-4o-mini", "status": "in_progress", "output": []any{}}))
+	send(w, flusher, "response.output_item.added", mustJSON(map[string]any{"type": "message", "id": mid, "role": "assistant", "content": []any{}}))
 	send(w, flusher, "response.content_part.added", mustJSON(map[string]any{"type": "output_text", "text": ""}))
 	for _, tok := range streamTokens {
 		send(w, flusher, "response.output_text.delta", mustJSON(map[string]any{"type": "response.output_text.delta", "delta": tok}))
 	}
 	send(w, flusher, "response.output_text.done", mustJSON(map[string]any{"type": "response.output_text.done", "text": fullText()}))
 	send(w, flusher, "response.completed", mustJSON(map[string]any{
-		"id": "resp-bench-001", "object": "response", "status": "completed",
-		"output": []map[string]any{{"type": "message", "id": "msg-bench-001", "role": "assistant",
+		"id": rid, "object": "response", "status": "completed",
+		"output": []map[string]any{{"type": "message", "id": mid, "role": "assistant",
 			"content": []map[string]any{{"type": "output_text", "text": fullText()}}}},
 		"usage": map[string]any{"input_tokens": 25, "output_tokens": 35, "total_tokens": 60},
 	}))
@@ -310,9 +322,9 @@ func handleMessages(w http.ResponseWriter, r *http.Request) {
 
 func nonStreamMessages(w http.ResponseWriter, e *entry) {
 	resp := merge(map[string]any{
-		"id": "msg-bench-001", "type": "message", "role": "assistant",
-		"model":   "claude-3-5-sonnet",
-		"content": []map[string]any{{"type": "text", "text": fullText()}},
+		"id": nextID("msg-bench"), "type": "message", "role": "assistant",
+		"model":       "claude-3-5-sonnet",
+		"content":     []map[string]any{{"type": "text", "text": fullText()}},
 		"stop_reason": "end_turn", "stop_sequence": nil,
 		"usage": map[string]any{"input_tokens": 25, "output_tokens": 35},
 	}, providerExtras())
@@ -326,7 +338,7 @@ func streamMessages(w http.ResponseWriter, e *entry) {
 	}
 	setStreamResp(e, "message_*")
 	send(w, flusher, "message_start", mustJSON(map[string]any{"type": "message_start", "message": map[string]any{
-		"id": "msg-bench-001", "type": "message", "role": "assistant", "model": "claude-3-5-sonnet",
+		"id": nextID("msg-bench"), "type": "message", "role": "assistant", "model": "claude-3-5-sonnet",
 		"content": []any{}, "stop_reason": nil, "usage": map[string]any{"input_tokens": 25, "output_tokens": 1},
 	}}))
 	send(w, flusher, "content_block_start", mustJSON(map[string]any{"type": "content_block_start", "index": 0, "content_block": map[string]any{"type": "text", "text": ""}}))

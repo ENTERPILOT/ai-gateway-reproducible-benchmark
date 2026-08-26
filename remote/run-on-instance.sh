@@ -265,7 +265,13 @@ measure_resources() {
 log "Building bench-tools image"
 docker build -q -t "$BENCH_TOOLS_IMAGE" ./bench-tools >/dev/null
 
-# ── Validate gateways, pull their images (digests recorded per gateway) ──
+# ── Resolve every gateway's image/port, even ones not being run ─────
+# compose.yml includes all gateways/*/compose.yml, and compose interpolates
+# every included file whether or not its profile is active, so each
+# <NAME>_IMAGE / <NAME>_HOST_PORT must be exported before any compose call.
+for d in "$GATEWAYS_DIR"/*/; do gw_load "$(basename "$d")" || exit 1; done
+
+# ── Validate the selected gateways, pull their images (digests recorded per gateway) ──
 # A locally built tag (GOMODEL_SOURCE=... in ../run.sh) fails to pull and is
 # used as-is; everything else resolves to the registry's current "latest".
 for gw in $GATEWAYS; do
