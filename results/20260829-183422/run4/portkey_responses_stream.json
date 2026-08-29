@@ -1,0 +1,41 @@
+{
+  "capped": 0,
+  "concurrency": 10,
+  "dialect": "responses",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {
+    "avg_ms": 0,
+    "max_ms": 1.65,
+    "min_ms": 0,
+    "p50_ms": 0,
+    "p90_ms": 0,
+    "p95_ms": 0,
+    "p99_ms": 0
+  },
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 20000,
+  "requests": 20000,
+  "rps": 339.99600929650086,
+  "total_latency": {
+    "avg_ms": 29.38,
+    "max_ms": 95.6,
+    "min_ms": 25.48,
+    "p50_ms": 28.44,
+    "p90_ms": 32.52,
+    "p95_ms": 34.64,
+    "p99_ms": 46.12
+  },
+  "ttft": {
+    "avg_ms": 29.36,
+    "max_ms": 95.57,
+    "min_ms": 25.46,
+    "p50_ms": 28.41,
+    "p90_ms": 32.49,
+    "p95_ms": 34.61,
+    "p99_ms": 46.09
+  },
+  "url": "http://portkey:8787/v1/responses",
+  "wall_ms": 58824
+}

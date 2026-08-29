@@ -4,7 +4,7 @@
 #   1. terraform apply  -> one EC2 instance (default c7i.large, NOT free tier)
 #   2. wait for SSH + docker, ship the harness
 #   3. run the containerized benchmark on the instance:
-#        6 request variants x 4 gateways + a no-gateway baseline,
+#        6 request variants x every gateway under remote/gateways/ + a no-gateway baseline,
 #        REPEATS latency trials + a capacity sweep + footprint measurements
 #   4. pull the raw results back, summarize, and record the run in results/
 #   5. terraform destroy -> guaranteed teardown (runs even on failure)
@@ -41,7 +41,7 @@ REPEATS="${REPEATS:-5}"
 GATEWAYS="${GATEWAYS:-$(ls "$REMOTE_DIR/gateways" | tr '\n' ' ' | sed 's/ $//')}"
 GOMODEL_SOURCE="${GOMODEL_SOURCE:-}"   # path to a GoModel checkout; builds + ships a local image
 IMAGE_TAR="${TMPDIR:-/tmp}/gomodel-bench-amd64.tar.gz"
-POLL_MAX="${POLL_MAX:-400}"            # 400 * 15s = 100 min ceiling (a default run takes ~75 min)
+POLL_MAX="${POLL_MAX:-720}"            # 720 * 15s = 180 min ceiling (a default run with six gateways takes ~2 h)
 
 STAMP="$(date -u +%Y%m%d-%H%M%S)"
 OUT_DIR="$SCRIPT_DIR/output/$STAMP"
@@ -61,6 +61,22 @@ destroy() {
     && echo "  teardown complete" \
     || err "TEARDOWN FAILED — the instance may still be billing. Run: (cd $TF_DIR && $TF destroy)"
 }
+
+# Ctrl-C / SIGTERM: once the benchmark is running detached on the instance, destroying
+# it would throw the measurement away — leave it up and point at `collect` instead.
+# Before that point (provisioning, bootstrap) there is nothing to keep, so destroy.
+BENCH_RUNNING=0
+on_interrupt() {
+  trap - EXIT INT TERM
+  if (( BENCH_RUNNING == 1 )); then
+    err "interrupted — the benchmark keeps running on the instance (still billing)."
+    err "re-attach with: ./run.sh collect   |   or destroy: (cd $TF_DIR && $TF destroy -auto-approve)"
+  else
+    destroy
+  fi
+  exit 130
+}
+trap on_interrupt INT TERM
 
 command -v "$TF" >/dev/null || { err "terraform not found (set TERRAFORM=/path/to/terraform)"; exit 1; }
 command -v python3 >/dev/null || { err "python3 required to summarize results"; exit 1; }
@@ -148,6 +164,7 @@ collect_and_record() {
 # ── collect mode: re-attach to an existing instance ────────────────
 if [[ "$MODE" == "collect" ]]; then
   trap destroy EXIT
+  BENCH_RUNNING=1
   load_instance
   log "Re-attaching to $USER@$IP"
   ensure_ssh || { err "cannot reach the instance"; exit 1; }
@@ -240,6 +257,7 @@ done
 kill "$LAUNCH_PID" 2>/dev/null || true
 wait "$LAUNCH_PID" 2>/dev/null || true
 (( launched == 1 )) || { err "run-on-instance.sh did not start on the instance"; exit 1; }
+BENCH_RUNNING=1
 echo "  running on the instance"
 
 # ── 5. Wait, collect, record ───────────────────────────────────────

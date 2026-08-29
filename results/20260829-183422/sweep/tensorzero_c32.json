@@ -1,0 +1,33 @@
+{
+  "capped": 32,
+  "concurrency": 32,
+  "dialect": "chat",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "throughput",
+  "mode": "nonstream",
+  "ok": 5097,
+  "requests": 5129,
+  "rps": 636.9967493835924,
+  "total_latency": {
+    "avg_ms": 50,
+    "max_ms": 60.83,
+    "min_ms": 0.89,
+    "p50_ms": 50.01,
+    "p90_ms": 59.74,
+    "p95_ms": 60.09,
+    "p99_ms": 60.41
+  },
+  "ttft": {
+    "avg_ms": 50,
+    "max_ms": 60.83,
+    "min_ms": 0.89,
+    "p50_ms": 50.01,
+    "p90_ms": 59.74,
+    "p95_ms": 60.09,
+    "p99_ms": 60.41
+  },
+  "url": "http://tensorzero:3000/openai/v1/chat/completions",
+  "wall_ms": 8001
+}

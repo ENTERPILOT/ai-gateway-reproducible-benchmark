@@ -1,0 +1,14 @@
+# TensorZero gateway with tensorzero.toml (one model -> mock, observability off).
+services:
+  tensorzero:
+    profiles: ["tensorzero"]
+    image: ${TENSORZERO_IMAGE:?set by run-on-instance.sh}
+    depends_on: [mock]
+    ports:
+      - "${TENSORZERO_HOST_PORT:-3000}:3000"
+    command: ["--config-file", "/app/config/tensorzero.toml"]
+    environment:
+      - TENSORZERO_DISABLE_PSEUDONYMOUS_USAGE_ANALYTICS=1
+    volumes:
+      - ./tensorzero.toml:/app/config/tensorzero.toml:ro
+    restart: "no"

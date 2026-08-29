@@ -28,11 +28,13 @@ MOVE_NOTE = ("> Moved here from the [GoModel repository](https://github.com/ENTE
              "> (`docs/2026-06-25_aws_gateway_benchmark`) on 20 August 2026. The runs from June and\n"
              "> July 2026 were made with that original harness and are part of the history.")
 
-GATEWAYS = ["gomodel", "bifrost", "portkey", "litellm"]
-LABEL = {"gomodel": "GoModel", "bifrost": "Bifrost", "portkey": "Portkey", "litellm": "LiteLLM"}
+GATEWAYS = ["gomodel", "bifrost", "portkey", "litellm", "tensorzero", "omniroute"]
+LABEL = {"gomodel": "GoModel", "bifrost": "Bifrost", "portkey": "Portkey", "litellm": "LiteLLM",
+         "tensorzero": "TensorZero", "omniroute": "OmniRoute"}
 # Fixed categorical hue per gateway (never cycled), validated for CVD separation.
-COLOR = {"gomodel": "#2a78d6", "bifrost": "#eb6834", "portkey": "#1baf7a", "litellm": "#eda100"}
-EXTRA_COLORS = ["#e87ba4", "#008300", "#4a3aa7", "#e34948"]
+COLOR = {"gomodel": "#2a78d6", "bifrost": "#eb6834", "portkey": "#1baf7a", "litellm": "#eda100",
+         "tensorzero": "#4a3aa7", "omniroute": "#e87ba4"}
+EXTRA_COLORS = ["#008300", "#e34948", "#7a5c00", "#00838f"]
 
 
 def label(gw):
@@ -114,7 +116,10 @@ def record(stamp, summary):
             "image_mb": dig(res, "image", "compressed_mb"),
             "startup_s": dig(res, "startup", "startup_s"),
             "idle_mem_mb": dig(res, "resources", "idle_mem_mb"),
-            "peak_mem_mb": dig(res, "resources", "under_load", "peak_mem_mb"),
+            # older summary.json files predate the max(idle, under-load) rule in summarize.py
+            "peak_mem_mb": max(v for v in (dig(res, "resources", "idle_mem_mb"),
+                                           dig(res, "resources", "under_load", "peak_mem_mb"), 0)
+                               if isinstance(v, (int, float))) or None,
             "avg_cpu_pct": dig(res, "resources", "under_load", "avg_cpu_pct"),
             "rps_per_cpu_pct": res.get("rps_per_cpu_pct"),
             "peak_rps": cap.get("peak_rps"),
