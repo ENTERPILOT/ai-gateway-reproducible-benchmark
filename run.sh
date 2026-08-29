@@ -62,6 +62,22 @@ destroy() {
     || err "TEARDOWN FAILED — the instance may still be billing. Run: (cd $TF_DIR && $TF destroy)"
 }
 
+# Ctrl-C / SIGTERM: once the benchmark is running detached on the instance, destroying
+# it would throw the measurement away — leave it up and point at `collect` instead.
+# Before that point (provisioning, bootstrap) there is nothing to keep, so destroy.
+BENCH_RUNNING=0
+on_interrupt() {
+  trap - EXIT INT TERM
+  if (( BENCH_RUNNING == 1 )); then
+    err "interrupted — the benchmark keeps running on the instance (still billing)."
+    err "re-attach with: ./run.sh collect   |   or destroy: (cd $TF_DIR && $TF destroy -auto-approve)"
+  else
+    destroy
+  fi
+  exit 130
+}
+trap on_interrupt INT TERM
+
 command -v "$TF" >/dev/null || { err "terraform not found (set TERRAFORM=/path/to/terraform)"; exit 1; }
 command -v python3 >/dev/null || { err "python3 required to summarize results"; exit 1; }
 if [[ "$HARNESS_COMMIT" == *-dirty ]]; then
@@ -148,6 +164,7 @@ collect_and_record() {
 # ── collect mode: re-attach to an existing instance ────────────────
 if [[ "$MODE" == "collect" ]]; then
   trap destroy EXIT
+  BENCH_RUNNING=1
   load_instance
   log "Re-attaching to $USER@$IP"
   ensure_ssh || { err "cannot reach the instance"; exit 1; }
@@ -240,6 +257,7 @@ done
 kill "$LAUNCH_PID" 2>/dev/null || true
 wait "$LAUNCH_PID" 2>/dev/null || true
 (( launched == 1 )) || { err "run-on-instance.sh did not start on the instance"; exit 1; }
+BENCH_RUNNING=1
 echo "  running on the instance"
 
 # ── 5. Wait, collect, record ───────────────────────────────────────

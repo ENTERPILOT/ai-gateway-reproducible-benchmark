@@ -15,16 +15,18 @@ streaming), not model or network latency.
 > (`docs/2026-06-25_aws_gateway_benchmark`) on 20 August 2026. The runs from June and
 > July 2026 were made with that original harness and are part of the history.
 
-Latest run — `20260820-183544` · 2026-08-20 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
+Latest run — `20260829-183422` · 2026-08-29 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
 
 | Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
 |---|---|---|--:|--:|--:|--:|--:|--:|:-:|
-| GoModel | 0.1.79 | `enterpilot/gomodel:latest` | 2.06 | 7.79 | 4,212 | 60.1 | 0.76 | 14.1 | 6/6 |
-| Bifrost | 1.6.11 | `maximhq/bifrost:latest` | 3.04 | 19.23 | 2,624 | 179.5 | 6.71 | 80.3 | 5/6 |
-| Portkey | 1.15.2 | `portkeyai/gateway:latest` | 9.14 | 29.37 | 982 | 110.0 | 0.99 | 57.9 | 4/6 |
-| LiteLLM | 1.97.0 | `litellm/litellm:main-stable` | 35.85 | 53.32 | 276 | 2,092 | 26.50 | 353.9 | 6/6 |
+| GoModel | 0.1.83 | `enterpilot/gomodel:latest` | 2.35 | 8.80 | 3,610 | 42.7 | 0.58 | 14.4 | 6/6 |
+| Bifrost | 2.0.0 | `maximhq/bifrost:latest` | 3.82 | 27.80 | 1,992 | 275.8 | 8.67 | 81.6 | 5/6 |
+| Portkey | 1.15.2 | `portkeyai/gateway:latest` | 9.87 | 32.14 | 907 | 123.9 | 2.17 | 57.9 | 4/6 |
+| LiteLLM | 1.98.0 | `litellm/litellm:main-stable` | 42.44 | 61.93 | 250 | 2,173 | 31.25 | 353.9 | 6/6 |
+| TensorZero | 2026.6.0 | `tensorzero/gateway:latest` | 49.97 | 60.15 | 4,498 | 105.2 | 0.58 | 88.0 | 2/6 |
+| OmniRoute | 3.8.50 | `diegosouzapw/omniroute:latest` | 186.63 | 456.23 | 53 | 936.1 | 6.41 | 1,182 | 6/6 |
 
-All 5 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
+All 6 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
 <!-- history:end -->
 
 ## Run it
@@ -63,8 +65,11 @@ Those are the versions of the latest recorded run, so this command repeats it on
 gateway releases. Use `image@sha256:…` from the `*_image.json` files for a byte-exact pin.
 
 > **Cost:** `c7i.large` is not free tier — about `$0.09`/hour, so well under `$1` per run.
-> The instance is destroyed on exit even on failure. If you pass `KEEP=1` or the teardown
-> fails, destroy it yourself: `cd terraform && terraform destroy -auto-approve`.
+> The instance is destroyed on exit even on failure. The one exception is Ctrl-C (or a
+> kill) while the benchmark is already running on the instance: it is left up so the
+> measurement survives — re-attach with `./run.sh collect`. If you pass `KEEP=1`, the
+> teardown fails, or you abandon an interrupted run, destroy it yourself:
+> `cd terraform && terraform destroy -auto-approve`.
 
 The benchmark runs detached on the instance, so a closed laptop, a dropped SSH session or a
 changed public IP does not lose the measurement. If `run.sh` itself was interrupted, re-attach
@@ -117,6 +122,15 @@ probes; if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
   this single-provider setup, TensorZero exposes only Chat Completions on its
   OpenAI-compatible surface (2/6), Bifrost's streaming over a non-native dialect is
   idle-bound.
+- **Read TensorZero's row with care:** its HTTP server leaves Nagle's algorithm on, so
+  on a keep-alive connection every request after the first waits for the client's
+  delayed ACK (~1.5 ms on a fresh connection, ~40–50 ms after). Latency at c=10 is that
+  stall, and "peak req/s" doubles with every doubling of concurrency (20 req/s at c=1,
+  4,500 at c=256, the top of the sweep) — it measures how many connections the sweep
+  opened, not a capacity ceiling. At any concurrency below 64 it is behind every
+  other gateway. SDK clients keep connections alive, so this is what a user sees.
+- **Peak RAM** is the larger of the idle sample (after warm-up) and the peak under
+  load; runtimes that GC under load otherwise report a "peak" below "idle".
 
 Everything specific to one gateway lives in its own folder under
 [`remote/gateways/`](remote/gateways): the compose service (image, ports, environment), a

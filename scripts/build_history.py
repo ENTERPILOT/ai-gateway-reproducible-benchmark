@@ -116,7 +116,10 @@ def record(stamp, summary):
             "image_mb": dig(res, "image", "compressed_mb"),
             "startup_s": dig(res, "startup", "startup_s"),
             "idle_mem_mb": dig(res, "resources", "idle_mem_mb"),
-            "peak_mem_mb": dig(res, "resources", "under_load", "peak_mem_mb"),
+            # older summary.json files predate the max(idle, under-load) rule in summarize.py
+            "peak_mem_mb": max(v for v in (dig(res, "resources", "idle_mem_mb"),
+                                           dig(res, "resources", "under_load", "peak_mem_mb"), 0)
+                               if isinstance(v, (int, float))) or None,
             "avg_cpu_pct": dig(res, "resources", "under_load", "avg_cpu_pct"),
             "rps_per_cpu_pct": res.get("rps_per_cpu_pct"),
             "peak_rps": cap.get("peak_rps"),

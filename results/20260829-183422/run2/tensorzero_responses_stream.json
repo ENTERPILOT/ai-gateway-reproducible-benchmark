@@ -1,0 +1,19 @@
+{
+  "capped": 0,
+  "concurrency": 10,
+  "dialect": "responses",
+  "errors": {
+    "HTTP 404: {\"error\":\"Route not found: POST /openai/v1/responses\"}": 20000
+  },
+  "failed": 20000,
+  "inter_chunk": {},
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 0,
+  "requests": 20000,
+  "rps": 0,
+  "total_latency": {},
+  "ttft": {},
+  "url": "http://tensorzero:3000/openai/v1/responses",
+  "wall_ms": 3767
+}
