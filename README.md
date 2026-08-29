@@ -1,8 +1,8 @@
 # AI gateway reproducible benchmark
 
-One command that benchmarks **[GoModel](https://github.com/ENTERPILOT/GoModel), LiteLLM, Portkey and Bifrost**
-on a fresh AWS box and records the numbers here, so the comparison can be tracked over time
-instead of trusted from a blog post.
+One command that benchmarks **[GoModel](https://github.com/ENTERPILOT/GoModel), LiteLLM, Portkey, Bifrost,
+TensorZero and OmniRoute** on a fresh AWS box and records the numbers here, so the comparison can be
+tracked over time instead of trusted from a blog post.
 
 Every gateway runs from its latest public Docker image, one at a time, against the same
 in-memory mock backend. The numbers are therefore **gateway overhead** (routing, translation,
@@ -38,7 +38,7 @@ cd ai-gateway-reproducible-benchmark
 ./run.sh
 ```
 
-That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~75 min),
+That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~2 h with six gateways),
 copies the results into `results/<timestamp>/`, regenerates the chart and tables, and
 destroys the instance. Commit the new `results/` directory to publish your run.
 
@@ -54,6 +54,8 @@ GOMODEL_IMAGE=enterpilot/gomodel:0.1.79 \
 LITELLM_IMAGE=litellm/litellm:v1.97.0 \
 PORTKEY_IMAGE=portkeyai/gateway:1.15.2 \
 BIFROST_IMAGE=maximhq/bifrost:v1.6.11 \
+TENSORZERO_IMAGE=tensorzero/gateway:2026.6.0 \
+OMNIROUTE_IMAGE=diegosouzapw/omniroute:3.8.50 \
 ./run.sh
 ```
 
@@ -74,8 +76,8 @@ Useful knobs (all env vars):
 | Variable | Default | Meaning |
 |---|---|---|
 | `N` / `C` / `REPEATS` | `20000` / `10` / `5` | requests per variant, concurrency, latency trials |
-| `GATEWAYS` | `gomodel litellm portkey bifrost` | subset to run |
-| `GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE` | `enterpilot/gomodel:latest`, `litellm/litellm:main-stable`, `portkeyai/gateway:latest`, `maximhq/bifrost:latest` | gateway versions to benchmark (tag or digest) |
+| `GATEWAYS` | every folder under `remote/gateways/` | subset to run, e.g. `gomodel tensorzero` |
+| `<NAME>_IMAGE` (`GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE`, `TENSORZERO_IMAGE`, `OMNIROUTE_IMAGE`) | the public `latest` image of each gateway (see `remote/gateways/<name>/gateway.env`) | gateway versions to benchmark (tag or digest) |
 | `GOMODEL_SOURCE` | – | path to a GoModel checkout: build and benchmark that instead of the published image |
 | `INSTANCE_TYPE` / `REGION` | `c7i.large` / `us-east-1` | hardware; `t2.micro` is free tier but burstable |
 | `KEEP` | `0` | `1` leaves the instance running |
@@ -91,8 +93,8 @@ N=300 REPEATS=1 SWEEP_CONCURRENCY="1 16" ./run-on-instance.sh
 python3 ../scripts/summarize.py --results-dir results
 ```
 
-The gateways are published on host ports 8080, 4000, 8787 and 8089 for readiness probes;
-if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
+The gateways are published on host ports 8080, 4000, 8787, 8089, 3000 and 20128 for readiness
+probes; if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
 
 ## What is measured
 
@@ -104,22 +106,34 @@ if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
 - **Footprint:** compressed image size, cold start to the first HTTP 200, idle and peak RSS
   and average CPU under sustained load.
 - **Parity:** retries off everywhere, GoModel's circuit breaker and external model
-  catalog off, LiteLLM at its recommended one worker per vCPU, per-variant warm-up
-  before measuring. Per-request logging is off on every gateway (GoModel's audit log
-  and usage tracking, Bifrost's request logs, LiteLLM's spend logs), so the numbers
-  are routing overhead only.
+  catalog off, OmniRoute's default per-provider request queue off (60 req/min with a
+  350 ms minimum gap would otherwise serialize it at ~3 req/s), LiteLLM at its
+  recommended one worker per vCPU, per-variant warm-up before measuring. Per-request
+  logging is off on every gateway (GoModel's audit log and usage tracking, Bifrost's
+  request logs, LiteLLM's spend logs, OmniRoute's request logs, TensorZero's
+  observability store), so the numbers are routing overhead only.
+- **Coverage:** a gateway that does not serve a dialect gets that variant recorded as
+  failed and a lower `Variants` count: Portkey has no Anthropic Messages endpoint in
+  this single-provider setup, TensorZero exposes only Chat Completions on its
+  OpenAI-compatible surface (2/6), Bifrost's streaming over a non-native dialect is
+  idle-bound.
 
 Everything specific to one gateway lives in its own folder under
 [`remote/gateways/`](remote/gateways): the compose service (image, ports, environment), a
 `gateway.env` describing how the harness talks to it (default image, port, model name, extra
-request headers, where it serves the Anthropic Messages dialect), and any config file it
-needs. The load generator and mock are in [`remote/bench-tools/`](remote/bench-tools).
+request headers, where each dialect is served when it is not at the OpenAI/Anthropic default
+path), and any config file it needs. OmniRoute has no config file — its providers live in a
+database behind a dashboard — so a small seeder ([`bootstrap.mjs`](remote/gateways/omniroute/bootstrap.mjs))
+runs next to the server and registers the mock through the management API. The load generator
+and mock are in [`remote/bench-tools/`](remote/bench-tools).
 
 ### Add a gateway
 
 1. Create `remote/gateways/<name>/` with a `compose.yml` (one service named `<name>`, in
    profile `<name>`, using `${<NAME>_IMAGE:?}` and `${<NAME>_HOST_PORT:-<port>}`), a
-   `gateway.env` (copy one of the existing ones), and any config file.
+   `gateway.env` (copy one of the existing ones; `CHAT_PATH`, `RESPONSES_PATH` and
+   `MESSAGES_PATH` are optional and default to `/v1/chat/completions`, `/v1/responses`,
+   `/v1/messages`), and any config file.
 2. Add `gateways/<name>/compose.yml` to the `include:` list in `remote/compose.yml`.
 
 `run-on-instance.sh` discovers the folder, and the tables and chart pick the gateway up on

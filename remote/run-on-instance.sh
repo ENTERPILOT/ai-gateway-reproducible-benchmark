@@ -81,12 +81,15 @@ json_num() { grep -o "\"$2\": *[0-9.]*" "$1" 2>/dev/null | head -1 | grep -o '[0
 # ── the gateway contract ───────────────────────────────────────────
 # gw_load NAME sources gateways/NAME/gateway.env and exposes the loaded gateway as:
 #   NAME, SERVICE (compose service; "mock" for the baseline), IMAGE, PORT (in-network),
-#   HOST_PORT (published on this host, for probes), MODEL, MESSAGES_PATH, HDR_ARGS
-#   (extra "-H 'Name: value'" pairs for loadgen and curl).
+#   HOST_PORT (published on this host, for probes), MODEL, CHAT_PATH, RESPONSES_PATH,
+#   MESSAGES_PATH (where each dialect is served; the OpenAI/Anthropic defaults unless
+#   the gateway mounts a dialect elsewhere), HDR_ARGS (extra "-H 'Name: value'" pairs
+#   for loadgen and curl).
 # Overrides: <NAME>_IMAGE and <NAME>_HOST_PORT env vars (uppercased name). They are
 # exported so the gateway's compose.yml sees the same values.
 gw_load() {
-  NAME="$1"; SERVICE="$1"; IMAGE=""; PORT=""; MODEL="gpt-4o-mini"; MESSAGES_PATH="/v1/messages"
+  NAME="$1"; SERVICE="$1"; IMAGE=""; PORT=""; MODEL="gpt-4o-mini"
+  CHAT_PATH="/v1/chat/completions"; RESPONSES_PATH="/v1/responses"; MESSAGES_PATH="/v1/messages"
   local HEADERS=(); HDR_ARGS=()
   if [[ "$NAME" == "baseline" ]]; then SERVICE="mock"; PORT=9999; HOST_PORT=9999; return 0; fi
   [[ -f "$GATEWAYS_DIR/$NAME/gateway.env" ]] || { echo "  ERROR: no gateways/$NAME/gateway.env" >&2; return 1; }
@@ -100,7 +103,7 @@ gw_load() {
 }
 
 dialect_path() {  # dialect -> request path on the loaded gateway
-  case "$1" in chat) echo /v1/chat/completions;; responses) echo /v1/responses;; messages) echo "$MESSAGES_PATH";; esac
+  case "$1" in chat) echo "$CHAT_PATH";; responses) echo "$RESPONSES_PATH";; messages) echo "$MESSAGES_PATH";; esac
 }
 gw_url() { echo "http://${SERVICE}:${PORT}$(dialect_path "${1:-chat}")"; }  # in-network URL
 
@@ -115,7 +118,7 @@ loadgen() {
 # probe: HTTP status of a real chat request to the loaded gateway via its host port.
 probe() {
   curl -s -o /dev/null -w '%{http_code}' -m 5 -X POST \
-    "http://localhost:${HOST_PORT}/v1/chat/completions" \
+    "http://localhost:${HOST_PORT}$(dialect_path chat)" \
     -H 'Content-Type: application/json' -H "Authorization: Bearer $AUTH" ${HDR_ARGS[@]+"${HDR_ARGS[@]}"} \
     -d "{\"model\":\"$MODEL\",\"messages\":[{\"role\":\"user\",\"content\":\"ping\"}]}" 2>/dev/null || echo 000
 }
@@ -274,8 +277,15 @@ for d in "$GATEWAYS_DIR"/*/; do gw_load "$(basename "$d")" || exit 1; done
 # ── Validate the selected gateways, pull their images (digests recorded per gateway) ──
 # A locally built tag (GOMODEL_SOURCE=... in ../run.sh) fails to pull and is
 # used as-is; everything else resolves to the registry's current "latest".
+# Readiness probes go through localhost:<HOST_PORT>, so a port that already
+# answers (e.g. a dev instance of the same gateway) would be benchmarked instead
+# of the container: refuse to start rather than measure the wrong thing.
 for gw in $GATEWAYS; do
   gw_load "$gw" || exit 1
+  if curl -s -o /dev/null -m 2 "http://localhost:${HOST_PORT}/" 2>/dev/null; then
+    echo "  ERROR: something already answers on localhost:${HOST_PORT} (host port for $NAME); stop it or set $(printf '%s' "$NAME" | tr 'a-z-' 'A-Z_')_HOST_PORT" >&2
+    exit 1
+  fi
   docker pull -q "$IMAGE" 2>/dev/null || docker image inspect "$IMAGE" >/dev/null 2>&1 \
     || echo "  WARN: image $IMAGE for $NAME is neither pullable nor present locally" >&2
 done

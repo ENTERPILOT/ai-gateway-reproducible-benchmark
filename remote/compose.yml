@@ -13,6 +13,8 @@ include:
   - gateways/litellm/compose.yml
   - gateways/portkey/compose.yml
   - gateways/bifrost/compose.yml
+  - gateways/tensorzero/compose.yml
+  - gateways/omniroute/compose.yml
 
 networks:
   default:

@@ -1,0 +1,15 @@
+# TensorZero config for the benchmark: one model routed at the mock backend over the
+# shared docker network. No ClickHouse/Postgres, so observability is off and nothing
+# is written per request; usage analytics off too. Retries are off by default.
+[gateway]
+observability.enabled = false
+disable_pseudonymous_usage_analytics = true
+
+[models.gpt-4o-mini]
+routing = ["mock"]
+
+[models.gpt-4o-mini.providers.mock]
+type = "openai"
+api_base = "http://mock:9999/v1"
+model_name = "gpt-4o-mini"
+api_key_location = "none"
