@@ -1,0 +1,41 @@
+{
+  "capped": 0,
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {
+    "avg_ms": 0.03,
+    "max_ms": 21.18,
+    "min_ms": 0,
+    "p50_ms": 0,
+    "p90_ms": 0.03,
+    "p95_ms": 0.05,
+    "p99_ms": 0.63
+  },
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 20000,
+  "requests": 20000,
+  "rps": 1133.6314871547538,
+  "total_latency": {
+    "avg_ms": 8.75,
+    "max_ms": 55.45,
+    "min_ms": 0.88,
+    "p50_ms": 8.19,
+    "p90_ms": 13.92,
+    "p95_ms": 15.81,
+    "p99_ms": 20.01
+  },
+  "ttft": {
+    "avg_ms": 7.65,
+    "max_ms": 55.18,
+    "min_ms": 0.48,
+    "p50_ms": 7.1,
+    "p90_ms": 12.63,
+    "p95_ms": 14.46,
+    "p99_ms": 18.52
+  },
+  "url": "http://gomodel:8080/v1/messages",
+  "wall_ms": 17642
+}

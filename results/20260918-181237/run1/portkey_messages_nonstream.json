@@ -1,0 +1,19 @@
+{
+  "capped": 0,
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {
+    "HTTP 500: {\"status\":\"failure\",\"message\":\"messages is not supported by openai\"}": 20000
+  },
+  "failed": 20000,
+  "inter_chunk": {},
+  "measure": "latency",
+  "mode": "nonstream",
+  "ok": 0,
+  "requests": 20000,
+  "rps": 0,
+  "total_latency": {},
+  "ttft": {},
+  "url": "http://portkey:8787/v1/messages",
+  "wall_ms": 9557
+}

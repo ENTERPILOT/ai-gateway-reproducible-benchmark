@@ -4,6 +4,21 @@ Newest first. Latency is chat/completions non-streaming, median across trials. P
 
 ![History chart](charts/history.svg)
 
+## 2026-09-18 — 20260918-181237
+
+`20260918-181237` · 2026-09-18 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
+
+| Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
+|---|---|---|--:|--:|--:|--:|--:|--:|:-:|
+| GoModel | 0.1.94 | `enterpilot/gomodel:latest` | 2.21 | 7.01 | 4,416 | 24.2 | 0.55 | 20.6 | 6/6 |
+| Bifrost | 2.2.0 | `maximhq/bifrost:latest` | 4.09 | 19.33 | 2,086 | 203.8 | 8.79 | 84.5 | 6/6 |
+| Portkey † | 1.15.2 | `portkeyai/gateway:latest` | 9.14 | 29.37 | 982 | 110.0 | 0.99 | 57.9 | 4/6 |
+| LiteLLM | 1.101.0 | `litellm/litellm:main-stable` | 48.96 | 68.55 | 250 | 1,357 | 21.49 | 357.9 | 6/6 |
+
+† not re-measured in this run — values carried over from an earlier run on the same hardware and load: Portkey (from `20260820-183544`).
+
+Full tables: [`20260918-181237/summary.md`](20260918-181237/summary.md)
+
 ## 2026-08-20 — 20260820-183544
 
 `20260820-183544` · 2026-08-20 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2

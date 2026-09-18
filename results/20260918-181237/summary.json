@@ -1,0 +1,873 @@
+{
+  "meta": {
+    "date": "2026-09-18T19:16:33Z",
+    "harness_commit": "e56754b",
+    "images": {
+      "gomodel": "enterpilot/gomodel:latest",
+      "litellm": "litellm/litellm:main-stable",
+      "bifrost": "maximhq/bifrost:latest",
+      "portkey": "portkeyai/gateway:latest"
+    },
+    "n_requests": 20000,
+    "max_variant_seconds": 60,
+    "concurrency": 10,
+    "repeats": 5,
+    "litellm_num_workers": 2,
+    "warmup": 100,
+    "resource_seconds": 15,
+    "rest_seconds": 5,
+    "sweep_concurrency": "1,2,4,8,16,32,64,128,256",
+    "sweep_duration_s": 8,
+    "gateways": "gomodel,litellm,bifrost",
+    "instance_type": "c7i.large",
+    "cpus": 2,
+    "kernel": "6.18.48-107.148.amzn2023.x86_64",
+    "copied_gateways": {
+      "portkey": "20260820-183544"
+    },
+    "copied_note": "portkey was not re-measured in this run; its raw results were copied verbatim from run 20260820-183544 (image portkeyai/gateway:latest, version 1.15.2, same c7i.large / N=20000 / c=10 / 5 trials)"
+  },
+  "trials": 5,
+  "latency": {
+    "baseline": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 26234.267075566022,
+        "rps_spread": [
+          24366.34025521322,
+          26318.571589109077
+        ],
+        "p50": 0.26,
+        "p90": 0.59,
+        "p99": 2.96,
+        "p99_spread": [
+          2.58,
+          3.76
+        ],
+        "ttft_p50": 0.26,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 0.0
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 4418.372708122337,
+        "rps_spread": [
+          4040.952342124794,
+          4460.50733302354
+        ],
+        "p50": 1.98,
+        "p90": 3.8,
+        "p99": 6.48,
+        "p99_spread": [
+          6.19,
+          9.08
+        ],
+        "ttft_p50": 1.77,
+        "gap_p50": 0,
+        "gap_p99": 0.1,
+        "overhead_p50": 0.0
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 26246.241664503683,
+        "rps_spread": [
+          24938.49210831455,
+          26425.126005504782
+        ],
+        "p50": 0.26,
+        "p90": 0.59,
+        "p99": 2.86,
+        "p99_spread": [
+          2.71,
+          3.3
+        ],
+        "ttft_p50": 0.26,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 0.0
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 3519.942360690408,
+        "rps_spread": [
+          3389.5864611219063,
+          3612.0483272337174
+        ],
+        "p50": 2.47,
+        "p90": 4.7,
+        "p99": 8.16,
+        "p99_spread": [
+          7.49,
+          9.38
+        ],
+        "ttft_p50": 2.19,
+        "gap_p50": 0,
+        "gap_p99": 0.12,
+        "overhead_p50": 0.0
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 26035.203020716726,
+        "rps_spread": [
+          25380.843941538362,
+          26840.723209598113
+        ],
+        "p50": 0.25,
+        "p90": 0.59,
+        "p99": 2.92,
+        "p99_spread": [
+          2.35,
+          3.76
+        ],
+        "ttft_p50": 0.25,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 0.0
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 3294.971702173452,
+        "rps_spread": [
+          3058.151381557655,
+          3436.5895408426586
+        ],
+        "p50": 2.68,
+        "p90": 5,
+        "p99": 8.32,
+        "p99_spread": [
+          7.81,
+          11.3
+        ],
+        "ttft_p50": 2.36,
+        "gap_p50": 0,
+        "gap_p99": 0.14,
+        "overhead_p50": 0.0
+      }
+    },
+    "gomodel": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 3966.357031246604,
+        "rps_spread": [
+          3883.2094469787457,
+          3979.2816092605117
+        ],
+        "p50": 2.21,
+        "p90": 4.29,
+        "p99": 7.01,
+        "p99_spread": [
+          6.88,
+          7.06
+        ],
+        "ttft_p50": 2.21,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 1.95
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 1660.9438309931295,
+        "rps_spread": [
+          1630.483132149116,
+          1695.4350330946447
+        ],
+        "p50": 5.53,
+        "p90": 9.55,
+        "p99": 14.05,
+        "p99_spread": [
+          13.35,
+          14.27
+        ],
+        "ttft_p50": 4.95,
+        "gap_p50": 0,
+        "gap_p99": 0.23,
+        "overhead_p50": 3.5500000000000003
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 2838.9155596418,
+        "rps_spread": [
+          2798.5718131303774,
+          2862.3847574789766
+        ],
+        "p50": 3.05,
+        "p90": 6.14,
+        "p99": 10.27,
+        "p99_spread": [
+          9.99,
+          10.69
+        ],
+        "ttft_p50": 3.05,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 2.79
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 1534.157272829404,
+        "rps_spread": [
+          1521.7483204052155,
+          1544.2699045147056
+        ],
+        "p50": 5.97,
+        "p90": 10.32,
+        "p99": 15.12,
+        "p99_spread": [
+          14.65,
+          15.21
+        ],
+        "ttft_p50": 5.42,
+        "gap_p50": 0,
+        "gap_p99": 0.06,
+        "overhead_p50": 3.4999999999999996
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 4032.063459737159,
+        "rps_spread": [
+          3991.307205910939,
+          4082.6425238512315
+        ],
+        "p50": 2.19,
+        "p90": 4.15,
+        "p99": 6.8,
+        "p99_spread": [
+          6.73,
+          6.92
+        ],
+        "ttft_p50": 2.19,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 1.94
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 1145.7104634704906,
+        "rps_spread": [
+          1126.147787731005,
+          1166.0294243277385
+        ],
+        "p50": 8.18,
+        "p90": 13.77,
+        "p99": 19.3,
+        "p99_spread": [
+          19.11,
+          20.33
+        ],
+        "ttft_p50": 7.1,
+        "gap_p50": 0,
+        "gap_p99": 0.6,
+        "overhead_p50": 5.5
+      }
+    },
+    "litellm": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 70276,
+        "failed": 0,
+        "rps": 241.02936994278573,
+        "rps_spread": [
+          202.71257005171702,
+          245.69677034871333
+        ],
+        "p50": 48.96,
+        "p90": 60.76,
+        "p99": 68.55,
+        "p99_spread": [
+          56.84,
+          89.08
+        ],
+        "ttft_p50": 48.96,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 48.7
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 17403,
+        "failed": 0,
+        "rps": 59.2324085989447,
+        "rps_spread": [
+          51.79929983059083,
+          60.08281450821625
+        ],
+        "p50": 165.62,
+        "p90": 187.41,
+        "p99": 229.04,
+        "p99_spread": [
+          222.75,
+          682.02
+        ],
+        "ttft_p50": 165.6,
+        "gap_p50": 0,
+        "gap_p99": 0,
+        "overhead_p50": 163.64000000000001
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 68732,
+        "failed": 0,
+        "rps": 237.06185034426971,
+        "rps_spread": [
+          197.28037182943956,
+          239.11512796081823
+        ],
+        "p50": 42.48,
+        "p90": 62.72,
+        "p99": 70.88,
+        "p99_spread": [
+          55.42,
+          91.1
+        ],
+        "ttft_p50": 42.48,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 42.22
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 42575,
+        "failed": 0,
+        "rps": 149.23015040345538,
+        "rps_spread": [
+          128.346971169775,
+          152.61323528524898
+        ],
+        "p50": 76.95,
+        "p90": 84.85,
+        "p99": 95.45,
+        "p99_spread": [
+          94.24,
+          127.44
+        ],
+        "ttft_p50": 76.92,
+        "gap_p50": 0,
+        "gap_p99": 0,
+        "overhead_p50": 74.48
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 61549,
+        "failed": 0,
+        "rps": 205.41461611183774,
+        "rps_spread": [
+          199.5952968994267,
+          209.72964747110328
+        ],
+        "p50": 49.25,
+        "p90": 72.68,
+        "p99": 81.98,
+        "p99_spread": [
+          64.59,
+          94.55
+        ],
+        "ttft_p50": 49.25,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 49.0
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 36525,
+        "failed": 0,
+        "rps": 121.21602642179751,
+        "rps_spread": [
+          118.68122828240926,
+          124.68237949858388
+        ],
+        "p50": 77.37,
+        "p90": 88.15,
+        "p99": 99.81,
+        "p99_spread": [
+          94.58,
+          147.18
+        ],
+        "ttft_p50": 39.45,
+        "gap_p50": 0.93,
+        "gap_p99": 8.75,
+        "overhead_p50": 74.69
+      }
+    },
+    "portkey": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 898.8206413790159,
+        "rps_spread": [
+          891.1388250253731,
+          907.7464354887451
+        ],
+        "p50": 9.14,
+        "p90": 14.97,
+        "p99": 29.37,
+        "p99_spread": [
+          28.14,
+          29.43
+        ],
+        "ttft_p50": 9.14,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 8.88
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 346.9055365905506,
+        "rps_spread": [
+          345.21800073754207,
+          347.88855246369906
+        ],
+        "p50": 27.95,
+        "p90": 31.66,
+        "p99": 44.25,
+        "p99_spread": [
+          42.87,
+          44.45
+        ],
+        "ttft_p50": 27.93,
+        "gap_p50": 0,
+        "gap_p99": 0,
+        "overhead_p50": 25.97
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 946.168929654314,
+        "rps_spread": [
+          941.9022208322492,
+          960.1379263017907
+        ],
+        "p50": 9.13,
+        "p90": 13.63,
+        "p99": 27.76,
+        "p99_spread": [
+          27.06,
+          28.51
+        ],
+        "ttft_p50": 9.13,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 8.870000000000001
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 346.8003864063361,
+        "rps_spread": [
+          345.766110702611,
+          347.4212877802637
+        ],
+        "p50": 27.98,
+        "p90": 31.59,
+        "p99": 44.02,
+        "p99_spread": [
+          42.94,
+          44.07
+        ],
+        "ttft_p50": 27.96,
+        "gap_p50": 0,
+        "gap_p99": 0,
+        "overhead_p50": 25.51
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 0,
+        "failed": 100000,
+        "rps": 0,
+        "rps_spread": [
+          0,
+          0
+        ],
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p99_spread": [
+          null,
+          null
+        ],
+        "ttft_p50": null,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": null
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 0,
+        "failed": 100000,
+        "rps": 0,
+        "rps_spread": [
+          0,
+          0
+        ],
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p99_spread": [
+          null,
+          null
+        ],
+        "ttft_p50": null,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": null
+      }
+    },
+    "bifrost": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 1998.8570984853707,
+        "rps_spread": [
+          1982.1399735557097,
+          2011.5840901901292
+        ],
+        "p50": 4.09,
+        "p90": 9.87,
+        "p99": 19.33,
+        "p99_spread": [
+          18.92,
+          20.19
+        ],
+        "ttft_p50": 4.09,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 3.83
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 637.1594641824574,
+        "rps_spread": [
+          633.3316902946514,
+          647.3895950130326
+        ],
+        "p50": 14.62,
+        "p90": 24.37,
+        "p99": 35.4,
+        "p99_spread": [
+          34.37,
+          35.5
+        ],
+        "ttft_p50": 11.91,
+        "gap_p50": 0,
+        "gap_p99": 2.48,
+        "overhead_p50": 12.639999999999999
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 1976.8257560720276,
+        "rps_spread": [
+          1963.2892454093278,
+          1987.5137864887556
+        ],
+        "p50": 4.2,
+        "p90": 9.88,
+        "p99": 19.4,
+        "p99_spread": [
+          19.22,
+          19.77
+        ],
+        "ttft_p50": 4.2,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 3.9400000000000004
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 587.0673662239952,
+        "rps_spread": [
+          582.0582272367623,
+          590.9762771149414
+        ],
+        "p50": 15.93,
+        "p90": 26.38,
+        "p99": 37.73,
+        "p99_spread": [
+          37.29,
+          38.05
+        ],
+        "ttft_p50": 13.19,
+        "gap_p50": 0,
+        "gap_p99": 2.31,
+        "overhead_p50": 13.459999999999999
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 1933.6930763750356,
+        "rps_spread": [
+          1926.256296331202,
+          1946.1089086877662
+        ],
+        "p50": 4.3,
+        "p90": 10.01,
+        "p99": 19.19,
+        "p99_spread": [
+          18.62,
+          20.38
+        ],
+        "ttft_p50": 4.3,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 4.05
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 100000,
+        "failed": 0,
+        "rps": 695.5474042970334,
+        "rps_spread": [
+          690.3251745342105,
+          700.6799795106039
+        ],
+        "p50": 12.95,
+        "p90": 23.15,
+        "p99": 35.7,
+        "p99_spread": [
+          35.28,
+          36.15
+        ],
+        "ttft_p50": 11.12,
+        "gap_p50": 0,
+        "gap_p99": 1.69,
+        "overhead_p50": 10.27
+      }
+    }
+  },
+  "capacity": {
+    "baseline": {
+      "peak_rps": 29213.770938153317,
+      "peak_c": 32,
+      "knee_c": 8,
+      "curve": {
+        "1": 13480.417512783746,
+        "2": 20249.821951669903,
+        "4": 26736.285134051264,
+        "8": 28108.171267014346,
+        "16": 29202.513020860602,
+        "32": 29213.770938153317,
+        "64": 27707.228742599113,
+        "128": 27483.63169816473,
+        "256": 27236.17592385796
+      }
+    },
+    "gomodel": {
+      "peak_rps": 4415.562582550074,
+      "peak_c": 32,
+      "knee_c": 16,
+      "curve": {
+        "1": 2175.449122771366,
+        "2": 3312.66641547465,
+        "4": 3720.616695255778,
+        "8": 4033.169058330168,
+        "16": 4284.950861739454,
+        "32": 4415.562582550074,
+        "64": 4266.821955557612,
+        "128": 3930.601864255289,
+        "256": 3435.3252857826037
+      }
+    },
+    "litellm": {
+      "peak_rps": 249.71770997057982,
+      "peak_c": 16,
+      "knee_c": 4,
+      "curve": {
+        "1": 183.0867183065259,
+        "2": 187.99539723819115,
+        "4": 247.86324818374547,
+        "8": 202.33726716002585,
+        "16": 249.71770997057982,
+        "32": 201.7061448986965,
+        "64": 238.5597200709003,
+        "128": 244.57836535891622,
+        "256": 219.93170763042218
+      }
+    },
+    "portkey": {
+      "peak_rps": 982.3140746708822,
+      "peak_c": 8,
+      "knee_c": 2,
+      "curve": {
+        "1": 685.5932584890177,
+        "2": 952.2303041874169,
+        "4": 955.212943946659,
+        "8": 982.3140746708822,
+        "16": 969.8081429763009,
+        "32": 945.5895728096602,
+        "64": 949.5324635369025,
+        "128": 883.853333853,
+        "256": 886.7335719600201
+      }
+    },
+    "bifrost": {
+      "peak_rps": 2086.1346741563348,
+      "peak_c": 32,
+      "knee_c": 4,
+      "curve": {
+        "1": 1363.6379996383566,
+        "2": 1935.0908023496818,
+        "4": 2013.5311291787577,
+        "8": 2064.7749699118076,
+        "16": 2084.6787607938772,
+        "32": 2086.1346741563348,
+        "64": 2040.4434601193122,
+        "128": 1969.2429939244278,
+        "256": 1932.6424147231562
+      }
+    }
+  },
+  "resources": {
+    "gomodel": {
+      "image": {
+        "gateway": "gomodel",
+        "image": "enterpilot/gomodel:latest",
+        "version": "0.1.94",
+        "size_bytes": 63102918,
+        "size_mb": 60.2,
+        "compressed_bytes": 21577153,
+        "compressed_mb": 20.6,
+        "digest": "enterpilot/gomodel@sha256:945b0ef599f72e5ba23ea63ccc150c0003ec0c60bd666453b59a6b875258ad8a"
+      },
+      "resources": {
+        "gateway": "gomodel",
+        "idle_mem_mb": 66.72,
+        "load_rps": 4144.9415466116425,
+        "under_load": {
+          "peak_mem_mb": 24.2,
+          "avg_mem_mb": 23.9,
+          "avg_cpu_pct": 107.6,
+          "samples": 7
+        }
+      },
+      "startup": {
+        "gateway": "gomodel",
+        "startup_s": 0.554,
+        "ready": 1
+      },
+      "rps_per_cpu_pct": 38.521761585610065
+    },
+    "litellm": {
+      "image": {
+        "gateway": "litellm",
+        "image": "litellm/litellm:main-stable",
+        "version": "1.101.0",
+        "size_bytes": 1173521551,
+        "size_mb": 1119.2,
+        "compressed_bytes": 375333653,
+        "compressed_mb": 357.9,
+        "digest": "litellm/litellm@sha256:d295634e09c648dcdb72c4cc2dd226f5fb87823a73e88cbbed6f205e4deb044b"
+      },
+      "resources": {
+        "gateway": "litellm",
+        "idle_mem_mb": 1357.82,
+        "load_rps": 192.1205492477453,
+        "under_load": {
+          "peak_mem_mb": 1356.8,
+          "avg_mem_mb": 1356.8,
+          "avg_cpu_pct": 99.4,
+          "samples": 7
+        }
+      },
+      "startup": {
+        "gateway": "litellm",
+        "startup_s": 21.492,
+        "ready": 1
+      },
+      "rps_per_cpu_pct": 1.9328023063153448
+    },
+    "portkey": {
+      "image": {
+        "gateway": "portkey",
+        "image": "portkeyai/gateway:latest",
+        "version": "1.15.2",
+        "size_bytes": 185997410,
+        "size_mb": 177.4,
+        "compressed_bytes": 60703338,
+        "compressed_mb": 57.9,
+        "digest": "portkeyai/gateway@sha256:97f094d9c8a764cbfaa2a7138c0017b247ca923bb06db1b4c13b7f8a33b5200d"
+      },
+      "resources": {
+        "gateway": "portkey",
+        "idle_mem_mb": 120.1,
+        "load_rps": 961.7052960976994,
+        "under_load": {
+          "peak_mem_mb": 110.0,
+          "avg_mem_mb": 105.7,
+          "avg_cpu_pct": 114.4,
+          "samples": 7
+        }
+      },
+      "startup": {
+        "gateway": "portkey",
+        "startup_s": 0.987,
+        "ready": 1
+      },
+      "rps_per_cpu_pct": 8.40651482602884
+    },
+    "bifrost": {
+      "image": {
+        "gateway": "bifrost",
+        "image": "maximhq/bifrost:latest",
+        "version": "2.2.0",
+        "size_bytes": 267524720,
+        "size_mb": 255.1,
+        "compressed_bytes": 88570461,
+        "compressed_mb": 84.5,
+        "digest": "maximhq/bifrost@sha256:12d6bbab32b44e3bb88869c6f5ca9304b53a9c43cb55c57a29f851037bcc19e1"
+      },
+      "resources": {
+        "gateway": "bifrost",
+        "idle_mem_mb": 287.2,
+        "load_rps": 2012.5346135371544,
+        "under_load": {
+          "peak_mem_mb": 203.8,
+          "avg_mem_mb": 188.8,
+          "avg_cpu_pct": 135.1,
+          "samples": 7
+        }
+      },
+      "startup": {
+        "gateway": "bifrost",
+        "startup_s": 8.787,
+        "ready": 1
+      },
+      "rps_per_cpu_pct": 14.896629263783527
+    }
+  }
+}

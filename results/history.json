@@ -25,7 +25,8 @@
         "chat_p99_ms": 19.1,
         "chat_overhead_p50_ms": 6.949999999999999,
         "chat_stream_ttft_p50_ms": 18.85,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -42,7 +43,8 @@
         "chat_p99_ms": 223.05,
         "chat_overhead_p50_ms": -1.13,
         "chat_stream_ttft_p50_ms": 39.08,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -59,7 +61,8 @@
         "chat_p99_ms": 72.77,
         "chat_overhead_p50_ms": 36.46,
         "chat_stream_ttft_p50_ms": 67.3,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "ghcr.io/berriai/litellm:main-stable",
@@ -76,7 +79,8 @@
         "chat_p99_ms": 96.96,
         "chat_overhead_p50_ms": 69.71,
         "chat_stream_ttft_p50_ms": 366.63,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   },
@@ -106,7 +110,8 @@
         "chat_p99_ms": 8.295,
         "chat_overhead_p50_ms": 1.86,
         "chat_stream_ttft_p50_ms": 5.535,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -123,7 +128,8 @@
         "chat_p99_ms": 21.005000000000003,
         "chat_overhead_p50_ms": 2.6050000000000004,
         "chat_stream_ttft_p50_ms": 10.34,
-        "variants_served": "5/6"
+        "variants_served": "5/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -140,7 +146,8 @@
         "chat_p99_ms": 35.474999999999994,
         "chat_overhead_p50_ms": 11.094999999999999,
         "chat_stream_ttft_p50_ms": 28.675,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "ghcr.io/berriai/litellm:main-stable",
@@ -157,7 +164,8 @@
         "chat_p99_ms": 61.71,
         "chat_overhead_p50_ms": 44.155,
         "chat_stream_ttft_p50_ms": 197.7,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   },
@@ -187,7 +195,8 @@
         "chat_p99_ms": 6.875,
         "chat_overhead_p50_ms": 1.58,
         "chat_stream_ttft_p50_ms": 4.71,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -204,7 +213,8 @@
         "chat_p99_ms": 18.27,
         "chat_overhead_p50_ms": 2.275,
         "chat_stream_ttft_p50_ms": 9.02,
-        "variants_served": "5/6"
+        "variants_served": "5/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -221,7 +231,8 @@
         "chat_p99_ms": 30.535,
         "chat_overhead_p50_ms": 9.465,
         "chat_stream_ttft_p50_ms": 27.97,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "ghcr.io/berriai/litellm:main-stable",
@@ -238,7 +249,8 @@
         "chat_p99_ms": 39.26,
         "chat_overhead_p50_ms": 30.325000000000003,
         "chat_stream_ttft_p50_ms": 151.935,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   },
@@ -268,7 +280,8 @@
         "chat_p99_ms": 8.3,
         "chat_overhead_p50_ms": 1.83,
         "chat_stream_ttft_p50_ms": 5.34,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -285,7 +298,8 @@
         "chat_p99_ms": 20.85,
         "chat_overhead_p50_ms": 2.73,
         "chat_stream_ttft_p50_ms": 10.54,
-        "variants_served": "5/6"
+        "variants_served": "5/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -302,7 +316,8 @@
         "chat_p99_ms": 32.02,
         "chat_overhead_p50_ms": 9.770000000000001,
         "chat_stream_ttft_p50_ms": 28.27,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "ghcr.io/berriai/litellm:main-stable",
@@ -319,7 +334,8 @@
         "chat_p99_ms": 54.18,
         "chat_overhead_p50_ms": 38.42,
         "chat_stream_ttft_p50_ms": 175.23,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   },
@@ -349,7 +365,8 @@
         "chat_p99_ms": 7.79,
         "chat_overhead_p50_ms": 1.83,
         "chat_stream_ttft_p50_ms": 5.6,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -366,7 +383,8 @@
         "chat_p99_ms": 19.23,
         "chat_overhead_p50_ms": 2.81,
         "chat_stream_ttft_p50_ms": 12.56,
-        "variants_served": "5/6"
+        "variants_served": "5/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -383,7 +401,8 @@
         "chat_p99_ms": 29.37,
         "chat_overhead_p50_ms": 8.91,
         "chat_stream_ttft_p50_ms": 27.93,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "litellm/litellm:main-stable",
@@ -400,7 +419,93 @@
         "chat_p99_ms": 53.32,
         "chat_overhead_p50_ms": 35.620000000000005,
         "chat_stream_ttft_p50_ms": 142.94,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
+      }
+    }
+  },
+  {
+    "run": "20260918-181237",
+    "date": "2026-09-18T19:16:33Z",
+    "instance_type": "c7i.large",
+    "cpus": 2,
+    "n_requests": 20000,
+    "concurrency": 10,
+    "repeats": 5,
+    "litellm_num_workers": 2,
+    "harness_commit": "e56754b",
+    "gateways": {
+      "gomodel": {
+        "image": "enterpilot/gomodel:latest",
+        "version": "0.1.94",
+        "digest": "enterpilot/gomodel@sha256:945b0ef599f72e5ba23ea63ccc150c0003ec0c60bd666453b59a6b875258ad8a",
+        "image_mb": 20.6,
+        "startup_s": 0.554,
+        "idle_mem_mb": 66.72,
+        "peak_mem_mb": 24.2,
+        "avg_cpu_pct": 107.6,
+        "rps_per_cpu_pct": 38.521761585610065,
+        "peak_rps": 4415.562582550074,
+        "chat_p50_ms": 2.21,
+        "chat_p99_ms": 7.01,
+        "chat_overhead_p50_ms": 1.95,
+        "chat_stream_ttft_p50_ms": 4.95,
+        "variants_served": "6/6",
+        "copied_from": null
+      },
+      "bifrost": {
+        "image": "maximhq/bifrost:latest",
+        "version": "2.2.0",
+        "digest": "maximhq/bifrost@sha256:12d6bbab32b44e3bb88869c6f5ca9304b53a9c43cb55c57a29f851037bcc19e1",
+        "image_mb": 84.5,
+        "startup_s": 8.787,
+        "idle_mem_mb": 287.2,
+        "peak_mem_mb": 203.8,
+        "avg_cpu_pct": 135.1,
+        "rps_per_cpu_pct": 14.896629263783527,
+        "peak_rps": 2086.1346741563348,
+        "chat_p50_ms": 4.09,
+        "chat_p99_ms": 19.33,
+        "chat_overhead_p50_ms": 3.83,
+        "chat_stream_ttft_p50_ms": 11.91,
+        "variants_served": "6/6",
+        "copied_from": null
+      },
+      "portkey": {
+        "image": "portkeyai/gateway:latest",
+        "version": "1.15.2",
+        "digest": "portkeyai/gateway@sha256:97f094d9c8a764cbfaa2a7138c0017b247ca923bb06db1b4c13b7f8a33b5200d",
+        "image_mb": 57.9,
+        "startup_s": 0.987,
+        "idle_mem_mb": 120.1,
+        "peak_mem_mb": 110.0,
+        "avg_cpu_pct": 114.4,
+        "rps_per_cpu_pct": 8.40651482602884,
+        "peak_rps": 982.3140746708822,
+        "chat_p50_ms": 9.14,
+        "chat_p99_ms": 29.37,
+        "chat_overhead_p50_ms": 8.88,
+        "chat_stream_ttft_p50_ms": 27.93,
+        "variants_served": "4/6",
+        "copied_from": "20260820-183544"
+      },
+      "litellm": {
+        "image": "litellm/litellm:main-stable",
+        "version": "1.101.0",
+        "digest": "litellm/litellm@sha256:d295634e09c648dcdb72c4cc2dd226f5fb87823a73e88cbbed6f205e4deb044b",
+        "image_mb": 357.9,
+        "startup_s": 21.492,
+        "idle_mem_mb": 1357.82,
+        "peak_mem_mb": 1356.8,
+        "avg_cpu_pct": 99.4,
+        "rps_per_cpu_pct": 1.9328023063153448,
+        "peak_rps": 249.71770997057982,
+        "chat_p50_ms": 48.96,
+        "chat_p99_ms": 68.55,
+        "chat_overhead_p50_ms": 48.7,
+        "chat_stream_ttft_p50_ms": 165.6,
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   }

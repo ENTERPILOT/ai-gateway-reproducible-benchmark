@@ -1,0 +1,28 @@
+{
+  "date": "2026-09-18T19:16:33Z",
+  "harness_commit": "e56754b",
+  "images": {
+    "gomodel": "enterpilot/gomodel:latest",
+    "litellm": "litellm/litellm:main-stable",
+    "bifrost": "maximhq/bifrost:latest",
+    "portkey": "portkeyai/gateway:latest"
+  },
+  "n_requests": 20000,
+  "max_variant_seconds": 60,
+  "concurrency": 10,
+  "repeats": 5,
+  "litellm_num_workers": 2,
+  "warmup": 100,
+  "resource_seconds": 15,
+  "rest_seconds": 5,
+  "sweep_concurrency": "1,2,4,8,16,32,64,128,256",
+  "sweep_duration_s": 8,
+  "gateways": "gomodel,litellm,bifrost",
+  "instance_type": "c7i.large",
+  "cpus": 2,
+  "kernel": "6.18.48-107.148.amzn2023.x86_64",
+  "copied_gateways": {
+    "portkey": "20260820-183544"
+  },
+  "copied_note": "portkey was not re-measured in this run; its raw results were copied verbatim from run 20260820-183544 (image portkeyai/gateway:latest, version 1.15.2, same c7i.large / N=20000 / c=10 / 5 trials)"
+}

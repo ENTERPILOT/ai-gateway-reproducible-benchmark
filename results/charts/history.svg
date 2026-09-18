@@ -2,7 +2,7 @@
 <style>.ttl{font-size:13px;font-weight:600;fill:#0b0b0b}.sub{font-size:10.5px;fill:#52514e}.tick{font-size:10.5px;fill:#52514e}.lbl{font-size:11px;fill:#0b0b0b}.lg{font-size:12px;fill:#0b0b0b}.grid{stroke:#e6e6e3;stroke-width:1}.axis{stroke:#c3c2b7;stroke-width:1}.line{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.dot{stroke:#fcfcfb;stroke-width:2}.h1{font-size:17px;font-weight:700;fill:#0b0b0b}</style>
 <rect width="1080" height="628" fill="#fcfcfb"/>
 <text x="16" y="26" class="h1">AI gateway benchmark over time</text>
-<text x="16" y="42" class="sub">4 runs on AWS c7i.large · 2026-06-25 → 2026-08-20 · latest public Docker image of each gateway · same mock backend, so numbers are gateway overhead</text>
+<text x="16" y="42" class="sub">5 runs on AWS c7i.large · 2026-06-25 → 2026-09-18 · latest public Docker image of each gateway · same mock backend, so numbers are gateway overhead</text>
 <g transform="translate(16,64)"><circle cx="6" cy="-4" r="5" fill="#2a78d6"/><text x="16" y="0" class="lg">GoModel</text></g><g transform="translate(126,64)"><circle cx="6" cy="-4" r="5" fill="#eb6834"/><text x="16" y="0" class="lg">Bifrost</text></g><g transform="translate(236,64)"><circle cx="6" cy="-4" r="5" fill="#1baf7a"/><text x="16" y="0" class="lg">Portkey</text></g><g transform="translate(346,64)"><circle cx="6" cy="-4" r="5" fill="#eda100"/><text x="16" y="0" class="lg">LiteLLM</text></g>
 <text x="60.0" y="104" class="ttl">Latency p50 · chat, non-stream</text>
 <text x="60.0" y="119" class="sub">ms · log scale · lower is better</text>
@@ -20,33 +20,38 @@
 <text x="54.0" y="135.0" class="tick" text-anchor="end">50</text>
 <line x1="60.0" y1="316" x2="295.3333333333333" y2="316" class="axis"/>
 <text x="60.0" y="332" class="tick" text-anchor="middle">Jun 25 16:08</text>
-<text x="138.4" y="332" class="tick" text-anchor="middle">Jun 25 18:25</text>
-<text x="216.9" y="332" class="tick" text-anchor="middle">Jul 21</text>
-<text x="295.3" y="332" class="tick" text-anchor="middle">Aug 20</text>
-<path d="M60.0,279.8 L138.4,288.0 L216.9,279.1 L295.3,282.0" class="line" stroke="#2a78d6"/>
+<text x="118.8" y="332" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="177.7" y="332" class="tick" text-anchor="middle">Jul 21</text>
+<text x="236.5" y="332" class="tick" text-anchor="middle">Aug 20</text>
+<text x="295.3" y="332" class="tick" text-anchor="middle">Sep 18</text>
+<path d="M60.0,279.8 L118.8,288.0 L177.7,279.1 L236.5,282.0 L295.3,278.7" class="line" stroke="#2a78d6"/>
 <circle cx="60.0" cy="279.8" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="138.4" cy="288.0" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="216.9" cy="279.1" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="295.3" cy="282.0" r="4" fill="#2a78d6" class="dot"/>
-<path d="M60.0,265.8 L138.4,272.7 L216.9,262.9 L295.3,263.7" class="line" stroke="#eb6834"/>
+<circle cx="118.8" cy="288.0" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="177.7" cy="279.1" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="236.5" cy="282.0" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="295.3" cy="278.7" r="4" fill="#2a78d6" class="dot"/>
+<path d="M60.0,265.8 L118.8,272.7 L177.7,262.9 L236.5,263.7 L295.3,249.7" class="line" stroke="#eb6834"/>
 <circle cx="60.0" cy="265.8" r="4" fill="#eb6834" class="dot"/>
-<circle cx="138.4" cy="272.7" r="4" fill="#eb6834" class="dot"/>
-<circle cx="216.9" cy="262.9" r="4" fill="#eb6834" class="dot"/>
-<circle cx="295.3" cy="263.7" r="4" fill="#eb6834" class="dot"/>
-<path d="M60.0,201.6 L138.4,209.1 L216.9,207.1 L295.3,211.9" class="line" stroke="#1baf7a"/>
+<circle cx="118.8" cy="272.7" r="4" fill="#eb6834" class="dot"/>
+<circle cx="177.7" cy="262.9" r="4" fill="#eb6834" class="dot"/>
+<circle cx="236.5" cy="263.7" r="4" fill="#eb6834" class="dot"/>
+<circle cx="295.3" cy="249.7" r="4" fill="#eb6834" class="dot"/>
+<path d="M60.0,201.6 L118.8,209.1 L177.7,207.1 L236.5,211.9 L295.3,211.9" class="line" stroke="#1baf7a"/>
 <circle cx="60.0" cy="201.6" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="138.4" cy="209.1" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="216.9" cy="207.1" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="118.8" cy="209.1" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="177.7" cy="207.1" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="236.5" cy="211.9" r="4" fill="#1baf7a" class="dot"/>
 <circle cx="295.3" cy="211.9" r="4" fill="#1baf7a" class="dot"/>
-<path d="M60.0,137.5 L138.4,155.2 L216.9,144.0 L295.3,147.6" class="line" stroke="#eda100"/>
+<path d="M60.0,137.5 L118.8,155.2 L177.7,144.0 L236.5,147.6 L295.3,133.0" class="line" stroke="#eda100"/>
 <circle cx="60.0" cy="137.5" r="4" fill="#eda100" class="dot"/>
-<circle cx="138.4" cy="155.2" r="4" fill="#eda100" class="dot"/>
-<circle cx="216.9" cy="144.0" r="4" fill="#eda100" class="dot"/>
-<circle cx="295.3" cy="147.6" r="4" fill="#eda100" class="dot"/>
-<text x="303.3333333333333" y="151.6" class="lbl"><tspan fill="#eda100">●</tspan> 35.9</text>
+<circle cx="118.8" cy="155.2" r="4" fill="#eda100" class="dot"/>
+<circle cx="177.7" cy="144.0" r="4" fill="#eda100" class="dot"/>
+<circle cx="236.5" cy="147.6" r="4" fill="#eda100" class="dot"/>
+<circle cx="295.3" cy="133.0" r="4" fill="#eda100" class="dot"/>
+<text x="303.3333333333333" y="137.0" class="lbl"><tspan fill="#eda100">●</tspan> 49.0</text>
 <text x="303.3333333333333" y="215.9" class="lbl"><tspan fill="#1baf7a">●</tspan> 9.14</text>
-<text x="303.3333333333333" y="267.7" class="lbl"><tspan fill="#eb6834">●</tspan> 3.04</text>
-<text x="303.3333333333333" y="286.0" class="lbl"><tspan fill="#2a78d6">●</tspan> 2.06</text>
+<text x="303.3333333333333" y="253.7" class="lbl"><tspan fill="#eb6834">●</tspan> 4.09</text>
+<text x="303.3333333333333" y="282.7" class="lbl"><tspan fill="#2a78d6">●</tspan> 2.21</text>
 <text x="409.3333333333333" y="104" class="ttl">Latency p99 · chat, non-stream</text>
 <text x="409.3333333333333" y="119" class="sub">ms · log scale · lower is better</text>
 <line x1="409.3333333333333" y1="316.0" x2="644.6666666666666" y2="316.0" class="grid"/>
@@ -61,33 +66,38 @@
 <text x="403.3333333333333" y="135.0" class="tick" text-anchor="end">100</text>
 <line x1="409.3333333333333" y1="316" x2="644.6666666666666" y2="316" class="axis"/>
 <text x="409.3" y="332" class="tick" text-anchor="middle">Jun 25 16:08</text>
-<text x="487.8" y="332" class="tick" text-anchor="middle">Jun 25 18:25</text>
-<text x="566.2" y="332" class="tick" text-anchor="middle">Jul 21</text>
-<text x="644.7" y="332" class="tick" text-anchor="middle">Aug 20</text>
-<path d="M409.3,284.9 L487.8,296.4 L566.2,284.9 L644.7,288.8" class="line" stroke="#2a78d6"/>
+<text x="468.2" y="332" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="527.0" y="332" class="tick" text-anchor="middle">Jul 21</text>
+<text x="585.8" y="332" class="tick" text-anchor="middle">Aug 20</text>
+<text x="644.7" y="332" class="tick" text-anchor="middle">Sep 18</text>
+<path d="M409.3,284.9 L468.2,296.4 L527.0,284.9 L585.8,288.8 L644.7,295.2" class="line" stroke="#2a78d6"/>
 <circle cx="409.3" cy="284.9" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="487.8" cy="296.4" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="566.2" cy="284.9" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="644.7" cy="288.8" r="4" fill="#2a78d6" class="dot"/>
-<path d="M409.3,227.8 L487.8,236.4 L566.2,228.3 L644.7,233.3" class="line" stroke="#eb6834"/>
+<circle cx="468.2" cy="296.4" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="527.0" cy="284.9" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="585.8" cy="288.8" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="644.7" cy="295.2" r="4" fill="#2a78d6" class="dot"/>
+<path d="M409.3,227.8 L468.2,236.4 L527.0,228.3 L585.8,233.3 L644.7,232.9" class="line" stroke="#eb6834"/>
 <circle cx="409.3" cy="227.8" r="4" fill="#eb6834" class="dot"/>
-<circle cx="487.8" cy="236.4" r="4" fill="#eb6834" class="dot"/>
-<circle cx="566.2" cy="228.3" r="4" fill="#eb6834" class="dot"/>
-<circle cx="644.7" cy="233.3" r="4" fill="#eb6834" class="dot"/>
-<path d="M409.3,195.7 L487.8,204.9 L566.2,201.9 L644.7,207.3" class="line" stroke="#1baf7a"/>
+<circle cx="468.2" cy="236.4" r="4" fill="#eb6834" class="dot"/>
+<circle cx="527.0" cy="228.3" r="4" fill="#eb6834" class="dot"/>
+<circle cx="585.8" cy="233.3" r="4" fill="#eb6834" class="dot"/>
+<circle cx="644.7" cy="232.9" r="4" fill="#eb6834" class="dot"/>
+<path d="M409.3,195.7 L468.2,204.9 L527.0,201.9 L585.8,207.3 L644.7,207.3" class="line" stroke="#1baf7a"/>
 <circle cx="409.3" cy="195.7" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="487.8" cy="204.9" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="566.2" cy="201.9" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="468.2" cy="204.9" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="527.0" cy="201.9" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="585.8" cy="207.3" r="4" fill="#1baf7a" class="dot"/>
 <circle cx="644.7" cy="207.3" r="4" fill="#1baf7a" class="dot"/>
-<path d="M409.3,161.6 L487.8,189.4 L566.2,169.6 L644.7,170.6" class="line" stroke="#eda100"/>
+<path d="M409.3,161.6 L468.2,189.4 L527.0,169.6 L585.8,170.6 L644.7,155.2" class="line" stroke="#eda100"/>
 <circle cx="409.3" cy="161.6" r="4" fill="#eda100" class="dot"/>
-<circle cx="487.8" cy="189.4" r="4" fill="#eda100" class="dot"/>
-<circle cx="566.2" cy="169.6" r="4" fill="#eda100" class="dot"/>
-<circle cx="644.7" cy="170.6" r="4" fill="#eda100" class="dot"/>
-<text x="652.6666666666666" y="174.6" class="lbl"><tspan fill="#eda100">●</tspan> 53.3</text>
+<circle cx="468.2" cy="189.4" r="4" fill="#eda100" class="dot"/>
+<circle cx="527.0" cy="169.6" r="4" fill="#eda100" class="dot"/>
+<circle cx="585.8" cy="170.6" r="4" fill="#eda100" class="dot"/>
+<circle cx="644.7" cy="155.2" r="4" fill="#eda100" class="dot"/>
+<text x="652.6666666666666" y="159.2" class="lbl"><tspan fill="#eda100">●</tspan> 68.5</text>
 <text x="652.6666666666666" y="211.3" class="lbl"><tspan fill="#1baf7a">●</tspan> 29.4</text>
-<text x="652.6666666666666" y="237.3" class="lbl"><tspan fill="#eb6834">●</tspan> 19.2</text>
-<text x="652.6666666666666" y="292.8" class="lbl"><tspan fill="#2a78d6">●</tspan> 7.79</text>
+<text x="652.6666666666666" y="236.9" class="lbl"><tspan fill="#eb6834">●</tspan> 19.3</text>
+<text x="652.6666666666666" y="299.2" class="lbl"><tspan fill="#2a78d6">●</tspan> 7.01</text>
 <text x="758.6666666666666" y="104" class="ttl">Peak throughput</text>
 <text x="758.6666666666666" y="119" class="sub">req/s · log scale · higher is better</text>
 <line x1="758.6666666666666" y1="316.0" x2="994.0" y2="316.0" class="grid"/>
@@ -102,33 +112,38 @@
 <text x="752.6666666666666" y="135.0" class="tick" text-anchor="end">5k</text>
 <line x1="758.6666666666666" y1="316" x2="994.0" y2="316" class="axis"/>
 <text x="758.7" y="332" class="tick" text-anchor="middle">Jun 25 16:08</text>
-<text x="837.1" y="332" class="tick" text-anchor="middle">Jun 25 18:25</text>
-<text x="915.6" y="332" class="tick" text-anchor="middle">Jul 21</text>
-<text x="994.0" y="332" class="tick" text-anchor="middle">Aug 20</text>
-<path d="M758.7,141.9 L837.1,132.8 L915.6,142.6 L994.0,141.8" class="line" stroke="#2a78d6"/>
+<text x="817.5" y="332" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="876.3" y="332" class="tick" text-anchor="middle">Jul 21</text>
+<text x="935.2" y="332" class="tick" text-anchor="middle">Aug 20</text>
+<text x="994.0" y="332" class="tick" text-anchor="middle">Sep 18</text>
+<path d="M758.7,141.9 L817.5,132.8 L876.3,142.6 L935.2,141.8 L994.0,139.1" class="line" stroke="#2a78d6"/>
 <circle cx="758.7" cy="141.9" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="837.1" cy="132.8" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="915.6" cy="142.6" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="994.0" cy="141.8" r="4" fill="#2a78d6" class="dot"/>
-<path d="M758.7,168.0 L837.1,159.5 L915.6,170.8 L994.0,168.9" class="line" stroke="#eb6834"/>
+<circle cx="817.5" cy="132.8" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="876.3" cy="142.6" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="935.2" cy="141.8" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="994.0" cy="139.1" r="4" fill="#2a78d6" class="dot"/>
+<path d="M758.7,168.0 L817.5,159.5 L876.3,170.8 L935.2,168.9 L994.0,182.0" class="line" stroke="#eb6834"/>
 <circle cx="758.7" cy="168.0" r="4" fill="#eb6834" class="dot"/>
-<circle cx="837.1" cy="159.5" r="4" fill="#eb6834" class="dot"/>
-<circle cx="915.6" cy="170.8" r="4" fill="#eb6834" class="dot"/>
-<circle cx="994.0" cy="168.9" r="4" fill="#eb6834" class="dot"/>
-<path d="M758.7,239.8 L837.1,227.2 L915.6,231.1 L994.0,225.0" class="line" stroke="#1baf7a"/>
+<circle cx="817.5" cy="159.5" r="4" fill="#eb6834" class="dot"/>
+<circle cx="876.3" cy="170.8" r="4" fill="#eb6834" class="dot"/>
+<circle cx="935.2" cy="168.9" r="4" fill="#eb6834" class="dot"/>
+<circle cx="994.0" cy="182.0" r="4" fill="#eb6834" class="dot"/>
+<path d="M758.7,239.8 L817.5,227.2 L876.3,231.1 L935.2,225.0 L994.0,225.0" class="line" stroke="#1baf7a"/>
 <circle cx="758.7" cy="239.8" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="837.1" cy="227.2" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="915.6" cy="231.1" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="817.5" cy="227.2" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="876.3" cy="231.1" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="935.2" cy="225.0" r="4" fill="#1baf7a" class="dot"/>
 <circle cx="994.0" cy="225.0" r="4" fill="#1baf7a" class="dot"/>
-<path d="M758.7,309.7 L837.1,288.5 L915.6,300.0 L994.0,297.6" class="line" stroke="#eda100"/>
+<path d="M758.7,309.7 L817.5,288.5 L876.3,300.0 L935.2,297.6 L994.0,303.3" class="line" stroke="#eda100"/>
 <circle cx="758.7" cy="309.7" r="4" fill="#eda100" class="dot"/>
-<circle cx="837.1" cy="288.5" r="4" fill="#eda100" class="dot"/>
-<circle cx="915.6" cy="300.0" r="4" fill="#eda100" class="dot"/>
-<circle cx="994.0" cy="297.6" r="4" fill="#eda100" class="dot"/>
-<text x="1002.0" y="145.8" class="lbl"><tspan fill="#2a78d6">●</tspan> 4,212</text>
-<text x="1002.0" y="172.9" class="lbl"><tspan fill="#eb6834">●</tspan> 2,624</text>
+<circle cx="817.5" cy="288.5" r="4" fill="#eda100" class="dot"/>
+<circle cx="876.3" cy="300.0" r="4" fill="#eda100" class="dot"/>
+<circle cx="935.2" cy="297.6" r="4" fill="#eda100" class="dot"/>
+<circle cx="994.0" cy="303.3" r="4" fill="#eda100" class="dot"/>
+<text x="1002.0" y="143.1" class="lbl"><tspan fill="#2a78d6">●</tspan> 4,416</text>
+<text x="1002.0" y="186.0" class="lbl"><tspan fill="#eb6834">●</tspan> 2,086</text>
 <text x="1002.0" y="229.0" class="lbl"><tspan fill="#1baf7a">●</tspan> 982</text>
-<text x="1002.0" y="301.6" class="lbl"><tspan fill="#eda100">●</tspan> 276</text>
+<text x="1002.0" y="307.3" class="lbl"><tspan fill="#eda100">●</tspan> 250</text>
 <text x="60.0" y="366" class="ttl">Peak RAM under load</text>
 <text x="60.0" y="381" class="sub">MB · log scale · lower is better</text>
 <line x1="60.0" y1="578.0" x2="295.3333333333333" y2="578.0" class="grid"/>
@@ -149,33 +164,38 @@
 <text x="54.0" y="397.0" class="tick" text-anchor="end">5k</text>
 <line x1="60.0" y1="578" x2="295.3333333333333" y2="578" class="axis"/>
 <text x="60.0" y="594" class="tick" text-anchor="middle">Jun 25 16:08</text>
-<text x="138.4" y="594" class="tick" text-anchor="middle">Jun 25 18:25</text>
-<text x="216.9" y="594" class="tick" text-anchor="middle">Jul 21</text>
-<text x="295.3" y="594" class="tick" text-anchor="middle">Aug 20</text>
-<path d="M60.0,560.2 L138.4,557.5 L216.9,555.2 L295.3,541.3" class="line" stroke="#2a78d6"/>
+<text x="118.8" y="594" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="177.7" y="594" class="tick" text-anchor="middle">Jul 21</text>
+<text x="236.5" y="594" class="tick" text-anchor="middle">Aug 20</text>
+<text x="295.3" y="594" class="tick" text-anchor="middle">Sep 18</text>
+<path d="M60.0,560.2 L118.8,557.5 L177.7,555.2 L236.5,541.3 L295.3,571.6" class="line" stroke="#2a78d6"/>
 <circle cx="60.0" cy="560.2" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="138.4" cy="557.5" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="216.9" cy="555.2" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="295.3" cy="541.3" r="4" fill="#2a78d6" class="dot"/>
-<path d="M60.0,514.3 L138.4,512.4 L216.9,502.2 L295.3,504.9" class="line" stroke="#eb6834"/>
+<circle cx="118.8" cy="557.5" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="177.7" cy="555.2" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="236.5" cy="541.3" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="295.3" cy="571.6" r="4" fill="#2a78d6" class="dot"/>
+<path d="M60.0,514.3 L118.8,512.4 L177.7,502.2 L236.5,504.9 L295.3,500.6" class="line" stroke="#eb6834"/>
 <circle cx="60.0" cy="514.3" r="4" fill="#eb6834" class="dot"/>
-<circle cx="138.4" cy="512.4" r="4" fill="#eb6834" class="dot"/>
-<circle cx="216.9" cy="502.2" r="4" fill="#eb6834" class="dot"/>
-<circle cx="295.3" cy="504.9" r="4" fill="#eb6834" class="dot"/>
-<path d="M60.0,519.9 L138.4,520.6 L216.9,520.9 L295.3,521.2" class="line" stroke="#1baf7a"/>
+<circle cx="118.8" cy="512.4" r="4" fill="#eb6834" class="dot"/>
+<circle cx="177.7" cy="502.2" r="4" fill="#eb6834" class="dot"/>
+<circle cx="236.5" cy="504.9" r="4" fill="#eb6834" class="dot"/>
+<circle cx="295.3" cy="500.6" r="4" fill="#eb6834" class="dot"/>
+<path d="M60.0,519.9 L118.8,520.6 L177.7,520.9 L236.5,521.2 L295.3,521.2" class="line" stroke="#1baf7a"/>
 <circle cx="60.0" cy="519.9" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="138.4" cy="520.6" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="216.9" cy="520.9" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="118.8" cy="520.6" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="177.7" cy="520.9" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="236.5" cy="521.2" r="4" fill="#1baf7a" class="dot"/>
 <circle cx="295.3" cy="521.2" r="4" fill="#1baf7a" class="dot"/>
-<path d="M60.0,447.3 L138.4,420.3 L216.9,420.4 L295.3,423.0" class="line" stroke="#eda100"/>
+<path d="M60.0,447.3 L118.8,420.3 L177.7,420.4 L236.5,423.0 L295.3,437.5" class="line" stroke="#eda100"/>
 <circle cx="60.0" cy="447.3" r="4" fill="#eda100" class="dot"/>
-<circle cx="138.4" cy="420.3" r="4" fill="#eda100" class="dot"/>
-<circle cx="216.9" cy="420.4" r="4" fill="#eda100" class="dot"/>
-<circle cx="295.3" cy="423.0" r="4" fill="#eda100" class="dot"/>
-<text x="303.3333333333333" y="427.0" class="lbl"><tspan fill="#eda100">●</tspan> 2,092</text>
-<text x="303.3333333333333" y="508.9" class="lbl"><tspan fill="#eb6834">●</tspan> 180</text>
+<circle cx="118.8" cy="420.3" r="4" fill="#eda100" class="dot"/>
+<circle cx="177.7" cy="420.4" r="4" fill="#eda100" class="dot"/>
+<circle cx="236.5" cy="423.0" r="4" fill="#eda100" class="dot"/>
+<circle cx="295.3" cy="437.5" r="4" fill="#eda100" class="dot"/>
+<text x="303.3333333333333" y="441.5" class="lbl"><tspan fill="#eda100">●</tspan> 1,357</text>
+<text x="303.3333333333333" y="504.6" class="lbl"><tspan fill="#eb6834">●</tspan> 204</text>
 <text x="303.3333333333333" y="525.2" class="lbl"><tspan fill="#1baf7a">●</tspan> 110</text>
-<text x="303.3333333333333" y="545.3" class="lbl"><tspan fill="#2a78d6">●</tspan> 60.1</text>
+<text x="303.3333333333333" y="575.6" class="lbl"><tspan fill="#2a78d6">●</tspan> 24.2</text>
 <text x="409.3333333333333" y="366" class="ttl">Cold start to first 200</text>
 <text x="409.3333333333333" y="381" class="sub">s · log scale · lower is better</text>
 <line x1="409.3333333333333" y1="578.0" x2="644.6666666666666" y2="578.0" class="grid"/>
@@ -194,33 +214,38 @@
 <text x="403.3333333333333" y="397.0" class="tick" text-anchor="end">50</text>
 <line x1="409.3333333333333" y1="578" x2="644.6666666666666" y2="578" class="axis"/>
 <text x="409.3" y="594" class="tick" text-anchor="middle">Jun 25 16:08</text>
-<text x="487.8" y="594" class="tick" text-anchor="middle">Jun 25 18:25</text>
-<text x="566.2" y="594" class="tick" text-anchor="middle">Jul 21</text>
-<text x="644.7" y="594" class="tick" text-anchor="middle">Aug 20</text>
-<path d="M409.3,567.2 L487.8,573.3 L566.2,569.1 L644.7,561.4" class="line" stroke="#2a78d6"/>
+<text x="468.2" y="594" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="527.0" y="594" class="tick" text-anchor="middle">Jul 21</text>
+<text x="585.8" y="594" class="tick" text-anchor="middle">Aug 20</text>
+<text x="644.7" y="594" class="tick" text-anchor="middle">Sep 18</text>
+<path d="M409.3,567.2 L468.2,573.3 L527.0,569.1 L585.8,561.4 L644.7,573.9" class="line" stroke="#2a78d6"/>
 <circle cx="409.3" cy="567.2" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="487.8" cy="573.3" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="566.2" cy="569.1" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="644.7" cy="561.4" r="4" fill="#2a78d6" class="dot"/>
-<path d="M409.3,474.1 L487.8,472.2 L566.2,484.0 L644.7,474.2" class="line" stroke="#eb6834"/>
+<circle cx="468.2" cy="573.3" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="527.0" cy="569.1" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="585.8" cy="561.4" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="644.7" cy="573.9" r="4" fill="#2a78d6" class="dot"/>
+<path d="M409.3,474.1 L468.2,472.2 L527.0,484.0 L585.8,474.2 L644.7,463.5" class="line" stroke="#eb6834"/>
 <circle cx="409.3" cy="474.1" r="4" fill="#eb6834" class="dot"/>
-<circle cx="487.8" cy="472.2" r="4" fill="#eb6834" class="dot"/>
-<circle cx="566.2" cy="484.0" r="4" fill="#eb6834" class="dot"/>
-<circle cx="644.7" cy="474.2" r="4" fill="#eb6834" class="dot"/>
-<path d="M409.3,547.5 L487.8,548.4 L566.2,546.9 L644.7,550.8" class="line" stroke="#1baf7a"/>
+<circle cx="468.2" cy="472.2" r="4" fill="#eb6834" class="dot"/>
+<circle cx="527.0" cy="484.0" r="4" fill="#eb6834" class="dot"/>
+<circle cx="585.8" cy="474.2" r="4" fill="#eb6834" class="dot"/>
+<circle cx="644.7" cy="463.5" r="4" fill="#eb6834" class="dot"/>
+<path d="M409.3,547.5 L468.2,548.4 L527.0,546.9 L585.8,550.8 L644.7,550.8" class="line" stroke="#1baf7a"/>
 <circle cx="409.3" cy="547.5" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="487.8" cy="548.4" r="4" fill="#1baf7a" class="dot"/>
-<circle cx="566.2" cy="546.9" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="468.2" cy="548.4" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="527.0" cy="546.9" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="585.8" cy="550.8" r="4" fill="#1baf7a" class="dot"/>
 <circle cx="644.7" cy="550.8" r="4" fill="#1baf7a" class="dot"/>
-<path d="M409.3,442.6 L487.8,420.9 L566.2,415.9 L644.7,419.4" class="line" stroke="#eda100"/>
+<path d="M409.3,442.6 L468.2,420.9 L527.0,415.9 L585.8,419.4 L644.7,427.7" class="line" stroke="#eda100"/>
 <circle cx="409.3" cy="442.6" r="4" fill="#eda100" class="dot"/>
-<circle cx="487.8" cy="420.9" r="4" fill="#eda100" class="dot"/>
-<circle cx="566.2" cy="415.9" r="4" fill="#eda100" class="dot"/>
-<circle cx="644.7" cy="419.4" r="4" fill="#eda100" class="dot"/>
-<text x="652.6666666666666" y="423.4" class="lbl"><tspan fill="#eda100">●</tspan> 26.5</text>
-<text x="652.6666666666666" y="478.2" class="lbl"><tspan fill="#eb6834">●</tspan> 6.71</text>
+<circle cx="468.2" cy="420.9" r="4" fill="#eda100" class="dot"/>
+<circle cx="527.0" cy="415.9" r="4" fill="#eda100" class="dot"/>
+<circle cx="585.8" cy="419.4" r="4" fill="#eda100" class="dot"/>
+<circle cx="644.7" cy="427.7" r="4" fill="#eda100" class="dot"/>
+<text x="652.6666666666666" y="431.7" class="lbl"><tspan fill="#eda100">●</tspan> 21.5</text>
+<text x="652.6666666666666" y="467.5" class="lbl"><tspan fill="#eb6834">●</tspan> 8.79</text>
 <text x="652.6666666666666" y="554.8" class="lbl"><tspan fill="#1baf7a">●</tspan> 0.99</text>
-<text x="652.6666666666666" y="567.8" class="lbl"><tspan fill="#2a78d6">●</tspan> 0.76</text>
+<text x="652.6666666666666" y="577.9" class="lbl"><tspan fill="#2a78d6">●</tspan> 0.55</text>
 <text x="758.6666666666666" y="366" class="ttl">Image size, compressed</text>
 <text x="758.6666666666666" y="381" class="sub">MB · log scale · lower is better</text>
 <line x1="758.6666666666666" y1="578.0" x2="994.0" y2="578.0" class="grid"/>
@@ -237,23 +262,28 @@
 <text x="752.6666666666666" y="397.0" class="tick" text-anchor="end">500</text>
 <line x1="758.6666666666666" y1="578" x2="994.0" y2="578" class="axis"/>
 <text x="758.7" y="594" class="tick" text-anchor="middle">Jun 25 16:08</text>
-<text x="837.1" y="594" class="tick" text-anchor="middle">Jun 25 18:25</text>
-<text x="915.6" y="594" class="tick" text-anchor="middle">Jul 21</text>
-<text x="994.0" y="594" class="tick" text-anchor="middle">Aug 20</text>
-<path d="M915.6,553.6 L994.0,561.8" class="line" stroke="#2a78d6"/>
-<circle cx="915.6" cy="553.6" r="4" fill="#2a78d6" class="dot"/>
-<circle cx="994.0" cy="561.8" r="4" fill="#2a78d6" class="dot"/>
-<path d="M915.6,480.8 L994.0,480.0" class="line" stroke="#eb6834"/>
-<circle cx="915.6" cy="480.8" r="4" fill="#eb6834" class="dot"/>
-<circle cx="994.0" cy="480.0" r="4" fill="#eb6834" class="dot"/>
-<path d="M915.6,495.4 L994.0,495.4" class="line" stroke="#1baf7a"/>
-<circle cx="915.6" cy="495.4" r="4" fill="#1baf7a" class="dot"/>
+<text x="817.5" y="594" class="tick" text-anchor="middle">Jun 25 18:25</text>
+<text x="876.3" y="594" class="tick" text-anchor="middle">Jul 21</text>
+<text x="935.2" y="594" class="tick" text-anchor="middle">Aug 20</text>
+<text x="994.0" y="594" class="tick" text-anchor="middle">Sep 18</text>
+<path d="M876.3,553.6 L935.2,561.8 L994.0,544.0" class="line" stroke="#2a78d6"/>
+<circle cx="876.3" cy="553.6" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="935.2" cy="561.8" r="4" fill="#2a78d6" class="dot"/>
+<circle cx="994.0" cy="544.0" r="4" fill="#2a78d6" class="dot"/>
+<path d="M876.3,480.8 L935.2,480.0 L994.0,477.6" class="line" stroke="#eb6834"/>
+<circle cx="876.3" cy="480.8" r="4" fill="#eb6834" class="dot"/>
+<circle cx="935.2" cy="480.0" r="4" fill="#eb6834" class="dot"/>
+<circle cx="994.0" cy="477.6" r="4" fill="#eb6834" class="dot"/>
+<path d="M876.3,495.4 L935.2,495.4 L994.0,495.4" class="line" stroke="#1baf7a"/>
+<circle cx="876.3" cy="495.4" r="4" fill="#1baf7a" class="dot"/>
+<circle cx="935.2" cy="495.4" r="4" fill="#1baf7a" class="dot"/>
 <circle cx="994.0" cy="495.4" r="4" fill="#1baf7a" class="dot"/>
-<path d="M915.6,412.9 L994.0,410.3" class="line" stroke="#eda100"/>
-<circle cx="915.6" cy="412.9" r="4" fill="#eda100" class="dot"/>
-<circle cx="994.0" cy="410.3" r="4" fill="#eda100" class="dot"/>
-<text x="1002.0" y="414.3" class="lbl"><tspan fill="#eda100">●</tspan> 354</text>
-<text x="1002.0" y="484.0" class="lbl"><tspan fill="#eb6834">●</tspan> 80.3</text>
+<path d="M876.3,412.9 L935.2,410.3 L994.0,409.7" class="line" stroke="#eda100"/>
+<circle cx="876.3" cy="412.9" r="4" fill="#eda100" class="dot"/>
+<circle cx="935.2" cy="410.3" r="4" fill="#eda100" class="dot"/>
+<circle cx="994.0" cy="409.7" r="4" fill="#eda100" class="dot"/>
+<text x="1002.0" y="413.7" class="lbl"><tspan fill="#eda100">●</tspan> 358</text>
+<text x="1002.0" y="481.6" class="lbl"><tspan fill="#eb6834">●</tspan> 84.5</text>
 <text x="1002.0" y="499.4" class="lbl"><tspan fill="#1baf7a">●</tspan> 57.9</text>
-<text x="1002.0" y="565.8" class="lbl"><tspan fill="#2a78d6">●</tspan> 14.1</text>
+<text x="1002.0" y="548.0" class="lbl"><tspan fill="#2a78d6">●</tspan> 20.6</text>
 </svg>
