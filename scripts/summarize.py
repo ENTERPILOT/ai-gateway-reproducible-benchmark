@@ -24,7 +24,7 @@ import os
 import re
 import statistics
 
-TARGETS = ["baseline", "gomodel", "litellm", "portkey", "bifrost"]
+TARGETS = ["baseline", "gomodel", "litellm", "portkey", "bifrost", "tensorzero", "omniroute"]
 VARIANTS = [
     ("chat", "nonstream"), ("chat", "stream"),
     ("responses", "nonstream"), ("responses", "stream"),
@@ -100,6 +100,18 @@ def agg_variant(trials):
         "gap_p50": med(field(["inter_chunk", "p50_ms"])),
         "gap_p99": med(field(["inter_chunk", "p99_ms"])),
     }
+
+
+def peak_mem(res):
+    """Peak RSS = the larger of the idle sample and the under-load peak (in place).
+
+    The idle sample is taken right after warm-up; a runtime that GCs under load can
+    show a lower "peak" than "idle", which reads as nonsense in the tables."""
+    ul = res.setdefault("under_load", {})
+    vals = [v for v in (res.get("idle_mem_mb"), ul.get("peak_mem_mb")) if isinstance(v, (int, float))]
+    if vals:
+        ul["peak_mem_mb"] = max(vals)
+    return ul.get("peak_mem_mb")
 
 
 # ── capacity sweep ────────────────────────────────────────────────────────────
@@ -204,6 +216,7 @@ def main():
         res = load(os.path.join(rd, f"{t}_resources.json")) or {}
         startup = load(os.path.join(rd, f"{t}_startup.json")) or {}
         ul = res.get("under_load", {})
+        peak_mem(res)
         load_rps = res.get("load_rps") or 0
         cpu = ul.get("avg_cpu_pct") or 0
         eff = (load_rps / cpu) if cpu else None

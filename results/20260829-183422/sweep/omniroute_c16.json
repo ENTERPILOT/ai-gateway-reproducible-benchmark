@@ -1,0 +1,33 @@
+{
+  "capped": 16,
+  "concurrency": 16,
+  "dialect": "chat",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {},
+  "measure": "throughput",
+  "mode": "nonstream",
+  "ok": 401,
+  "requests": 417,
+  "rps": 50.11902765377794,
+  "total_latency": {
+    "avg_ms": 311.9,
+    "max_ms": 754.78,
+    "min_ms": 158,
+    "p50_ms": 292.44,
+    "p90_ms": 356.27,
+    "p95_ms": 421.55,
+    "p99_ms": 665.98
+  },
+  "ttft": {
+    "avg_ms": 311.9,
+    "max_ms": 754.78,
+    "min_ms": 158,
+    "p50_ms": 292.44,
+    "p90_ms": 356.27,
+    "p95_ms": 421.55,
+    "p99_ms": 665.98
+  },
+  "url": "http://omniroute:20128/v1/chat/completions",
+  "wall_ms": 8000
+}

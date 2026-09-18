@@ -1,0 +1,37 @@
+# OmniRoute (Next.js/Node). It has no config file: providers live in its SQLite
+# database and are normally added through the dashboard, so bootstrap.mjs runs
+# next to the server and registers the mock as an OpenAI-compatible provider
+# through the management API (dashboard password -> provider node -> connection).
+# Cold start therefore includes that seeding, i.e. time to the first routable request.
+services:
+  omniroute:
+    profiles: ["omniroute"]
+    image: ${OMNIROUTE_IMAGE:?set by run-on-instance.sh}
+    depends_on: [mock]
+    ports:
+      - "${OMNIROUTE_HOST_PORT:-20128}:20128"
+    # The image's entrypoint execs its arguments; the seeder runs in the background
+    # while the server stays PID 1 (so docker stop reaches it).
+    command: ["sh", "-c", "node /bench/bootstrap.mjs & exec node dev/run-standalone.mjs"]
+    volumes:
+      - ./bootstrap.mjs:/bench/bootstrap.mjs:ro
+    environment:
+      # Required secrets (bench-only values) and the dashboard password bootstrap.mjs logs in with.
+      - JWT_SECRET=bench-jwt-secret-bench-jwt-secret-bench
+      - API_KEY_SECRET=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      - INITIAL_PASSWORD=benchpass
+      # Env-defined inference key: always valid, no key row to create.
+      - OMNIROUTE_API_KEY=sk-bench-test-key
+      # The mock lives on a private docker address; OmniRoute's SSRF guard blocks those by default.
+      - OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS=true
+      # Config parity with the peers (no throttling, no per-request logging, no background jobs):
+      #  - OmniRoute wraps every API-key provider in a request queue by default
+      #    (60 req/min, 350 ms minimum gap, 6 concurrent), which serializes the
+      #    benchmark at ~3 req/s. No other gateway throttles upstream calls.
+      - RATE_LIMIT_AUTO_ENABLE=false
+      - ENABLE_REQUEST_LOGS=false
+      - APP_LOG_TO_FILE=false
+      - OMNIROUTE_DISABLE_BACKGROUND_SERVICES=true
+      - OMNIROUTE_SKIP_DB_HEALTHCHECK=1
+      - DISABLE_SQLITE_AUTO_BACKUP=true
+    restart: "no"

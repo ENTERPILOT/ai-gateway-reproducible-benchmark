@@ -26,10 +26,10 @@ _Latency = median across 5 trial(s); p99 shows the min–max across trials. rps 
 | litellm | responses/stream | 42575/0 | 149 | 76.95 | 84.85 | 95.45 | 94.24–127.44 | 76.92 | 0.00 | 74.48 |
 | litellm | messages/nonstream | 61549/0 | 205 | 49.25 | 72.68 | 81.98 | 64.59–94.55 |  |  | 49.00 |
 | litellm | messages/stream | 36525/0 | 121 | 77.37 | 88.15 | 99.81 | 94.58–147.18 | 39.45 | 0.93 | 74.69 |
-| portkey | chat/nonstream | 100000/0 | 899 | 9.14 | 14.97 | 29.37 | 28.14–29.43 |  |  | 8.88 |
-| portkey | chat/stream | 100000/0 | 347 | 27.95 | 31.66 | 44.25 | 42.87–44.45 | 27.93 | 0.00 | 25.97 |
-| portkey | responses/nonstream | 100000/0 | 946 | 9.13 | 13.63 | 27.76 | 27.06–28.51 |  |  | 8.87 |
-| portkey | responses/stream | 100000/0 | 347 | 27.98 | 31.59 | 44.02 | 42.94–44.07 | 27.96 | 0.00 | 25.51 |
+| portkey | chat/nonstream | 100000/0 | 836 | 9.87 | 16.22 | 32.14 | 31.89–32.42 |  |  | 9.61 |
+| portkey | chat/stream | 100000/0 | 338 | 28.56 | 32.97 | 47.07 | 46.64–48.61 | 28.54 | 0.00 | 26.58 |
+| portkey | responses/nonstream | 100000/0 | 876 | 9.88 | 14.73 | 29.82 | 29.41–31.00 |  |  | 9.62 |
+| portkey | responses/stream | 100000/0 | 337 | 28.65 | 32.98 | 46.12 | 45.90–47.41 | 28.62 | 0.00 | 26.18 |
 | portkey | messages/nonstream | 0/100000 | 0 | — | — | — | — |  |  | — |
 | portkey | messages/stream | 0/100000 | 0 | — | — | — | — | — | — | — |
 | bifrost | chat/nonstream | 100000/0 | 1999 | 4.09 | 9.87 | 19.33 | 18.92–20.19 |  |  | 3.83 |
@@ -38,6 +38,12 @@ _Latency = median across 5 trial(s); p99 shows the min–max across trials. rps 
 | bifrost | responses/stream | 100000/0 | 587 | 15.93 | 26.38 | 37.73 | 37.29–38.05 | 13.19 | 0.00 | 13.46 |
 | bifrost | messages/nonstream | 100000/0 | 1934 | 4.30 | 10.01 | 19.19 | 18.62–20.38 |  |  | 4.05 |
 | bifrost | messages/stream | 100000/0 | 696 | 12.95 | 23.15 | 35.70 | 35.28–36.15 | 11.12 | 0.00 | 10.27 |
+| tensorzero | chat/nonstream | 60166/0 | 201 | 49.97 | 50.27 | 60.15 | 60.13–60.17 |  |  | 49.71 |
+| tensorzero | chat/stream | 97373/0 | 325 | 46.84 | 50.29 | 60.18 | 60.14–60.19 | 1.74 | 0.00 | 44.86 |
+| tensorzero | responses/nonstream | 0/100000 | 0 | — | — | — | — |  |  | — |
+| tensorzero | responses/stream | 0/100000 | 0 | — | — | — | — | — | — | — |
+| tensorzero | messages/nonstream | 0/100000 | 0 | — | — | — | — |  |  | — |
+| tensorzero | messages/stream | 0/100000 | 0 | — | — | — | — | — | — | — |
 
 ## Capacity (chat non-stream, sustained req/s by concurrency)
 
@@ -46,8 +52,9 @@ _Latency = median across 5 trial(s); p99 shows the min–max across trials. rps 
 | baseline | 13480 | 20250 | 26736 | 28108 | 29203 | 29214 | 27707 | 27484 | 27236 | 29214 | 32 | 8 |
 | gomodel | 2175 | 3313 | 3721 | 4033 | 4285 | 4416 | 4267 | 3931 | 3435 | 4416 | 32 | 16 |
 | litellm | 183 | 188 | 248 | 202 | 250 | 202 | 239 | 245 | 220 | 250 | 16 | 4 |
-| portkey | 686 | 952 | 955 | 982 | 970 | 946 | 950 | 884 | 887 | 982 | 8 | 2 |
+| portkey | 625 | 867 | 907 | 898 | 877 | 890 | 851 | 831 | 822 | 907 | 4 | 2 |
 | bifrost | 1364 | 1935 | 2014 | 2065 | 2085 | 2086 | 2040 | 1969 | 1933 | 2086 | 32 | 4 |
+| tensorzero | 20 | 40 | 80 | 159 | 315 | 637 | 1273 | 2561 | 4498 | 4498 | 256 | 256 |
 
 ## Resources
 
@@ -55,5 +62,6 @@ _Latency = median across 5 trial(s); p99 shows the min–max across trials. rps 
 |---|--:|--:|--:|--:|--:|--:|--:|--:|
 | gomodel | 20.6 | 60.2 | 0.55 | 66.7 | 24.2 | 107.6 | 4145 | 38.5 |
 | litellm | 357.9 | 1119.2 | 21.49 | 1357.8 | 1356.8 | 99.4 | 192 | 1.9 |
-| portkey | 57.9 | 177.4 | 0.99 | 120.1 | 110.0 | 114.4 | 962 | 8.4 |
+| portkey | 57.9 | 177.4 | 2.17 | 123.9 | 115.2 | 117.1 | 892 | 7.6 |
 | bifrost | 84.5 | 255.1 | 8.79 | 287.2 | 203.8 | 135.1 | 2013 | 14.9 |
+| tensorzero | 88.0 | 246.9 | 0.58 | 105.2 | 80.6 | 10.0 | 198 | 19.8 |

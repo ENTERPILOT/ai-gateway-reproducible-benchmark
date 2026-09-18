@@ -6,7 +6,8 @@
       "gomodel": "enterpilot/gomodel:latest",
       "litellm": "litellm/litellm:main-stable",
       "bifrost": "maximhq/bifrost:latest",
-      "portkey": "portkeyai/gateway:latest"
+      "portkey": "portkeyai/gateway:latest",
+      "tensorzero": "tensorzero/gateway:latest"
     },
     "n_requests": 20000,
     "max_variant_seconds": 60,
@@ -23,9 +24,10 @@
     "cpus": 2,
     "kernel": "6.18.48-107.148.amzn2023.x86_64",
     "copied_gateways": {
-      "portkey": "20260820-183544"
+      "portkey": "20260829-183422",
+      "tensorzero": "20260829-183422"
     },
-    "copied_note": "portkey was not re-measured in this run; its raw results were copied verbatim from run 20260820-183544 (image portkeyai/gateway:latest, version 1.15.2, same c7i.large / N=20000 / c=10 / 5 trials)"
+    "copied_note": "portkey and tensorzero were not re-measured in this run (no new release since 20260829-183422); their raw results are copied verbatim from that run, which used the same c7i.large / N=20000 / c=10 / 5 trials"
   },
   "trials": 5,
   "latency": {
@@ -418,85 +420,85 @@
         "trials": 5,
         "ok": 100000,
         "failed": 0,
-        "rps": 898.8206413790159,
+        "rps": 836.4487097992845,
         "rps_spread": [
-          891.1388250253731,
-          907.7464354887451
+          830.7549255017155,
+          840.7259144869269
         ],
-        "p50": 9.14,
-        "p90": 14.97,
-        "p99": 29.37,
+        "p50": 9.87,
+        "p90": 16.22,
+        "p99": 32.14,
         "p99_spread": [
-          28.14,
-          29.43
+          31.89,
+          32.42
         ],
-        "ttft_p50": 9.14,
+        "ttft_p50": 9.87,
         "gap_p50": null,
         "gap_p99": null,
-        "overhead_p50": 8.88
+        "overhead_p50": 9.61
       },
       "chat/stream": {
         "trials": 5,
         "ok": 100000,
         "failed": 0,
-        "rps": 346.9055365905506,
+        "rps": 337.8885240044722,
         "rps_spread": [
-          345.21800073754207,
-          347.88855246369906
+          336.7179776726315,
+          341.66705238570626
         ],
-        "p50": 27.95,
-        "p90": 31.66,
-        "p99": 44.25,
+        "p50": 28.56,
+        "p90": 32.97,
+        "p99": 47.07,
         "p99_spread": [
-          42.87,
-          44.45
+          46.64,
+          48.61
         ],
-        "ttft_p50": 27.93,
+        "ttft_p50": 28.54,
         "gap_p50": 0,
         "gap_p99": 0,
-        "overhead_p50": 25.97
+        "overhead_p50": 26.58
       },
       "responses/nonstream": {
         "trials": 5,
         "ok": 100000,
         "failed": 0,
-        "rps": 946.168929654314,
+        "rps": 876.4890625188382,
         "rps_spread": [
-          941.9022208322492,
-          960.1379263017907
+          860.6269603762977,
+          883.0079963733942
         ],
-        "p50": 9.13,
-        "p90": 13.63,
-        "p99": 27.76,
+        "p50": 9.88,
+        "p90": 14.73,
+        "p99": 29.82,
         "p99_spread": [
-          27.06,
-          28.51
+          29.41,
+          31
         ],
-        "ttft_p50": 9.13,
+        "ttft_p50": 9.88,
         "gap_p50": null,
         "gap_p99": null,
-        "overhead_p50": 8.870000000000001
+        "overhead_p50": 9.620000000000001
       },
       "responses/stream": {
         "trials": 5,
         "ok": 100000,
         "failed": 0,
-        "rps": 346.8003864063361,
+        "rps": 337.07071529101745,
         "rps_spread": [
-          345.766110702611,
-          347.4212877802637
+          335.6667319492306,
+          339.99600929650086
         ],
-        "p50": 27.98,
-        "p90": 31.59,
-        "p99": 44.02,
+        "p50": 28.65,
+        "p90": 32.98,
+        "p99": 46.12,
         "p99_spread": [
-          42.94,
-          44.07
+          45.9,
+          47.41
         ],
-        "ttft_p50": 27.96,
+        "ttft_p50": 28.62,
         "gap_p50": 0,
         "gap_p99": 0,
-        "overhead_p50": 25.51
+        "overhead_p50": 26.18
       },
       "messages/nonstream": {
         "trials": 5,
@@ -668,6 +670,134 @@
         "gap_p99": 1.69,
         "overhead_p50": 10.27
       }
+    },
+    "tensorzero": {
+      "chat/nonstream": {
+        "trials": 5,
+        "ok": 60166,
+        "failed": 0,
+        "rps": 200.5470487596578,
+        "rps_spread": [
+          200.2461957661595,
+          200.84617538001046
+        ],
+        "p50": 49.97,
+        "p90": 50.27,
+        "p99": 60.15,
+        "p99_spread": [
+          60.13,
+          60.17
+        ],
+        "ttft_p50": 49.97,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": 49.71
+      },
+      "chat/stream": {
+        "trials": 5,
+        "ok": 97373,
+        "failed": 0,
+        "rps": 324.88054136952223,
+        "rps_spread": [
+          321.3191861797425,
+          329.4897457684026
+        ],
+        "p50": 46.84,
+        "p90": 50.29,
+        "p99": 60.18,
+        "p99_spread": [
+          60.14,
+          60.19
+        ],
+        "ttft_p50": 1.74,
+        "gap_p50": 0,
+        "gap_p99": 46.65,
+        "overhead_p50": 44.86000000000001
+      },
+      "responses/nonstream": {
+        "trials": 5,
+        "ok": 0,
+        "failed": 100000,
+        "rps": 0,
+        "rps_spread": [
+          0,
+          0
+        ],
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p99_spread": [
+          null,
+          null
+        ],
+        "ttft_p50": null,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": null
+      },
+      "responses/stream": {
+        "trials": 5,
+        "ok": 0,
+        "failed": 100000,
+        "rps": 0,
+        "rps_spread": [
+          0,
+          0
+        ],
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p99_spread": [
+          null,
+          null
+        ],
+        "ttft_p50": null,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": null
+      },
+      "messages/nonstream": {
+        "trials": 5,
+        "ok": 0,
+        "failed": 100000,
+        "rps": 0,
+        "rps_spread": [
+          0,
+          0
+        ],
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p99_spread": [
+          null,
+          null
+        ],
+        "ttft_p50": null,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": null
+      },
+      "messages/stream": {
+        "trials": 5,
+        "ok": 0,
+        "failed": 100000,
+        "rps": 0,
+        "rps_spread": [
+          0,
+          0
+        ],
+        "p50": null,
+        "p90": null,
+        "p99": null,
+        "p99_spread": [
+          null,
+          null
+        ],
+        "ttft_p50": null,
+        "gap_p50": null,
+        "gap_p99": null,
+        "overhead_p50": null
+      }
     }
   },
   "capacity": {
@@ -720,19 +850,19 @@
       }
     },
     "portkey": {
-      "peak_rps": 982.3140746708822,
-      "peak_c": 8,
+      "peak_rps": 907.0757212972891,
+      "peak_c": 4,
       "knee_c": 2,
       "curve": {
-        "1": 685.5932584890177,
-        "2": 952.2303041874169,
-        "4": 955.212943946659,
-        "8": 982.3140746708822,
-        "16": 969.8081429763009,
-        "32": 945.5895728096602,
-        "64": 949.5324635369025,
-        "128": 883.853333853,
-        "256": 886.7335719600201
+        "1": 625.2186745124462,
+        "2": 866.9310076798141,
+        "4": 907.0757212972891,
+        "8": 897.6950550031921,
+        "16": 876.932898410013,
+        "32": 889.6564483313877,
+        "64": 850.669243207129,
+        "128": 830.5323544311543,
+        "256": 822.1928483819172
       }
     },
     "bifrost": {
@@ -749,6 +879,22 @@
         "64": 2040.4434601193122,
         "128": 1969.2429939244278,
         "256": 1932.6424147231562
+      }
+    },
+    "tensorzero": {
+      "peak_rps": 4498.239813916102,
+      "peak_c": 256,
+      "knee_c": 256,
+      "curve": {
+        "1": 19.873886913278703,
+        "2": 39.62145894106616,
+        "4": 79.86958687868409,
+        "8": 159.1054520853868,
+        "16": 314.69327166003757,
+        "32": 636.9967493835924,
+        "64": 1272.7043986536958,
+        "128": 2561.161418037265,
+        "256": 4498.239813916102
       }
     }
   },
@@ -769,7 +915,7 @@
         "idle_mem_mb": 66.72,
         "load_rps": 4144.9415466116425,
         "under_load": {
-          "peak_mem_mb": 24.2,
+          "peak_mem_mb": 66.72,
           "avg_mem_mb": 23.9,
           "avg_cpu_pct": 107.6,
           "samples": 7
@@ -798,7 +944,7 @@
         "idle_mem_mb": 1357.82,
         "load_rps": 192.1205492477453,
         "under_load": {
-          "peak_mem_mb": 1356.8,
+          "peak_mem_mb": 1357.82,
           "avg_mem_mb": 1356.8,
           "avg_cpu_pct": 99.4,
           "samples": 7
@@ -818,27 +964,27 @@
         "version": "1.15.2",
         "size_bytes": 185997410,
         "size_mb": 177.4,
-        "compressed_bytes": 60703338,
+        "compressed_bytes": 60703429,
         "compressed_mb": 57.9,
         "digest": "portkeyai/gateway@sha256:97f094d9c8a764cbfaa2a7138c0017b247ca923bb06db1b4c13b7f8a33b5200d"
       },
       "resources": {
         "gateway": "portkey",
-        "idle_mem_mb": 120.1,
-        "load_rps": 961.7052960976994,
+        "idle_mem_mb": 123.9,
+        "load_rps": 891.8519151612327,
         "under_load": {
-          "peak_mem_mb": 110.0,
-          "avg_mem_mb": 105.7,
-          "avg_cpu_pct": 114.4,
+          "peak_mem_mb": 123.9,
+          "avg_mem_mb": 110.8,
+          "avg_cpu_pct": 117.1,
           "samples": 7
         }
       },
       "startup": {
         "gateway": "portkey",
-        "startup_s": 0.987,
+        "startup_s": 2.173,
         "ready": 1
       },
-      "rps_per_cpu_pct": 8.40651482602884
+      "rps_per_cpu_pct": 7.616156406159118
     },
     "bifrost": {
       "image": {
@@ -856,7 +1002,7 @@
         "idle_mem_mb": 287.2,
         "load_rps": 2012.5346135371544,
         "under_load": {
-          "peak_mem_mb": 203.8,
+          "peak_mem_mb": 287.2,
           "avg_mem_mb": 188.8,
           "avg_cpu_pct": 135.1,
           "samples": 7
@@ -868,6 +1014,35 @@
         "ready": 1
       },
       "rps_per_cpu_pct": 14.896629263783527
+    },
+    "tensorzero": {
+      "image": {
+        "gateway": "tensorzero",
+        "image": "tensorzero/gateway:latest",
+        "version": "2026.6.0",
+        "size_bytes": 258843298,
+        "size_mb": 246.9,
+        "compressed_bytes": 92311148,
+        "compressed_mb": 88.0,
+        "digest": "tensorzero/gateway@sha256:c939db4f27e41aa3a37a87909430a0c8f898f9c952f402dcbdc17e1708597bcb"
+      },
+      "resources": {
+        "gateway": "tensorzero",
+        "idle_mem_mb": 105.2,
+        "load_rps": 197.7754357898438,
+        "under_load": {
+          "peak_mem_mb": 105.2,
+          "avg_mem_mb": 80.5,
+          "avg_cpu_pct": 10.0,
+          "samples": 7
+        }
+      },
+      "startup": {
+        "gateway": "tensorzero",
+        "startup_s": 0.578,
+        "ready": 1
+      },
+      "rps_per_cpu_pct": 19.777543578984382
     }
   }
 }

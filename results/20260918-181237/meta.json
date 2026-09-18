@@ -5,7 +5,8 @@
     "gomodel": "enterpilot/gomodel:latest",
     "litellm": "litellm/litellm:main-stable",
     "bifrost": "maximhq/bifrost:latest",
-    "portkey": "portkeyai/gateway:latest"
+    "portkey": "portkeyai/gateway:latest",
+    "tensorzero": "tensorzero/gateway:latest"
   },
   "n_requests": 20000,
   "max_variant_seconds": 60,
@@ -22,7 +23,8 @@
   "cpus": 2,
   "kernel": "6.18.48-107.148.amzn2023.x86_64",
   "copied_gateways": {
-    "portkey": "20260820-183544"
+    "portkey": "20260829-183422",
+    "tensorzero": "20260829-183422"
   },
-  "copied_note": "portkey was not re-measured in this run; its raw results were copied verbatim from run 20260820-183544 (image portkeyai/gateway:latest, version 1.15.2, same c7i.large / N=20000 / c=10 / 5 trials)"
+  "copied_note": "portkey and tensorzero were not re-measured in this run (no new release since 20260829-183422); their raw results are copied verbatim from that run, which used the same c7i.large / N=20000 / c=10 / 5 trials"
 }
