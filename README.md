@@ -15,18 +15,20 @@ streaming), not model or network latency.
 > (`docs/2026-06-25_aws_gateway_benchmark`) on 20 August 2026. The runs from June and
 > July 2026 were made with that original harness and are part of the history.
 
-Latest run — `20260829-183422` · 2026-08-29 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
+Latest run — `20260918-212130` · 2026-09-18 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
 
 | Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
 |---|---|---|--:|--:|--:|--:|--:|--:|:-:|
-| GoModel | 0.1.83 | `enterpilot/gomodel:latest` | 2.35 | 8.80 | 3,610 | 42.7 | 0.58 | 14.4 | 6/6 |
-| Bifrost | 2.0.0 | `maximhq/bifrost:latest` | 3.82 | 27.80 | 1,992 | 275.8 | 8.67 | 81.6 | 5/6 |
-| Portkey | 1.15.2 | `portkeyai/gateway:latest` | 9.87 | 32.14 | 907 | 123.9 | 2.17 | 57.9 | 4/6 |
-| LiteLLM | 1.98.0 | `litellm/litellm:main-stable` | 42.44 | 61.93 | 250 | 2,173 | 31.25 | 353.9 | 6/6 |
-| TensorZero | 2026.6.0 | `tensorzero/gateway:latest` | 49.97 | 60.15 | 4,498 | 105.2 | 0.58 | 88.0 | 2/6 |
-| OmniRoute | 3.8.50 | `diegosouzapw/omniroute:latest` | 186.63 | 456.23 | 53 | 936.1 | 6.41 | 1,182 | 6/6 |
+| GoModel | 0.1.94 | `enterpilot/gomodel:latest` | 2.34 | 7.19 | 4,215 | 91.8 | 1.03 | 20.6 | 6/6 |
+| Bifrost | 2.2.1 | `maximhq/bifrost:latest` | 4.30 | 20.50 | 1,984 | 298.9 | 7.80 | 84.6 | 6/6 |
+| Portkey † | 1.15.2 | `portkeyai/gateway:latest` | 9.87 | 32.14 | 907 | 123.9 | 2.17 | 57.9 | 4/6 |
+| LiteLLM | 1.101.0 | `litellm/litellm:main-stable` | 44.05 | 67.30 | 242 | 1,352 | 22.08 | 357.9 | 6/6 |
+| TensorZero † | 2026.6.0 | `tensorzero/gateway:latest` | 49.97 | 60.15 | 4,498 | 105.2 | 0.58 | 88.0 | 2/6 |
+| OmniRoute | 3.8.50 | `diegosouzapw/omniroute:latest` | 170.84 | 399.48 | 56 | 1,098 | 10.76 | 1,182 | 6/6 |
 
-All 6 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
+† not re-measured in this run — values carried over from an earlier run on the same hardware and load: Portkey (from `20260829-183422`), TensorZero (from `20260829-183422`).
+
+All 7 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
 <!-- history:end -->
 
 ## Run it

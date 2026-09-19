@@ -25,7 +25,8 @@
         "chat_p99_ms": 19.1,
         "chat_overhead_p50_ms": 6.949999999999999,
         "chat_stream_ttft_p50_ms": 18.85,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -42,7 +43,8 @@
         "chat_p99_ms": 223.05,
         "chat_overhead_p50_ms": -1.13,
         "chat_stream_ttft_p50_ms": 39.08,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -59,7 +61,8 @@
         "chat_p99_ms": 72.77,
         "chat_overhead_p50_ms": 36.46,
         "chat_stream_ttft_p50_ms": 67.3,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "ghcr.io/berriai/litellm:main-stable",
@@ -76,7 +79,8 @@
         "chat_p99_ms": 96.96,
         "chat_overhead_p50_ms": 69.71,
         "chat_stream_ttft_p50_ms": 366.63,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   },
@@ -106,7 +110,8 @@
         "chat_p99_ms": 8.295,
         "chat_overhead_p50_ms": 1.86,
         "chat_stream_ttft_p50_ms": 5.535,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -123,7 +128,8 @@
         "chat_p99_ms": 21.005000000000003,
         "chat_overhead_p50_ms": 2.6050000000000004,
         "chat_stream_ttft_p50_ms": 10.34,
-        "variants_served": "5/6"
+        "variants_served": "5/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -140,7 +146,8 @@
         "chat_p99_ms": 35.474999999999994,
         "chat_overhead_p50_ms": 11.094999999999999,
         "chat_stream_ttft_p50_ms": 28.675,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "ghcr.io/berriai/litellm:main-stable",
@@ -157,7 +164,8 @@
         "chat_p99_ms": 61.71,
         "chat_overhead_p50_ms": 44.155,
         "chat_stream_ttft_p50_ms": 197.7,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   },
@@ -187,7 +195,8 @@
         "chat_p99_ms": 6.875,
         "chat_overhead_p50_ms": 1.58,
         "chat_stream_ttft_p50_ms": 4.71,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -204,7 +213,8 @@
         "chat_p99_ms": 18.27,
         "chat_overhead_p50_ms": 2.275,
         "chat_stream_ttft_p50_ms": 9.02,
-        "variants_served": "5/6"
+        "variants_served": "5/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -221,7 +231,8 @@
         "chat_p99_ms": 30.535,
         "chat_overhead_p50_ms": 9.465,
         "chat_stream_ttft_p50_ms": 27.97,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "ghcr.io/berriai/litellm:main-stable",
@@ -238,7 +249,8 @@
         "chat_p99_ms": 39.26,
         "chat_overhead_p50_ms": 30.325000000000003,
         "chat_stream_ttft_p50_ms": 151.935,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   },
@@ -268,7 +280,8 @@
         "chat_p99_ms": 8.3,
         "chat_overhead_p50_ms": 1.83,
         "chat_stream_ttft_p50_ms": 5.34,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -285,7 +298,8 @@
         "chat_p99_ms": 20.85,
         "chat_overhead_p50_ms": 2.73,
         "chat_stream_ttft_p50_ms": 10.54,
-        "variants_served": "5/6"
+        "variants_served": "5/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -302,7 +316,8 @@
         "chat_p99_ms": 32.02,
         "chat_overhead_p50_ms": 9.770000000000001,
         "chat_stream_ttft_p50_ms": 28.27,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "ghcr.io/berriai/litellm:main-stable",
@@ -319,7 +334,8 @@
         "chat_p99_ms": 54.18,
         "chat_overhead_p50_ms": 38.42,
         "chat_stream_ttft_p50_ms": 175.23,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   },
@@ -349,7 +365,8 @@
         "chat_p99_ms": 7.79,
         "chat_overhead_p50_ms": 1.83,
         "chat_stream_ttft_p50_ms": 5.6,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -366,7 +383,8 @@
         "chat_p99_ms": 19.23,
         "chat_overhead_p50_ms": 2.81,
         "chat_stream_ttft_p50_ms": 12.56,
-        "variants_served": "5/6"
+        "variants_served": "5/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -383,7 +401,8 @@
         "chat_p99_ms": 29.37,
         "chat_overhead_p50_ms": 8.91,
         "chat_stream_ttft_p50_ms": 27.93,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "litellm/litellm:main-stable",
@@ -400,7 +419,8 @@
         "chat_p99_ms": 53.32,
         "chat_overhead_p50_ms": 35.620000000000005,
         "chat_stream_ttft_p50_ms": 142.94,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   },
@@ -430,7 +450,8 @@
         "chat_p99_ms": 8.8,
         "chat_overhead_p50_ms": 2.09,
         "chat_stream_ttft_p50_ms": 5.9,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "bifrost": {
         "image": "maximhq/bifrost:latest",
@@ -447,7 +468,8 @@
         "chat_p99_ms": 27.8,
         "chat_overhead_p50_ms": 3.5599999999999996,
         "chat_stream_ttft_p50_ms": 14.8,
-        "variants_served": "5/6"
+        "variants_served": "5/6",
+        "copied_from": null
       },
       "portkey": {
         "image": "portkeyai/gateway:latest",
@@ -464,7 +486,8 @@
         "chat_p99_ms": 32.14,
         "chat_overhead_p50_ms": 9.61,
         "chat_stream_ttft_p50_ms": 28.54,
-        "variants_served": "4/6"
+        "variants_served": "4/6",
+        "copied_from": null
       },
       "litellm": {
         "image": "litellm/litellm:main-stable",
@@ -481,7 +504,8 @@
         "chat_p99_ms": 61.93,
         "chat_overhead_p50_ms": 42.18,
         "chat_stream_ttft_p50_ms": 166.3,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
       },
       "tensorzero": {
         "image": "tensorzero/gateway:latest",
@@ -498,7 +522,8 @@
         "chat_p99_ms": 60.15,
         "chat_overhead_p50_ms": 49.71,
         "chat_stream_ttft_p50_ms": 1.74,
-        "variants_served": "2/6"
+        "variants_served": "2/6",
+        "copied_from": null
       },
       "omniroute": {
         "image": "diegosouzapw/omniroute:latest",
@@ -515,7 +540,129 @@
         "chat_p99_ms": 456.23,
         "chat_overhead_p50_ms": 186.37,
         "chat_stream_ttft_p50_ms": 215.61,
-        "variants_served": "6/6"
+        "variants_served": "6/6",
+        "copied_from": null
+      }
+    }
+  },
+  {
+    "run": "20260918-212130",
+    "date": "2026-09-18T23:08:28Z",
+    "instance_type": "c7i.large",
+    "cpus": 2,
+    "n_requests": 20000,
+    "concurrency": 10,
+    "repeats": 5,
+    "litellm_num_workers": 2,
+    "harness_commit": "bd2f5eb",
+    "gateways": {
+      "gomodel": {
+        "image": "enterpilot/gomodel:latest",
+        "version": "0.1.94",
+        "digest": "enterpilot/gomodel@sha256:945b0ef599f72e5ba23ea63ccc150c0003ec0c60bd666453b59a6b875258ad8a",
+        "image_mb": 20.6,
+        "startup_s": 1.035,
+        "idle_mem_mb": 91.75,
+        "peak_mem_mb": 91.75,
+        "avg_cpu_pct": 107.7,
+        "rps_per_cpu_pct": 36.75169463351163,
+        "peak_rps": 4215.246206068252,
+        "chat_p50_ms": 2.34,
+        "chat_p99_ms": 7.19,
+        "chat_overhead_p50_ms": 2.07,
+        "chat_stream_ttft_p50_ms": 5.14,
+        "variants_served": "6/6",
+        "copied_from": null
+      },
+      "bifrost": {
+        "image": "maximhq/bifrost:latest",
+        "version": "2.2.1",
+        "digest": "maximhq/bifrost@sha256:a8942692af7b4b89196cd8fc33653b7353488dfd58b24078fe793b8574a8084b",
+        "image_mb": 84.6,
+        "startup_s": 7.804,
+        "idle_mem_mb": 298.9,
+        "peak_mem_mb": 298.9,
+        "avg_cpu_pct": 133.4,
+        "rps_per_cpu_pct": 14.459704845352771,
+        "peak_rps": 1983.5800014910794,
+        "chat_p50_ms": 4.3,
+        "chat_p99_ms": 20.5,
+        "chat_overhead_p50_ms": 4.029999999999999,
+        "chat_stream_ttft_p50_ms": 12.66,
+        "variants_served": "6/6",
+        "copied_from": null
+      },
+      "portkey": {
+        "image": "portkeyai/gateway:latest",
+        "version": "1.15.2",
+        "digest": "portkeyai/gateway@sha256:97f094d9c8a764cbfaa2a7138c0017b247ca923bb06db1b4c13b7f8a33b5200d",
+        "image_mb": 57.9,
+        "startup_s": 2.173,
+        "idle_mem_mb": 123.9,
+        "peak_mem_mb": 123.9,
+        "avg_cpu_pct": 117.1,
+        "rps_per_cpu_pct": 7.616156406159118,
+        "peak_rps": 907.0757212972891,
+        "chat_p50_ms": 9.87,
+        "chat_p99_ms": 32.14,
+        "chat_overhead_p50_ms": 9.6,
+        "chat_stream_ttft_p50_ms": 28.54,
+        "variants_served": "4/6",
+        "copied_from": "20260829-183422"
+      },
+      "litellm": {
+        "image": "litellm/litellm:main-stable",
+        "version": "1.101.0",
+        "digest": "litellm/litellm@sha256:d295634e09c648dcdb72c4cc2dd226f5fb87823a73e88cbbed6f205e4deb044b",
+        "image_mb": 357.9,
+        "startup_s": 22.081,
+        "idle_mem_mb": 1351.68,
+        "peak_mem_mb": 1351.68,
+        "avg_cpu_pct": 188.1,
+        "rps_per_cpu_pct": 1.2102908399905028,
+        "peak_rps": 241.8298618214876,
+        "chat_p50_ms": 44.05,
+        "chat_p99_ms": 67.3,
+        "chat_overhead_p50_ms": 43.779999999999994,
+        "chat_stream_ttft_p50_ms": 174.38,
+        "variants_served": "6/6",
+        "copied_from": null
+      },
+      "tensorzero": {
+        "image": "tensorzero/gateway:latest",
+        "version": "2026.6.0",
+        "digest": "tensorzero/gateway@sha256:c939db4f27e41aa3a37a87909430a0c8f898f9c952f402dcbdc17e1708597bcb",
+        "image_mb": 88.0,
+        "startup_s": 0.578,
+        "idle_mem_mb": 105.2,
+        "peak_mem_mb": 105.2,
+        "avg_cpu_pct": 10.0,
+        "rps_per_cpu_pct": 19.777543578984382,
+        "peak_rps": 4498.239813916102,
+        "chat_p50_ms": 49.97,
+        "chat_p99_ms": 60.15,
+        "chat_overhead_p50_ms": 49.699999999999996,
+        "chat_stream_ttft_p50_ms": 1.74,
+        "variants_served": "2/6",
+        "copied_from": "20260829-183422"
+      },
+      "omniroute": {
+        "image": "diegosouzapw/omniroute:latest",
+        "version": "3.8.50",
+        "digest": "diegosouzapw/omniroute@sha256:085c57adf499a8aaa9f35ccde95c0df9c11bd9ecd18d6c9edbf3b68b8079ba9d",
+        "image_mb": 1182.3,
+        "startup_s": 10.758,
+        "idle_mem_mb": 1094.66,
+        "peak_mem_mb": 1097.7,
+        "avg_cpu_pct": 104.3,
+        "rps_per_cpu_pct": 0.46784880044853056,
+        "peak_rps": 55.986799404443026,
+        "chat_p50_ms": 170.84,
+        "chat_p99_ms": 399.48,
+        "chat_overhead_p50_ms": 170.57,
+        "chat_stream_ttft_p50_ms": 200.19,
+        "variants_served": "6/6",
+        "copied_from": null
       }
     }
   }
