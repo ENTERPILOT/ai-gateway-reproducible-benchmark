@@ -128,6 +128,8 @@ def record(stamp, summary):
             "chat_overhead_p50_ms": dig(lat, "chat/nonstream", "overhead_p50"),
             "chat_stream_ttft_p50_ms": dig(lat, "chat/stream", "ttft_p50"),
             "variants_served": f"{len(variants)}/{len(lat)}",
+            # Not re-measured in this run: values carried over from an earlier run.
+            "copied_from": (meta.get("copied_gateways") or {}).get(gw),
         }
     return rec
 
@@ -267,13 +269,22 @@ def build_svg(runs, instance_type, path):
 
 # ── Markdown ──────────────────────────────────────────────────────────────────
 def run_table(rec):
+    """Markdown table for one run; rows carried over from an earlier run are footnoted."""
     L = ["| Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |",
          "|---|---|---|--:|--:|--:|--:|--:|--:|:-:|"]
+    carried = []
     for gw, g in rec["gateways"].items():
         img = (g.get("image") or "?").split("@")[0]
-        L.append(f"| {label(gw)} | {g.get('version') or '—'} | `{img}` | {fmt(g['chat_p50_ms'], 2)} | {fmt(g['chat_p99_ms'], 2)} | "
+        mark = ""
+        if g.get("copied_from"):
+            mark = " †"
+            carried.append(f"{label(gw)} (from `{g['copied_from']}`)")
+        L.append(f"| {label(gw)}{mark} | {g.get('version') or '—'} | `{img}` | {fmt(g['chat_p50_ms'], 2)} | {fmt(g['chat_p99_ms'], 2)} | "
                  f"{fmt(g['peak_rps'], 0)} | {fmt(g['peak_mem_mb'])} | {fmt(g['startup_s'], 2)} | "
                  f"{fmt(g['image_mb'])} | {g['variants_served']} |")
+    if carried:
+        L += ["", "† not re-measured in this run — values carried over from an earlier run on the "
+              "same hardware and load: " + ", ".join(carried) + "."]
     return "\n".join(L)
 
 

@@ -1,0 +1,19 @@
+{
+  "capped": 0,
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {
+    "HTTP 404: {\"error\":\"Route not found: POST /anthropic/v1/messages\"}": 20000
+  },
+  "failed": 20000,
+  "inter_chunk": {},
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 0,
+  "requests": 20000,
+  "rps": 0,
+  "total_latency": {},
+  "ttft": {},
+  "url": "http://tensorzero:3000/anthropic/v1/messages",
+  "wall_ms": 3269
+}
