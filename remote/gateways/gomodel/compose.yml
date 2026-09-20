@@ -21,11 +21,15 @@ services:
       - MODEL_LIST_URL=off
       # Config parity with the no-retry / no-breaker peers (LiteLLM, Bifrost):
       #  - retries off (default is 3).
-      #  - circuit breaker effectively disabled. It has no on/off env, so set an
-      #    unreachable failure threshold. Under the c=128 sweep a few transient
-      #    upstream errors would otherwise trip the default breaker (threshold 5)
-      #    and blanket-503 every request. No other gateway has a breaker.
+      #  - circuit breaker off. Under the c=128 sweep a few transient upstream
+      #    errors would otherwise trip the default breaker (threshold 5) and
+      #    blanket-503 every request. No other gateway has a breaker.
+      #    Both switches are set on purpose: CIRCUIT_BREAKER_ENABLED is the
+      #    documented one, and the unreachable threshold is what the runs before
+      #    2026-09 used on their own (same effect), so it stays as the fallback
+      #    for a pinned GOMODEL_IMAGE old enough to predate the env switch.
       - RETRY_MAX_RETRIES=0
+      - CIRCUIT_BREAKER_ENABLED=false
       - CIRCUIT_BREAKER_FAILURE_THRESHOLD=1000000000
       - STORAGE_TYPE=sqlite
       - SQLITE_PATH=/app/data/gomodel-bench.db

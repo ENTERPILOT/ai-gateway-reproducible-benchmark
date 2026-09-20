@@ -118,7 +118,11 @@ probes; if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
   recommended one worker per vCPU, per-variant warm-up before measuring. Per-request
   logging is off on every gateway (GoModel's audit log and usage tracking, Bifrost's
   request logs, LiteLLM's spend logs, OmniRoute's request logs, TensorZero's
-  observability store), so the numbers are routing overhead only.
+  observability store), so the numbers are routing overhead only. Prometheus
+  metrics are the one setting left at each gateway's own default rather than
+  equalized: off for GoModel (its default), on for Bifrost and TensorZero, which
+  serve `/metrics` out of the box. That is a counter update per request, far
+  below the differences reported here — but it is a difference, not parity.
 - **Coverage:** a gateway that does not serve a dialect gets that variant recorded as
   failed and a lower `Variants` count: Portkey has no Anthropic Messages endpoint in
   this single-provider setup, TensorZero exposes only Chat Completions on its
