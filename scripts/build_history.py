@@ -58,6 +58,8 @@ def ordered(names):
 METRICS = [
     ("chat_p50_ms", "Latency p50 · chat, non-stream", "ms", True),
     ("chat_p99_ms", "Latency p99 · chat, non-stream", "ms", True),
+    ("chat_stream_ttft_p50_ms", "Time to first token p50 · chat, stream", "ms", True),
+    ("chat_stream_p99_ms", "Latency p99 · chat, stream", "ms", True),
     ("peak_rps", "Peak throughput", "req/s", False),
     ("peak_mem_mb", "Peak RAM under load", "MB", True),
     ("startup_s", "Cold start to first 200", "s", True),
@@ -127,6 +129,7 @@ def record(stamp, summary):
             "chat_p99_ms": dig(lat, "chat/nonstream", "p99"),
             "chat_overhead_p50_ms": dig(lat, "chat/nonstream", "overhead_p50"),
             "chat_stream_ttft_p50_ms": dig(lat, "chat/stream", "ttft_p50"),
+            "chat_stream_p99_ms": dig(lat, "chat/stream", "p99"),
             "variants_served": f"{len(variants)}/{len(lat)}",
             # Not re-measured in this run: values carried over from an earlier run.
             "copied_from": (meta.get("copied_gateways") or {}).get(gw),
@@ -230,13 +233,13 @@ def panel(x0, y0, w, h, title, unit, runs, key, lower_better):
         ends[k][0] = min(ends[k][0], ends[k + 1][0] - 13)
     for y, gw, v, x in ends:
         out.append(f'<text x="{px + pw + 8}" y="{y + 4:.1f}" class="lbl">'
-                   f'<tspan fill="{color(gw)}">●</tspan> {fmt(v, 2 if v < 10 else 1 if v < 100 else 0)}</text>')
+                   f'<tspan fill="{color(gw)}">●</tspan> {fmt(float(v), 2 if v < 10 else 1 if v < 100 else 0)}</text>')
     return "\n".join(out)
 
 
 def build_svg(runs, instance_type, path):
-    cols, rows = 3, 2
-    W, PH = 1080, 262
+    cols, rows = 4, 2
+    W, PH = 1400, 262
     top = 88
     H = top + rows * PH + 16
     legend = "".join(

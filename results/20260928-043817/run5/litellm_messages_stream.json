@@ -1,0 +1,41 @@
+{
+  "capped": 1,
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {
+    "avg_ms": 1.35,
+    "max_ms": 27.22,
+    "min_ms": 0,
+    "p50_ms": 0.56,
+    "p90_ms": 2.54,
+    "p95_ms": 4.5,
+    "p99_ms": 9.75
+  },
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 7084,
+  "requests": 7085,
+  "rps": 118.06583262207633,
+  "total_latency": {
+    "avg_ms": 80.48,
+    "max_ms": 179.47,
+    "min_ms": 16.71,
+    "p50_ms": 47.24,
+    "p90_ms": 136.54,
+    "p95_ms": 140.26,
+    "p99_ms": 147.4
+  },
+  "ttft": {
+    "avg_ms": 37.46,
+    "max_ms": 106.1,
+    "min_ms": 10.32,
+    "p50_ms": 22.55,
+    "p90_ms": 70.86,
+    "p95_ms": 74.79,
+    "p99_ms": 80.88
+  },
+  "url": "http://litellm:4000/v1/messages",
+  "wall_ms": 60000
+}
