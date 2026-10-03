@@ -9,6 +9,8 @@ Writes results/history.json          one compact record per run
 
 Runs on a different instance type than the chart's reference type still land
 in history.json and HISTORY.md; the chart only plots like-for-like hardware.
+A run whose meta.json names a `superseded_by` rerun is kept in history.json and
+HISTORY.md (marked as superseded) but left off the chart.
 Stdlib only.
 """
 import argparse
@@ -102,6 +104,9 @@ def record(stamp, summary):
         "repeats": meta.get("repeats", summary.get("trials")),
         "litellm_num_workers": meta.get("litellm_num_workers", 1),
         "harness_commit": meta.get("harness_commit"),
+        # Repeated with corrected settings; the rerun named here replaces it on the chart.
+        "superseded_by": meta.get("superseded_by"),
+        "superseded_note": meta.get("superseded_note"),
         "gateways": {},
     }
     for gw in ordered(g for g in (summary.get("latency") or {}) if g != "baseline"):
@@ -322,8 +327,11 @@ def write_history_md(records, path):
          "numbers in machine-readable form.", "",
          "![History chart](charts/history.svg)", ""]
     for rec in reversed(records):
-        L += [f"## {short_date(rec['date'])} — {rec['run']}", "", run_caption(rec), "",
-              run_table(rec), "",
+        L += [f"## {short_date(rec['date'])} — {rec['run']}", "", run_caption(rec), ""]
+        if rec.get("superseded_by"):
+            L += [f"> **Superseded by `{rec['superseded_by']}`, not charted.** "
+                  f"{rec.get('superseded_note') or ''}".rstrip(), ""]
+        L += [run_table(rec), "",
               f"Full tables: [`{rec['run']}/summary.md`]({rec['run']}/summary.md)", ""]
     with open(path, "w") as f:
         f.write("\n".join(L))
@@ -369,7 +377,7 @@ def main():
         json.dump(records, f, indent=2)
 
     inst = args.instance_type or records[-1]["instance_type"]
-    charted = [r for r in records if r["instance_type"] == inst]
+    charted = [r for r in records if r["instance_type"] == inst and not r.get("superseded_by")]
     build_svg(charted, inst, os.path.join(RESULTS, "charts", "history.svg"))
     write_history_md(records, os.path.join(RESULTS, "HISTORY.md"))
     update_readme(records[-1], len(records))

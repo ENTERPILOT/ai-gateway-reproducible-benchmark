@@ -94,6 +94,8 @@ Full tables: [`20260625-182538/summary.md`](20260625-182538/summary.md)
 
 `20260625-160856` · 2026-06-25 · AWS **c7i.large** (2 vCPU) · N=8,000 per variant · c=10 · 2 trial(s) · LiteLLM workers=1
 
+> **Superseded by `20260625-182538`, not charted.** LiteLLM ran with a single worker here. The run was repeated the same day with identical images, LiteLLM at one worker per vCPU (num_workers=2) and a 200-request warmup; that rerun is the published reference.
+
 | Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
 |---|---|---|--:|--:|--:|--:|--:|--:|:-:|
 | GoModel | — | `gomodel-bench:local` | 2.16 | 8.29 | 4,202 | 51.3 | 0.66 | — | 6/6 |
