@@ -171,6 +171,23 @@ def tick_label(v):
     return f"{v:g}" if v < 1000 else f"{v/1000:g}k"
 
 
+ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
+
+
+def run_labels(runs):
+    """Compact x-axis labels: day.roman-month ("28.IX"), the year appended where it changes
+    from the previous run, and the time as a second line for runs that share a day."""
+    days = [short_date(r["date"]) for r in runs]
+    out = []
+    for i, (r, d) in enumerate(zip(runs, days)):
+        dt = datetime.strptime(d, "%Y-%m-%d")
+        day = f"{dt.day}.{ROMAN[dt.month - 1]}"
+        if i and days[i - 1][:4] != d[:4]:
+            day += f".{dt:%y}"
+        out.append((day, r["date"][11:16] if days.count(d) > 1 else None))
+    return out
+
+
 def panel(x0, y0, w, h, title, unit, runs, key, lower_better):
     """One small-multiple: log-y line chart of `key` per gateway over runs."""
     pad_l, pad_r, pad_t, pad_b = 44, 70, 44, 34
@@ -206,16 +223,16 @@ def panel(x0, y0, w, h, title, unit, runs, key, lower_better):
         out.append(f'<line x1="{px}" y1="{y:.1f}" x2="{px + pw}" y2="{y:.1f}" class="grid"/>')
         out.append(f'<text x="{px - 6}" y="{y + 3:.1f}" class="tick" text-anchor="end">{tick_label(t)}</text>')
     out.append(f'<line x1="{px}" y1="{py + ph}" x2="{px + pw}" y2="{py + ph}" class="axis"/>')
-    seen = {}
-    for i, r in enumerate(runs):
-        d = short_date(r["date"])
-        seen[d] = seen.get(d, 0) + 1
-    for i, r in enumerate(runs):
-        d = short_date(r["date"])
-        label = datetime.strptime(d, "%Y-%m-%d").strftime("%b %-d")
-        if seen[d] > 1:
-            label += " " + r["date"][11:16]
-        out.append(f'<text x="{lx(i):.1f}" y="{py + ph + 16}" class="tick" text-anchor="middle">{label}</text>')
+    labels = run_labels(runs)
+    # thin to every k-th label, counted back from the latest run so it is always labelled
+    widest = max(sum(3.2 if c in "I.:1" else 6.2 for c in s) for pair in labels for s in pair if s) + 6
+    stride = 1 if n == 1 else math.ceil(widest / (pw / (n - 1)))
+    for i, (day, time) in enumerate(labels):
+        if (n - 1 - i) % stride:
+            continue
+        out.append(f'<text x="{lx(i):.1f}" y="{py + ph + 16}" class="tick" text-anchor="middle">{day}</text>')
+        if time:
+            out.append(f'<text x="{lx(i):.1f}" y="{py + ph + 28}" class="tick" text-anchor="middle">{time}</text>')
 
     # end labels, de-overlapped top-to-bottom
     ends = []
