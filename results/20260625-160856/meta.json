@@ -11,5 +11,7 @@
   "gateways": "gomodel,litellm,portkey,bifrost",
   "instance_type": "c7i.large",
   "cpus": 2,
-  "kernel": "6.1.175-219.357.amzn2023.x86_64"
+  "kernel": "6.1.175-219.357.amzn2023.x86_64",
+  "superseded_by": "20260625-182538",
+  "superseded_note": "LiteLLM ran with a single worker here. The run was repeated the same day with identical images, LiteLLM at one worker per vCPU (num_workers=2) and a 200-request warmup; that rerun is the published reference."
 }

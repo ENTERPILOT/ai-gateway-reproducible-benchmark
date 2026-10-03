@@ -9,6 +9,8 @@
     "repeats": 1,
     "litellm_num_workers": 1,
     "harness_commit": null,
+    "superseded_by": null,
+    "superseded_note": null,
     "gateways": {
       "gomodel": {
         "image": "gomodel-bench:local",
@@ -98,6 +100,8 @@
     "repeats": 2,
     "litellm_num_workers": 1,
     "harness_commit": null,
+    "superseded_by": "20260625-182538",
+    "superseded_note": "LiteLLM ran with a single worker here. The run was repeated the same day with identical images, LiteLLM at one worker per vCPU (num_workers=2) and a 200-request warmup; that rerun is the published reference.",
     "gateways": {
       "gomodel": {
         "image": "gomodel-bench:local",
@@ -187,6 +191,8 @@
     "repeats": 2,
     "litellm_num_workers": 2,
     "harness_commit": null,
+    "superseded_by": null,
+    "superseded_note": null,
     "gateways": {
       "gomodel": {
         "image": "gomodel-bench:local",
@@ -276,6 +282,8 @@
     "repeats": 5,
     "litellm_num_workers": 2,
     "harness_commit": null,
+    "superseded_by": null,
+    "superseded_note": null,
     "gateways": {
       "gomodel": {
         "image": "gomodel-bench:local",
@@ -365,6 +373,8 @@
     "repeats": 5,
     "litellm_num_workers": 2,
     "harness_commit": "a5b86b5",
+    "superseded_by": null,
+    "superseded_note": null,
     "gateways": {
       "gomodel": {
         "image": "enterpilot/gomodel:latest",
@@ -454,6 +464,8 @@
     "repeats": 5,
     "litellm_num_workers": 2,
     "harness_commit": "e11a9d7",
+    "superseded_by": null,
+    "superseded_note": null,
     "gateways": {
       "gomodel": {
         "image": "enterpilot/gomodel:latest",
@@ -581,6 +593,8 @@
     "repeats": 5,
     "litellm_num_workers": 2,
     "harness_commit": "bd2f5eb",
+    "superseded_by": null,
+    "superseded_note": null,
     "gateways": {
       "gomodel": {
         "image": "enterpilot/gomodel:latest",
@@ -708,6 +722,8 @@
     "repeats": 5,
     "litellm_num_workers": 2,
     "harness_commit": "1e42d5b",
+    "superseded_by": null,
+    "superseded_note": null,
     "gateways": {
       "gomodel": {
         "image": "enterpilot/gomodel:latest",

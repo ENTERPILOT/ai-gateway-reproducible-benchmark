@@ -35,3 +35,7 @@ older checkout did not know about.
   published as a fresh measurement.
 - Copy carried-over values from the most recent run that measured that gateway on the same
   hardware and load, not from an arbitrary older one.
+- A run that was repeated because its settings were wrong (e.g. a gateway misconfigured) is
+  not deleted. Set `superseded_by` (the rerun's stamp) and `superseded_note` (what was wrong)
+  in its `meta.json` and in the `meta` block of its `summary.json`. The run then stays in
+  `history.json` and `HISTORY.md`, marked as superseded, and is left off the chart.
