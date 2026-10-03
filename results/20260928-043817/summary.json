@@ -8,7 +8,6 @@
       "litellm": "litellm/litellm:main-stable",
       "omniroute": "diegosouzapw/omniroute:latest",
       "portkey": "portkeyai/gateway:latest",
-      "sbproxy": "soapbucket/sbproxy:latest",
       "tensorzero": "tensorzero/gateway:latest"
     },
     "n_requests": 20000,
@@ -21,7 +20,7 @@
     "rest_seconds": 5,
     "sweep_concurrency": "1,2,4,8,16,32,64,128,256",
     "sweep_duration_s": 8,
-    "gateways": "bifrost,gomodel,litellm,omniroute,portkey,sbproxy,tensorzero",
+    "gateways": "bifrost,gomodel,litellm,omniroute,portkey,tensorzero",
     "instance_type": "c7i.large",
     "cpus": 2,
     "kernel": "6.18.48-109.150.amzn2023.x86_64"
@@ -923,134 +922,6 @@
         "gap_p99": 12.94,
         "overhead_p50": 194.16000000000003
       }
-    },
-    "sbproxy": {
-      "chat/nonstream": {
-        "trials": 5,
-        "ok": 100000,
-        "failed": 0,
-        "rps": 4675.481293261186,
-        "rps_spread": [
-          4627.378496754306,
-          4709.123427638786
-        ],
-        "p50": 2.04,
-        "p90": 3.06,
-        "p99": 4.12,
-        "p99_spread": [
-          4.08,
-          4.31
-        ],
-        "ttft_p50": 2.04,
-        "gap_p50": null,
-        "gap_p99": null,
-        "overhead_p50": 1.78
-      },
-      "chat/stream": {
-        "trials": 5,
-        "ok": 100000,
-        "failed": 0,
-        "rps": 1226.2562679735056,
-        "rps_spread": [
-          1198.7719557832636,
-          1255.56802845624
-        ],
-        "p50": 7.76,
-        "p90": 11.39,
-        "p99": 15.09,
-        "p99_spread": [
-          14.71,
-          15.84
-        ],
-        "ttft_p50": 5.82,
-        "gap_p50": 0,
-        "gap_p99": 1.98,
-        "overhead_p50": 5.74
-      },
-      "responses/nonstream": {
-        "trials": 5,
-        "ok": 100000,
-        "failed": 0,
-        "rps": 4539.0006518395285,
-        "rps_spread": [
-          4479.137919746128,
-          4554.116297663181
-        ],
-        "p50": 2.11,
-        "p90": 3.15,
-        "p99": 4.21,
-        "p99_spread": [
-          4.2,
-          4.34
-        ],
-        "ttft_p50": 2.11,
-        "gap_p50": null,
-        "gap_p99": null,
-        "overhead_p50": 1.8299999999999998
-      },
-      "responses/stream": {
-        "trials": 5,
-        "ok": 100000,
-        "failed": 0,
-        "rps": 1102.9668688267398,
-        "rps_spread": [
-          1081.370219487036,
-          1115.5635700614785
-        ],
-        "p50": 8.68,
-        "p90": 12.57,
-        "p99": 16.73,
-        "p99_spread": [
-          16.21,
-          16.94
-        ],
-        "ttft_p50": 6.15,
-        "gap_p50": 0,
-        "gap_p99": 2.39,
-        "overhead_p50": 6.18
-      },
-      "messages/nonstream": {
-        "trials": 5,
-        "ok": 100000,
-        "failed": 0,
-        "rps": 4428.482453779472,
-        "rps_spread": [
-          4299.40440838713,
-          4437.702777111824
-        ],
-        "p50": 2.16,
-        "p90": 3.24,
-        "p99": 4.38,
-        "p99_spread": [
-          4.32,
-          4.88
-        ],
-        "ttft_p50": 2.16,
-        "gap_p50": null,
-        "gap_p99": null,
-        "overhead_p50": 1.8800000000000001
-      },
-      "messages/stream": {
-        "trials": 5,
-        "ok": 100000,
-        "failed": 0,
-        "rps": 1078.3480793945632,
-        "rps_spread": [
-          1071.6852954591361,
-          1096.3760750418437
-        ],
-        "p50": 8.88,
-        "p90": 12.85,
-        "p99": 17.09,
-        "p99_spread": [
-          16.57,
-          17.44
-        ],
-        "ttft_p50": 6.23,
-        "gap_p50": 0,
-        "gap_p99": 2.19,
-        "overhead_p50": 6.210000000000001
-      }
     }
   },
   "capacity": {
@@ -1164,22 +1035,6 @@
         "64": 60.85439378944699,
         "128": 57.854661793888475,
         "256": 59.32182954015878
-      }
-    },
-    "sbproxy": {
-      "peak_rps": 5266.007523755787,
-      "peak_c": 32,
-      "knee_c": 16,
-      "curve": {
-        "1": 2485.0226372581537,
-        "2": 3666.644731044246,
-        "4": 4252.007798720038,
-        "8": 4678.144926525877,
-        "16": 5111.559304985764,
-        "32": 5266.007523755787,
-        "64": 5246.015863359553,
-        "128": 5046.640172251454,
-        "256": 4878.015797073785
       }
     }
   },
@@ -1357,35 +1212,6 @@
         "ready": 1
       },
       "rps_per_cpu_pct": 0.5676025905732917
-    },
-    "sbproxy": {
-      "image": {
-        "gateway": "sbproxy",
-        "image": "soapbucket/sbproxy:latest",
-        "version": "1.14.0",
-        "size_bytes": 177456610,
-        "size_mb": 169.2,
-        "compressed_bytes": 71814106,
-        "compressed_mb": 68.5,
-        "digest": "soapbucket/sbproxy@sha256:21a278fb8ee56cc430ea18a5e8796888d034d46e8e59858780d5a8587d7af390"
-      },
-      "resources": {
-        "gateway": "sbproxy",
-        "idle_mem_mb": 193.7,
-        "load_rps": 4702.112117502899,
-        "under_load": {
-          "peak_mem_mb": 193.7,
-          "avg_mem_mb": 175.4,
-          "avg_cpu_pct": 123.1,
-          "samples": 7
-        }
-      },
-      "startup": {
-        "gateway": "sbproxy",
-        "startup_s": 1.209,
-        "ready": 1
-      },
-      "rps_per_cpu_pct": 38.19749892366287
     }
   }
 }

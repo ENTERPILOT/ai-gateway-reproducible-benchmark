@@ -50,12 +50,6 @@ _Latency = median across 5 trial(s); p99 shows the min–max across trials. rps 
 | omniroute | responses/stream | 14796/0 | 49 | 197.20 | 219.70 | 470.71 | 460.83–474.35 | 188.99 | 0.00 | 194.70 |
 | omniroute | messages/nonstream | 18527/0 | 62 | 154.20 | 189.40 | 393.86 | 363.07–418.56 |  |  | 153.92 |
 | omniroute | messages/stream | 14770/0 | 49 | 196.83 | 221.62 | 468.97 | 451.73–488.35 | 187.19 | 0.00 | 194.16 |
-| sbproxy | chat/nonstream | 100000/0 | 4675 | 2.04 | 3.06 | 4.12 | 4.08–4.31 |  |  | 1.78 |
-| sbproxy | chat/stream | 100000/0 | 1226 | 7.76 | 11.39 | 15.09 | 14.71–15.84 | 5.82 | 0.00 | 5.74 |
-| sbproxy | responses/nonstream | 100000/0 | 4539 | 2.11 | 3.15 | 4.21 | 4.20–4.34 |  |  | 1.83 |
-| sbproxy | responses/stream | 100000/0 | 1103 | 8.68 | 12.57 | 16.73 | 16.21–16.94 | 6.15 | 0.00 | 6.18 |
-| sbproxy | messages/nonstream | 100000/0 | 4428 | 2.16 | 3.24 | 4.38 | 4.32–4.88 |  |  | 1.88 |
-| sbproxy | messages/stream | 100000/0 | 1078 | 8.88 | 12.85 | 17.09 | 16.57–17.44 | 6.23 | 0.00 | 6.21 |
 
 ## Capacity (chat non-stream, sustained req/s by concurrency)
 
@@ -68,7 +62,6 @@ _Latency = median across 5 trial(s); p99 shows the min–max across trials. rps 
 | bifrost | 1328 | 1893 | 1985 | 2045 | 2053 | 2073 | 2079 | 2061 | 1976 | 2079 | 64 | 4 |
 | tensorzero | 20 | 40 | 80 | 161 | 323 | 633 | 1262 | 2552 | 4784 | 4784 | 256 | 256 |
 | omniroute | 57 | 64 | 67 | 64 | 65 | 64 | 61 | 58 | 59 | 67 | 4 | 2 |
-| sbproxy | 2485 | 3667 | 4252 | 4678 | 5112 | 5266 | 5246 | 5047 | 4878 | 5266 | 32 | 16 |
 
 ## Resources
 
@@ -80,4 +73,3 @@ _Latency = median across 5 trial(s); p99 shows the min–max across trials. rps 
 | bifrost | 84.8 | 255.8 | 6.50 | 289.9 | 225.7 | 133.8 | 1996 | 14.9 |
 | tensorzero | 88.0 | 246.9 | 0.60 | 106.7 | 92.0 | 5.7 | 200 | 35.2 |
 | omniroute | 1182.3 | 3950.2 | 6.24 | 946.7 | 954.4 | 105.7 | 60 | 0.6 |
-| sbproxy | 68.5 | 169.2 | 1.21 | 193.7 | 175.8 | 123.1 | 4702 | 38.2 |
