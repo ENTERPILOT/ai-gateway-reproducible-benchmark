@@ -4,6 +4,21 @@ Newest first. Latency is chat/completions non-streaming, median across trials. P
 
 ![History chart](charts/history.svg)
 
+## 2026-09-28 — 20260928-043817
+
+`20260928-043817` · 2026-09-28 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
+
+| Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
+|---|---|---|--:|--:|--:|--:|--:|--:|:-:|
+| GoModel | 0.1.98 | `enterpilot/gomodel:latest` | 2.22 | 6.88 | 4,498 | 73.6 | 0.81 | 20.6 | 6/6 |
+| Bifrost | 2.2.3 | `maximhq/bifrost:latest` | 4.18 | 18.92 | 2,079 | 289.9 | 6.50 | 84.8 | 6/6 |
+| Portkey | 1.15.2 | `portkeyai/gateway:latest` | 9.63 | 29.11 | 934 | 126.7 | 2.30 | 57.9 | 4/6 |
+| LiteLLM | 1.103.0 | `litellm/litellm:main-stable` | 55.76 | 66.60 | 220 | 1,488 | 26.77 | 365.0 | 6/6 |
+| TensorZero | 2026.6.0 | `tensorzero/gateway:latest` | 49.98 | 60.05 | 4,784 | 106.7 | 0.60 | 88.0 | 2/6 |
+| OmniRoute | 3.8.50 | `diegosouzapw/omniroute:latest` | 145.23 | 391.68 | 67 | 954.4 | 6.24 | 1,182 | 6/6 |
+
+Full tables: [`20260928-043817/summary.md`](20260928-043817/summary.md)
+
 ## 2026-09-18 — 20260918-212130
 
 `20260918-212130` · 2026-09-18 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
