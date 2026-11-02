@@ -10,6 +10,9 @@ model_list:
 
 general_settings:
   master_key: null
+  # Recent releases refuse to start without a master key. No gateway auth here, as in
+  # every earlier run and on the other gateways that make it optional.
+  dangerously_permit_weak_or_unset_master_key: true
   disable_spend_logs: true
 
 litellm_settings:
