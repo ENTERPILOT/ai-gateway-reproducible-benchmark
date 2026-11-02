@@ -1,0 +1,1 @@
+{"gateway":"litellm","image":"litellm/litellm:main-stable","version":"1.106.6","size_bytes":1294843678,"size_mb":1234.9,"compressed_bytes":410854094,"compressed_mb":391.8,"gateway_compressed_mb":391.8,"sidecar_images":[],"digest":"litellm/litellm@sha256:37e2dafb088a7723beb998590682957386dfc83ffea1848486f8e0e5cfac0b06"}

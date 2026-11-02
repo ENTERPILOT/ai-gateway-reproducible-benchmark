@@ -271,16 +271,38 @@ func handleResponses(w http.ResponseWriter, r *http.Request) {
 
 func nonStreamResponses(w http.ResponseWriter, e *entry) {
 	rid, mid := nextID("resp-bench"), nextID("msg-bench")
-	resp := merge(map[string]any{
-		"id": rid, "object": "response", "created_at": time.Now().Unix(),
-		"model": "gpt-4o-mini", "status": "completed",
-		"output": []map[string]any{{
-			"type": "message", "id": mid, "role": "assistant",
-			"content": []map[string]any{{"type": "output_text", "text": fullText()}},
-		}},
-		"usage": map[string]any{"input_tokens": 25, "output_tokens": 35, "total_tokens": 60},
-	}, providerExtras())
+	resp := merge(responseObject(rid, mid, "completed", time.Now().Unix()), providerExtras())
 	respond(w, e, resp)
+}
+
+// responseObject is the Response resource in the shape the OpenAI API returns: every
+// field a strict client deserializes is present, because a gateway that translates
+// another dialect onto /v1/responses parses it and would otherwise fail through no
+// fault of its own.
+func responseObject(rid, mid, status string, createdAt int64) map[string]any {
+	output := []map[string]any{}
+	resp := map[string]any{
+		"id": rid, "object": "response", "created_at": createdAt,
+		"model": "gpt-4o-mini", "status": status,
+	}
+	if status == "completed" {
+		output = append(output, messageItem(mid, "completed", []map[string]any{outputTextPart(fullText())}))
+		resp["usage"] = map[string]any{
+			"input_tokens": 25, "input_tokens_details": map[string]any{"cached_tokens": 0},
+			"output_tokens": 35, "output_tokens_details": map[string]any{"reasoning_tokens": 0},
+			"total_tokens": 60,
+		}
+	}
+	resp["output"] = output
+	return resp
+}
+
+func messageItem(mid, status string, content []map[string]any) map[string]any {
+	return map[string]any{"type": "message", "id": mid, "role": "assistant", "status": status, "content": content}
+}
+
+func outputTextPart(text string) map[string]any {
+	return map[string]any{"type": "output_text", "text": text, "annotations": []any{}, "logprobs": []any{}}
 }
 
 func streamResponses(w http.ResponseWriter, e *entry) {
@@ -291,19 +313,31 @@ func streamResponses(w http.ResponseWriter, e *entry) {
 	setStreamResp(e, "response.*")
 	now := time.Now().Unix()
 	rid, mid := nextID("resp-bench"), nextID("msg-bench")
-	send(w, flusher, "response.created", mustJSON(map[string]any{"id": rid, "object": "response", "created_at": now, "model": "gpt-4o-mini", "status": "in_progress", "output": []any{}}))
-	send(w, flusher, "response.output_item.added", mustJSON(map[string]any{"type": "message", "id": mid, "role": "assistant", "content": []any{}}))
-	send(w, flusher, "response.content_part.added", mustJSON(map[string]any{"type": "output_text", "text": ""}))
-	for _, tok := range streamTokens {
-		send(w, flusher, "response.output_text.delta", mustJSON(map[string]any{"type": "response.output_text.delta", "delta": tok}))
+	seq := 0
+	emit := func(event string, fields map[string]any) {
+		fields["type"] = event
+		fields["sequence_number"] = seq
+		seq++
+		send(w, flusher, event, mustJSON(fields))
 	}
-	send(w, flusher, "response.output_text.done", mustJSON(map[string]any{"type": "response.output_text.done", "text": fullText()}))
-	send(w, flusher, "response.completed", mustJSON(map[string]any{
-		"id": rid, "object": "response", "status": "completed",
-		"output": []map[string]any{{"type": "message", "id": mid, "role": "assistant",
-			"content": []map[string]any{{"type": "output_text", "text": fullText()}}}},
-		"usage": map[string]any{"input_tokens": 25, "output_tokens": 35, "total_tokens": 60},
-	}))
+	// part addresses the single output_text part of the single message item.
+	part := func(fields map[string]any) map[string]any {
+		fields["item_id"] = mid
+		fields["output_index"] = 0
+		fields["content_index"] = 0
+		return fields
+	}
+	emit("response.created", map[string]any{"response": responseObject(rid, mid, "in_progress", now)})
+	emit("response.in_progress", map[string]any{"response": responseObject(rid, mid, "in_progress", now)})
+	emit("response.output_item.added", map[string]any{"output_index": 0, "item": messageItem(mid, "in_progress", []map[string]any{})})
+	emit("response.content_part.added", part(map[string]any{"part": outputTextPart("")}))
+	for _, tok := range streamTokens {
+		emit("response.output_text.delta", part(map[string]any{"delta": tok, "logprobs": []any{}}))
+	}
+	emit("response.output_text.done", part(map[string]any{"text": fullText(), "logprobs": []any{}}))
+	emit("response.content_part.done", part(map[string]any{"part": outputTextPart(fullText())}))
+	emit("response.output_item.done", map[string]any{"output_index": 0, "item": messageItem(mid, "completed", []map[string]any{outputTextPart(fullText())})})
+	emit("response.completed", map[string]any{"response": responseObject(rid, mid, "completed", now)})
 }
 
 // ---------- Anthropic Messages ----------

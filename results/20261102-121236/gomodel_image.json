@@ -1,0 +1,1 @@
+{"gateway":"gomodel","image":"enterpilot/gomodel:latest","version":"0.2.1","size_bytes":67381281,"size_mb":64.3,"compressed_bytes":23164249,"compressed_mb":22.1,"gateway_compressed_mb":22.1,"sidecar_images":[],"digest":"enterpilot/gomodel@sha256:bdb357063c9a680074ca00071b0c897b0b6fc486f615d4e6268d81b11d482d52"}

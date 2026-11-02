@@ -1,0 +1,97 @@
+# LLMGateway, from its documented "separate services" deployment (infra/docker-compose.split.yml)
+# cut down to what serving a request needs: the gateway, Postgres (API keys, provider keys),
+# Redis, and the API image as a one-shot to migrate and seed the database. Left out: the
+# dashboards, which serve no inference, and the worker, which writes request logs to Postgres
+# (per-request logging is off everywhere in this benchmark).
+#
+# Cold start therefore includes the first-boot database setup, i.e. time to the first
+# routable request on a fresh install, like OmniRoute's seeding.
+services:
+  llmgateway:
+    profiles: ["llmgateway"]
+    image: ${LLMGATEWAY_IMAGE:?set by run-on-instance.sh}
+    depends_on:
+      mock:
+        condition: service_started
+      llmgateway-redis:
+        condition: service_healthy
+      llmgateway-init:
+        condition: service_completed_successfully
+    ports:
+      - "${LLMGATEWAY_HOST_PORT:-4001}:4001"
+    environment:
+      - NODE_ENV=production
+      - PORT=4001
+      - DATABASE_URL=postgres://postgres:bench@llmgateway-postgres:5432/llmgateway
+      - REDIS_HOST=llmgateway-redis
+      - REDIS_PORT=6379
+      # One Redis for queue, cache and Responses state, as in the project's unified image.
+      - STORAGE_REDIS_HOST=llmgateway-redis
+      - STORAGE_REDIS_PORT=6379
+      - GATEWAY_API_KEY_HASH_SECRET=bench-only-secret-bench-only-secret-bench
+      # The mock lives on a private docker address over plain HTTP.
+      - ALLOW_INSECURE_PROVIDER_URLS=true
+      # Config parity with the peers (no throttling, no retries):
+      #  - the per-org RPM limit and inflight cap and the daily spend cap would throttle
+      #    the benchmark's one organization. No other gateway limits it.
+      - GATEWAY_RATE_LIMITS_ENABLED=false
+      - GATEWAY_SPEND_CAPS_ENABLED=false
+      - SAME_KEY_MAX_RETRIES=0
+      # Tracing samples every request by default and exports to Google Cloud Trace.
+      # No other gateway traces here.
+      - OTEL_SAMPLE_RATE=0
+      - OTEL_ERROR_SAMPLE_RATE=0
+    restart: "no"
+
+  llmgateway-init:
+    profiles: ["llmgateway"]
+    # Same release as the gateway (derived in gateway.env): migrations ship in this image.
+    image: ${LLMGATEWAY_API_IMAGE:?set by run-on-instance.sh}
+    depends_on:
+      llmgateway-postgres:
+        condition: service_healthy
+      llmgateway-redis:
+        condition: service_healthy
+    entrypoint: ["sh", "-c", "node dist/migrate.js && node bench-seed.mjs"]
+    volumes:
+      - ./seed.mjs:/app/bench-seed.mjs:ro
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://postgres:bench@llmgateway-postgres:5432/llmgateway
+      - REDIS_HOST=llmgateway-redis
+      - REDIS_PORT=6379
+      - GATEWAY_API_KEY_HASH_SECRET=bench-only-secret-bench-only-secret-bench
+    restart: "no"
+
+  llmgateway-postgres:
+    profiles: ["llmgateway"]
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_PASSWORD=bench
+      - POSTGRES_DB=llmgateway
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d llmgateway"]
+      interval: 1s
+      timeout: 5s
+      retries: 60
+    restart: "no"
+
+  llmgateway-redis:
+    profiles: ["llmgateway"]
+    image: redis:8-alpine
+    # Same no-persistence flags as the project's unified image. The gateway pushes one log
+    # row per request onto this queue and has no switch for it. The worker that normally
+    # drains it is not running, so the rows are dropped here: otherwise the benchmark
+    # would charge LLMGateway's RAM for a backlog no real deployment keeps.
+    command:
+      - sh
+      - -c
+      - |
+        redis-server --appendonly no --save "" &
+        while sleep 1; do redis-cli del log_queue_production >/dev/null 2>&1; done
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 5s
+      retries: 60
+    restart: "no"

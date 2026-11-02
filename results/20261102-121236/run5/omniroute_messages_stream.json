@@ -1,0 +1,41 @@
+{
+  "capped": 10,
+  "concurrency": 10,
+  "dialect": "messages",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {
+    "avg_ms": 0.23,
+    "max_ms": 90.69,
+    "min_ms": 0,
+    "p50_ms": 0,
+    "p90_ms": 0,
+    "p95_ms": 0,
+    "p99_ms": 11.14
+  },
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 3827,
+  "requests": 3837,
+  "rps": 63.78205697677173,
+  "total_latency": {
+    "avg_ms": 156.5,
+    "max_ms": 389.05,
+    "min_ms": 55.02,
+    "p50_ms": 153.65,
+    "p90_ms": 174.85,
+    "p95_ms": 184.71,
+    "p99_ms": 320.16
+  },
+  "ttft": {
+    "avg_ms": 148.31,
+    "max_ms": 381.16,
+    "min_ms": 47.54,
+    "p50_ms": 145.06,
+    "p90_ms": 168.71,
+    "p95_ms": 178.44,
+    "p99_ms": 311.09
+  },
+  "url": "http://omniroute:20128/v1/messages",
+  "wall_ms": 60001
+}
