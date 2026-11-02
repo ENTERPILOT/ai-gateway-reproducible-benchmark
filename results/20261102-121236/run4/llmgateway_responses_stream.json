@@ -1,0 +1,41 @@
+{
+  "capped": 10,
+  "concurrency": 10,
+  "dialect": "responses",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {
+    "avg_ms": 0.19,
+    "max_ms": 318.79,
+    "min_ms": 0,
+    "p50_ms": 0,
+    "p90_ms": 0,
+    "p95_ms": 0,
+    "p99_ms": 6.93
+  },
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 14497,
+  "requests": 14507,
+  "rps": 241.61385370153633,
+  "total_latency": {
+    "avg_ms": 41.22,
+    "max_ms": 347.07,
+    "min_ms": 23.99,
+    "p50_ms": 37.34,
+    "p90_ms": 49.03,
+    "p95_ms": 57.82,
+    "p99_ms": 84.24
+  },
+  "ttft": {
+    "avg_ms": 34.65,
+    "max_ms": 342.97,
+    "min_ms": 14.16,
+    "p50_ms": 31.93,
+    "p90_ms": 42.71,
+    "p95_ms": 49.22,
+    "p99_ms": 69.63
+  },
+  "url": "http://llmgateway:4001/v1/responses",
+  "wall_ms": 60000
+}

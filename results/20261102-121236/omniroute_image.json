@@ -1,0 +1,1 @@
+{"gateway":"omniroute","image":"diegosouzapw/omniroute:latest","version":"3.8.52","size_bytes":1393967680,"size_mb":1329.4,"compressed_bytes":436111096,"compressed_mb":415.9,"gateway_compressed_mb":415.9,"sidecar_images":[],"digest":"diegosouzapw/omniroute@sha256:b08a12e876baa8a5ccadd1ebbe346fe7267dba3b1c9f4fd6bb02070fae41ab6c"}

@@ -1,0 +1,4 @@
+bench-llmgateway-1;693MiB / 3.726GiB
+bench-llmgateway-postgres-1;46.2MiB / 3.726GiB
+bench-llmgateway-redis-1;13.36MiB / 3.726GiB
+bench-llmgateway-init-1;0B / 0B
