@@ -31,7 +31,7 @@ variable "ami_id" {
 variable "root_volume_gb" {
   description = "Root EBS volume size (GiB). Free tier allows up to 30 GiB."
   type        = number
-  default     = 20
+  default     = 30
 }
 
 variable "compose_plugin_version" {

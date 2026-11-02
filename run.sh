@@ -41,7 +41,7 @@ REPEATS="${REPEATS:-5}"
 GATEWAYS="${GATEWAYS:-$(ls "$REMOTE_DIR/gateways" | tr '\n' ' ' | sed 's/ $//')}"
 GOMODEL_SOURCE="${GOMODEL_SOURCE:-}"   # path to a GoModel checkout; builds + ships a local image
 IMAGE_TAR="${TMPDIR:-/tmp}/gomodel-bench-amd64.tar.gz"
-POLL_MAX="${POLL_MAX:-720}"            # 720 * 15s = 180 min ceiling (a default run with six gateways takes ~2 h)
+POLL_MAX="${POLL_MAX:-1200}"           # 1200 * 15s = 5 h ceiling: running out destroys the box, so keep it well above a default run
 
 STAMP="$(date -u +%Y%m%d-%H%M%S)"
 OUT_DIR="$SCRIPT_DIR/output/$STAMP"

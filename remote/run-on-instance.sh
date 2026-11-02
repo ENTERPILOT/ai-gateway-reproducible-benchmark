@@ -84,11 +84,12 @@ json_num() { grep -o "\"$2\": *[0-9.]*" "$1" 2>/dev/null | head -1 | grep -o '[0
 #   HOST_PORT (published on this host, for probes), MODEL, CHAT_PATH, RESPONSES_PATH,
 #   MESSAGES_PATH (where each dialect is served; the OpenAI/Anthropic defaults unless
 #   the gateway mounts a dialect elsewhere), HDR_ARGS (extra "-H 'Name: value'" pairs
-#   for loadgen and curl).
+#   for loadgen and curl), SIDECARS (compose services the gateway cannot serve without:
+#   they start and stop with it and count towards its RAM, CPU and image size).
 # Overrides: <NAME>_IMAGE and <NAME>_HOST_PORT env vars (uppercased name). They are
 # exported so the gateway's compose.yml sees the same values.
 gw_load() {
-  NAME="$1"; SERVICE="$1"; IMAGE=""; PORT=""; MODEL="gpt-4o-mini"
+  NAME="$1"; SERVICE="$1"; IMAGE=""; PORT=""; MODEL="gpt-4o-mini"; SIDECARS=()
   CHAT_PATH="/v1/chat/completions"; RESPONSES_PATH="/v1/responses"; MESSAGES_PATH="/v1/messages"
   local HEADERS=(); HDR_ARGS=()
   if [[ "$NAME" == "baseline" ]]; then SERVICE="mock"; PORT=9999; HOST_PORT=9999; return 0; fi
@@ -124,9 +125,11 @@ probe() {
 }
 
 gw_up()   { "${COMPOSE[@]}" --profile "$NAME" up -d "$NAME" >/dev/null 2>&1 || true; }
-# Remove only this gateway's container — NOT `compose down`, which would also
-# tear down the profile-less mock and break the next baseline.
-gw_down() { "${COMPOSE[@]}" --profile "$NAME" rm -sf "$NAME" >/dev/null 2>&1 || true; }
+# Remove only this gateway's containers — NOT `compose down`, which would also
+# tear down the profile-less mock and break the next baseline. Sidecars go too (with
+# their anonymous volumes), or they would keep using the box while the next gateway
+# is measured, and the next trial would inherit their state.
+gw_down() { "${COMPOSE[@]}" --profile "$NAME" rm -sfv "$NAME" ${SIDECARS[@]+"${SIDECARS[@]}"} >/dev/null 2>&1 || true; }
 all_profiles() { local d; for d in "$GATEWAYS_DIR"/*/; do printf -- '--profile %s ' "$(basename "$d")"; done; }
 
 wait_ready() {  # poll the loaded gateway until HTTP 200 (up to tries*2s)
@@ -186,14 +189,25 @@ function tomib(s,  v){ v=s; gsub(/[^0-9.]/,"",v); v=v+0;
   cpu=a[2]; gsub(/[^0-9.]/,"",cpu);
   m=tomib(mem); if (m>0) printf "%.2f,%s\n", m, cpu }'
 
+# stack_containers: the loaded gateway's container, then its sidecars'.
+stack_containers() {
+  echo "bench-${NAME}-1"
+  local s; for s in ${SIDECARS[@]+"${SIDECARS[@]}"}; do echo "bench-${s}-1"; done
+}
+# stack_stats: one "mem_mb,cpu_pct" line, summed across the whole stack. A stopped
+# one-shot sidecar reports no memory and drops out in STAT_AWK.
+stack_stats() {
+  docker stats --no-stream --format '{{.MemUsage}};{{.CPUPerc}}' $(stack_containers) 2>/dev/null \
+    | awk "$STAT_AWK" | awk -F, '{ m+=$1; c+=$2 } END { if (NR) printf "%.2f,%.2f\n", m, c }'
+}
+
 SAMPLER_PID=""
-start_sampler() {  # container csv: sample mem/cpu while the container runs
+start_sampler() {  # container csv: sample stack mem/cpu while the gateway's container runs
   local cname="$1" csv="$2"
   echo "mem_mb,cpu_pct" > "$csv"
   (
     while docker ps --format '{{.Names}}' | grep -q "^${cname}$"; do
-      docker stats --no-stream --format '{{.MemUsage}};{{.CPUPerc}}' "$cname" 2>/dev/null \
-        | awk "$STAT_AWK" >> "$csv" || true
+      stack_stats >> "$csv" || true
     done
   ) &
   SAMPLER_PID=$!
@@ -214,17 +228,25 @@ summarize_resources() {  # csv -> json {peak_mem_mb, avg_mem_mb, avg_cpu_pct, sa
 }
 
 record_image() {  # -> results/<gw>_image.json (size, digest, version) for the loaded gateway
-  local size digest compressed version
-  size="$(docker image inspect "$IMAGE" --format '{{.Size}}' 2>/dev/null || echo 0)"
+  local size digest compressed version images=("$IMAGE") s img sidecars_json="" gateway_mb
+  # Sidecar images count: a deployment has to pull them too. Read them back from the
+  # containers compose created. The gateway's own figure is kept for the write-up.
+  for s in ${SIDECARS[@]+"${SIDECARS[@]}"}; do
+    img="$(docker inspect "bench-${s}-1" --format '{{.Config.Image}}' 2>/dev/null || true)"
+    [[ -n "$img" ]] && images+=("$img") && sidecars_json+="${sidecars_json:+,}\"$img\""
+  done
+  size="$(docker image inspect "${images[@]}" --format '{{.Size}}' 2>/dev/null | awk '{ s+=$1 } END { printf "%d", s }')"
   digest="$(docker image inspect "$IMAGE" --format '{{if .RepoDigests}}{{index .RepoDigests 0}}{{else}}{{.Id}}{{end}}' 2>/dev/null || echo unknown)"
   # Compressed size = what you actually pull/store: gzip the saved image (uniform
-  # across locally built and pulled images).
-  compressed="$(docker save "$IMAGE" 2>/dev/null | gzip -c | wc -c | tr -d ' ' || echo 0)"
+  # across locally built and pulled images). One `docker save` counts shared layers once.
+  compressed="$(docker save "${images[@]}" 2>/dev/null | gzip -c | wc -c | tr -d ' ' || echo 0)"
+  gateway_mb="$(awk "BEGIN{printf \"%.1f\", ${compressed:-0}/1048576}")"
+  [[ ${#images[@]} -gt 1 ]] && gateway_mb="$(docker save "$IMAGE" 2>/dev/null | gzip -c | wc -c | awk '{ printf "%.1f", $1/1048576 }')"
   # Release version: OCI label, else the x.y.z tag sharing this digest on Docker Hub.
   version="$("$SCRIPT_DIR/resolve-version.sh" "$IMAGE" "$digest" 2>/dev/null || true)"
-  printf '{"gateway":"%s","image":"%s","version":"%s","size_bytes":%s,"size_mb":%.1f,"compressed_bytes":%s,"compressed_mb":%.1f,"digest":"%s"}\n' \
+  printf '{"gateway":"%s","image":"%s","version":"%s","size_bytes":%s,"size_mb":%.1f,"compressed_bytes":%s,"compressed_mb":%.1f,"gateway_compressed_mb":%s,"sidecar_images":[%s],"digest":"%s"}\n' \
     "$NAME" "$IMAGE" "$version" "${size:-0}" "$(awk "BEGIN{print ${size:-0}/1048576}")" \
-    "${compressed:-0}" "$(awk "BEGIN{print ${compressed:-0}/1048576}")" "$digest" \
+    "${compressed:-0}" "$(awk "BEGIN{print ${compressed:-0}/1048576}")" "${gateway_mb:-0}" "$sidecars_json" "$digest" \
     > "$RESULTS_DIR/${NAME}_image.json"
   echo "    image: ${NAME} ${IMAGE} version=${version:-unknown}"
 }
@@ -241,9 +263,19 @@ measure_startup() {
   done
   t1="$(epoch)"
   local elapsed; elapsed="$(awk -v a="$t0" -v b="$t1" 'BEGIN{printf "%.3f", b-a}')"
-  printf '{"gateway":"%s","startup_s":%s,"ready":%s}\n' "$NAME" "$elapsed" "$ready" \
+  # A one-shot sidecar's lifetime is first-install work that the cold start includes.
+  local s setup=0 span
+  for s in ${SIDECARS[@]+"${SIDECARS[@]}"}; do
+    span="$(docker inspect "bench-${s}-1" --format '{{.State.Status}} {{.State.StartedAt}} {{.State.FinishedAt}}' 2>/dev/null \
+      | python3 -c 'import sys, datetime as d
+f = sys.stdin.read().split()
+t = lambda v: d.datetime.fromisoformat(v[:26].rstrip("Z") + "+00:00")
+print(f"{(t(f[2]) - t(f[1])).total_seconds():.3f}" if len(f) == 3 and f[0] == "exited" else 0)' 2>/dev/null)"
+    setup="$(awk -v a="$setup" -v b="${span:-0}" 'BEGIN{printf "%.3f", a+b}')"
+  done
+  printf '{"gateway":"%s","startup_s":%s,"oneshot_setup_s":%s,"ready":%s}\n' "$NAME" "$elapsed" "$setup" "$ready" \
     > "$RESULTS_DIR/${NAME}_startup.json"
-  echo "    startup: ${NAME} ${elapsed}s (ready=$ready)"
+  echo "    startup: ${NAME} ${elapsed}s (one-shot setup ${setup}s, ready=$ready)"
 }
 
 # Sustained chat load for RESOURCE_SECONDS while the sampler watches the container,
@@ -254,11 +286,14 @@ measure_resources() {
   local cname="bench-${NAME}-1"
   local csv="$RESULTS_DIR/${NAME}_resources.csv" load_json="$RESULTS_DIR/${NAME}_sustained.json"
   local idle_mem res
-  idle_mem="$(docker stats --no-stream --format '{{.MemUsage}};0' "$cname" 2>/dev/null | awk "$STAT_AWK" | cut -d, -f1 || true)"
+  idle_mem="$(stack_stats | cut -d, -f1 || true)"
   start_sampler "$cname" "$csv"
   loadgen -url "$(gw_url chat)" -dialect chat -duration "${RESOURCE_SECONDS}s" -c "$C" > "$load_json" 2>/dev/null || true
   stop_sampler
   res="$(summarize_resources "$csv")"
+  # Per-container split while the stack is still up, under no load (for the write-up).
+  [[ ${#SIDECARS[@]} -gt 0 ]] && docker stats --no-stream --format '{{.Name}};{{.MemUsage}}' $(stack_containers) 2>/dev/null \
+    > "$RESULTS_DIR/${NAME}_stack_mem.txt"
   printf '{"gateway":"%s","idle_mem_mb":%s,"load_rps":%s,"under_load":%s}\n' \
     "$NAME" "${idle_mem:-0}" "$(json_num "$load_json" rps | sed 's/^$/0/')" "$res" > "$RESULTS_DIR/${NAME}_resources.json"
   echo "    resources: idle=${idle_mem:-0}MiB load_rps=$(json_num "$load_json" rps) $res"
@@ -288,6 +323,9 @@ for gw in $GATEWAYS; do
   fi
   docker pull -q "$IMAGE" 2>/dev/null || docker image inspect "$IMAGE" >/dev/null 2>&1 \
     || echo "  WARN: image $IMAGE for $NAME is neither pullable nor present locally" >&2
+  # Pull sidecars now too, so that no measurement waits for a download.
+  [[ ${#SIDECARS[@]} -gt 0 ]] && { "${COMPOSE[@]}" --profile "$NAME" pull -q "${SIDECARS[@]}" >/dev/null 2>&1 \
+    || echo "  WARN: could not pull the sidecars of $NAME" >&2; }
 done
 
 # ── Clean any leftover state, then bring up the shared mock ────────
