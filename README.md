@@ -41,7 +41,7 @@ cd ai-gateway-reproducible-benchmark
 ./run.sh
 ```
 
-That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~3 h with seven gateways),
+That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~2 h with seven gateways),
 copies the results into `results/<timestamp>/`, regenerates the chart and tables, and
 destroys the instance. Commit the new `results/` directory to publish your run.
 
@@ -84,7 +84,7 @@ Useful knobs (all env vars):
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `N` / `C` / `REPEATS` | `20000` / `10` / `5` | requests per variant, concurrency, latency trials |
+| `N` / `C` / `REPEATS` | `20000` / `10` / `3` | requests per variant, concurrency, latency trials |
 | `GATEWAYS` | every folder under `remote/gateways/` | subset to run, e.g. `gomodel tensorzero` |
 | `<NAME>_IMAGE` (`GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE`, `TENSORZERO_IMAGE`, `OMNIROUTE_IMAGE`, `LLMGATEWAY_IMAGE`) | the public `latest` image of each gateway (see `remote/gateways/<name>/gateway.env`) | gateway versions to benchmark (tag or digest) |
 | `GOMODEL_SOURCE` | – | path to a GoModel checkout: build and benchmark that instead of the published image |
