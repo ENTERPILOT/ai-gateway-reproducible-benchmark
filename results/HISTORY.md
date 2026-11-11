@@ -4,6 +4,22 @@ Newest first. Latency is chat/completions non-streaming, median across trials. P
 
 ![History chart](charts/history.svg)
 
+## 2026-11-11 — 20261111-140559
+
+`20261111-140559` · 2026-11-11 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 3 trial(s) · LiteLLM workers=2
+
+| Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
+|---|---|---|--:|--:|--:|--:|--:|--:|:-:|
+| GoModel | 0.2.3 | `enterpilot/gomodel:latest` | 1.98 | 5.81 | 5,171 | 76.3 | 0.94 | 22.7 | 6/6 |
+| Bifrost | 2.5.1 | `maximhq/bifrost:latest` | 4.08 | 19.42 | 2,136 | 374.0 | 13.50 | 99.0 | 6/6 |
+| Portkey | 1.15.2 | `portkeyai/gateway:latest` | 8.86 | 27.22 | 1,030 | 131.7 | 1.84 | 57.9 | 4/6 |
+| LiteLLM | 1.109.0 | `litellm/litellm:main-stable` | 51.95 | 68.47 | 192 | 1,785 | 29.60 | 395.6 | 6/6 |
+| TensorZero | 2026.6.0 | `tensorzero/gateway:latest` | 49.99 | 60.07 | 4,878 | 108.7 | 1.11 | 88.0 | 2/6 |
+| OmniRoute | 3.8.53 | `diegosouzapw/omniroute:latest` | 107.55 | 236.85 | 92 | 793.0 | 7.99 | 496.3 | 6/6 |
+| LLMGateway | main | `ghcr.io/theopenco/llmgateway-gateway:latest` | 13.31 | 50.94 | 1,247 | 844.3 | 12.71 | 740.8 | 6/6 |
+
+Full tables: [`20261111-140559/summary.md`](20261111-140559/summary.md)
+
 ## 2026-11-02 — 20261102-121236
 
 `20261102-121236` · 2026-11-02 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
