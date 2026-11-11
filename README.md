@@ -15,19 +15,19 @@ streaming), not model or network latency.
 > (`docs/2026-06-25_aws_gateway_benchmark`) on 20 August 2026. The runs from June and
 > July 2026 were made with that original harness and are part of the history.
 
-Latest run — `20261102-121236` · 2026-11-02 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 5 trial(s) · LiteLLM workers=2
+Latest run — `20261111-140559` · 2026-11-11 · AWS **c7i.large** (2 vCPU) · N=20,000 per variant · c=10 · 3 trial(s) · LiteLLM workers=2
 
 | Gateway | Version | Image | p50 (ms) | p99 (ms) | Peak req/s | Peak RAM (MB) | Cold start (s) | Image (MB) | Variants |
 |---|---|---|--:|--:|--:|--:|--:|--:|:-:|
-| GoModel | 0.2.1 | `enterpilot/gomodel:latest` | 2.12 | 6.45 | 4,901 | 72.6 | 0.60 | 22.1 | 6/6 |
-| Bifrost | 2.4.0 | `maximhq/bifrost:latest` | 4.33 | 19.07 | 2,005 | 380.3 | 9.03 | 97.7 | 6/6 |
-| Portkey | 1.15.2 | `portkeyai/gateway:latest` | 9.36 | 29.50 | 967 | 129.2 | 2.35 | 57.9 | 4/6 |
-| LiteLLM | 1.106.6 | `litellm/litellm:main-stable` | 60.16 | 74.10 | 203 | 1,632 | 32.74 | 391.8 | 6/6 |
-| TensorZero | 2026.6.0 | `tensorzero/gateway:latest` | 49.98 | 60.09 | 4,667 | 115.0 | 0.60 | 88.0 | 2/6 |
-| OmniRoute | 3.8.52 | `diegosouzapw/omniroute:latest` | 107.04 | 231.31 | 92 | 711.4 | 5.35 | 415.9 | 6/6 |
-| LLMGateway | 1.24.0 | `ghcr.io/theopenco/llmgateway-gateway:latest` | 16.55 | 46.69 | 1,248 | 754.5 | 15.34 | 745.8 | 6/6 |
+| GoModel | 0.2.3 | `enterpilot/gomodel:latest` | 1.98 | 5.81 | 5,171 | 76.3 | 0.94 | 22.7 | 6/6 |
+| Bifrost | 2.5.1 | `maximhq/bifrost:latest` | 4.08 | 19.42 | 2,136 | 374.0 | 13.50 | 99.0 | 6/6 |
+| Portkey | 1.15.2 | `portkeyai/gateway:latest` | 8.86 | 27.22 | 1,030 | 131.7 | 1.84 | 57.9 | 4/6 |
+| LiteLLM | 1.109.0 | `litellm/litellm:main-stable` | 51.95 | 68.47 | 192 | 1,785 | 29.60 | 395.6 | 6/6 |
+| TensorZero | 2026.6.0 | `tensorzero/gateway:latest` | 49.99 | 60.07 | 4,878 | 108.7 | 1.11 | 88.0 | 2/6 |
+| OmniRoute | 3.8.53 | `diegosouzapw/omniroute:latest` | 107.55 | 236.85 | 92 | 793.0 | 7.99 | 496.3 | 6/6 |
+| LLMGateway | main | `ghcr.io/theopenco/llmgateway-gateway:latest` | 13.31 | 50.94 | 1,247 | 844.3 | 12.71 | 740.8 | 6/6 |
 
-All 9 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
+All 10 runs: [results/HISTORY.md](results/HISTORY.md) · machine-readable: [results/history.json](results/history.json)
 <!-- history:end -->
 
 ## Run it
@@ -41,7 +41,7 @@ cd ai-gateway-reproducible-benchmark
 ./run.sh
 ```
 
-That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~3 h with seven gateways),
+That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~2 h with seven gateways),
 copies the results into `results/<timestamp>/`, regenerates the chart and tables, and
 destroys the instance. Commit the new `results/` directory to publish your run.
 
@@ -53,12 +53,12 @@ in `results/<timestamp>/*_image.json` (tag, resolved version, digest) and shown 
 tables above:
 
 ```bash
-GOMODEL_IMAGE=enterpilot/gomodel:0.2.1 \
-LITELLM_IMAGE=litellm/litellm:v1.106.6 \
+GOMODEL_IMAGE=enterpilot/gomodel:0.2.3 \
+LITELLM_IMAGE=litellm/litellm:v1.109.0 \
 PORTKEY_IMAGE=portkeyai/gateway:1.15.2 \
-BIFROST_IMAGE=maximhq/bifrost:v2.4.0 \
+BIFROST_IMAGE=maximhq/bifrost:v2.5.1 \
 TENSORZERO_IMAGE=tensorzero/gateway:2026.6.0 \
-OMNIROUTE_IMAGE=diegosouzapw/omniroute:3.8.52 \
+OMNIROUTE_IMAGE=diegosouzapw/omniroute:3.8.53 \
 LLMGATEWAY_IMAGE=ghcr.io/theopenco/llmgateway-gateway:v1.24.0 \
 ./run.sh
 ```
@@ -84,7 +84,7 @@ Useful knobs (all env vars):
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `N` / `C` / `REPEATS` | `20000` / `10` / `5` | requests per variant, concurrency, latency trials |
+| `N` / `C` / `REPEATS` | `20000` / `10` / `3` | requests per variant, concurrency, latency trials |
 | `GATEWAYS` | every folder under `remote/gateways/` | subset to run, e.g. `gomodel tensorzero` |
 | `<NAME>_IMAGE` (`GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE`, `TENSORZERO_IMAGE`, `OMNIROUTE_IMAGE`, `LLMGATEWAY_IMAGE`) | the public `latest` image of each gateway (see `remote/gateways/<name>/gateway.env`) | gateway versions to benchmark (tag or digest) |
 | `GOMODEL_SOURCE` | – | path to a GoModel checkout: build and benchmark that instead of the published image |

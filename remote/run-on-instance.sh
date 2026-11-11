@@ -37,7 +37,7 @@ COMPOSE=(docker compose -p bench)
 # Load knobs. Defaults target a non-burstable box (c7i.large); see ../run.sh.
 N="${N:-20000}"          # requests per variant (large enough for a stable p99)
 C="${C:-10}"             # reference concurrency for the latency pass
-REPEATS="${REPEATS:-5}"  # independent latency trials (median + spread)
+REPEATS="${REPEATS:-3}"  # independent latency trials (median + spread)
 WARMUP="${WARMUP:-100}"  # global chat warmup after a gateway starts (process/connection init)
 WARMUP_VARIANT="${WARMUP_VARIANT:-30}"  # per-variant warmup (per-dialect lazy-import cold start)
 RESOURCE_SECONDS="${RESOURCE_SECONDS:-15}"  # sustained-load window for CPU/mem sampling

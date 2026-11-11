@@ -1,0 +1,1 @@
+{"gateway":"bifrost","image":"maximhq/bifrost:latest","version":"2.5.1","size_bytes":313222991,"size_mb":298.7,"compressed_bytes":103851453,"compressed_mb":99.0,"gateway_compressed_mb":99.0,"sidecar_images":[],"digest":"maximhq/bifrost@sha256:5ec9873acaf1687556b6e4dd854b92b539d9debf87a5a683b66338648b84d3c8"}

@@ -1,0 +1,41 @@
+{
+  "capped": 7,
+  "concurrency": 10,
+  "dialect": "chat",
+  "errors": {},
+  "failed": 0,
+  "inter_chunk": {
+    "avg_ms": 0.12,
+    "max_ms": 63.98,
+    "min_ms": 0,
+    "p50_ms": 0,
+    "p90_ms": 0,
+    "p95_ms": 0,
+    "p99_ms": 4
+  },
+  "measure": "latency",
+  "mode": "stream",
+  "ok": 18570,
+  "requests": 18577,
+  "rps": 309.4934432215004,
+  "total_latency": {
+    "avg_ms": 32.16,
+    "max_ms": 226.39,
+    "min_ms": 16.59,
+    "p50_ms": 28.53,
+    "p90_ms": 43.07,
+    "p95_ms": 49.96,
+    "p99_ms": 96.61
+  },
+  "ttft": {
+    "avg_ms": 28.12,
+    "max_ms": 204.7,
+    "min_ms": 10.88,
+    "p50_ms": 24.62,
+    "p90_ms": 38.6,
+    "p95_ms": 45.22,
+    "p99_ms": 83.14
+  },
+  "url": "http://llmgateway:4001/v1/chat/completions",
+  "wall_ms": 60001
+}

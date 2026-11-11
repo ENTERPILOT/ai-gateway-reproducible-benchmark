@@ -13,7 +13,7 @@
 # instance, so the run compares what users actually deploy today.
 #
 # Usage:  ./run.sh                          # full run, then destroy
-#         N=20000 C=10 REPEATS=5 ./run.sh    # (defaults) heavier/lighter load
+#         N=20000 C=10 REPEATS=3 ./run.sh    # (defaults) heavier/lighter load
 #         GATEWAYS="gomodel litellm" ./run.sh
 #         GOMODEL_SOURCE=../gomodel ./run.sh # build GoModel from a checkout instead
 #         INSTANCE_TYPE=t2.micro ./run.sh    # cheaper/burstable (free tier)
@@ -37,7 +37,7 @@ REGION="${REGION:-us-east-1}"
 INSTANCE_TYPE="${INSTANCE_TYPE:-c7i.large}"  # 2 vCPU, non-burstable (stable tail); NOT free tier
 N="${N:-20000}"
 C="${C:-10}"
-REPEATS="${REPEATS:-5}"
+REPEATS="${REPEATS:-3}"
 GATEWAYS="${GATEWAYS:-$(ls "$REMOTE_DIR/gateways" | tr '\n' ' ' | sed 's/ $//')}"
 GOMODEL_SOURCE="${GOMODEL_SOURCE:-}"   # path to a GoModel checkout; builds + ships a local image
 IMAGE_TAR="${TMPDIR:-/tmp}/gomodel-bench-amd64.tar.gz"
