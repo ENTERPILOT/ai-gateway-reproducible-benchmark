@@ -24,7 +24,7 @@ import os
 import re
 import statistics
 
-TARGETS = ["baseline", "gomodel", "litellm", "portkey", "bifrost", "tensorzero", "omniroute", "llmgateway"]
+TARGETS = ["baseline", "gomodel", "litellm", "portkey", "bifrost", "tensorzero", "omniroute", "llmgateway", "llmbridge"]
 VARIANTS = [
     ("chat", "nonstream"), ("chat", "stream"),
     ("responses", "nonstream"), ("responses", "stream"),

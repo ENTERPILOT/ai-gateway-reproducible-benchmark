@@ -1,0 +1,27 @@
+# llmbridge, configured entirely through command-line flags.
+# ${LLMBRIDGE_IMAGE} / ${LLMBRIDGE_HOST_PORT} are exported by run-on-instance.sh from gateway.env.
+services:
+  llmbridge:
+    profiles: ["llmbridge"]
+    image: ${LLMBRIDGE_IMAGE:?set by run-on-instance.sh}
+    depends_on: [mock]
+    ports:
+      - "${LLMBRIDGE_HOST_PORT:-8092}:8092"
+    # The mock is the one venue, in the OpenAI dialect, so chat and responses requests
+    # go to it as sent. llmbridge has no retry on an error reply, no failover and no
+    # breaker, keeps no per-request log, and prints no line for a request it serves.
+    #
+    # Each worker is one event loop on its own thread, one by default. run-on-instance.sh
+    # sets LLMBRIDGE_WORKERS=$(nproc), one per CPU core, as it does LiteLLM's workers.
+    #
+    # The image serves on io_uring or not at all, and Docker's default seccomp profile
+    # blocks io_uring. seccomp.json is that default profile (github.com/moby/profiles,
+    # seccomp/v0.1.0, which Docker 29 uses) with io_uring_setup, io_uring_enter and
+    # io_uring_register allowed and nothing else changed, so llmbridge runs under the
+    # same filter as every other gateway. Compose reads the path from its working
+    # directory, which run-on-instance.sh sets to remote/.
+    security_opt:
+      - "seccomp=gateways/llmbridge/seccomp.json"
+    command: ["--listen", "8092", "--upstream", "http://mock:9999", "--upstream-dialect", "openai",
+              "--workers", "${LLMBRIDGE_WORKERS:-1}"]
+    restart: "no"

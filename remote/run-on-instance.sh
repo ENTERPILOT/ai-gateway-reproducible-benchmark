@@ -54,6 +54,9 @@ BENCH_TOOLS_IMAGE="${BENCH_TOOLS_IMAGE:-bench-tools:local}"
 # single core while the Go gateways use all of them. Exported for docker-compose's
 # ${LITELLM_NUM_WORKERS} substitution.
 export LITELLM_NUM_WORKERS="${LITELLM_NUM_WORKERS:-$(nproc 2>/dev/null || echo 1)}"
+# llmbridge runs one event loop per worker and starts one by default; one per core
+# gives it the cores the Go runtimes and LiteLLM's workers already have.
+export LLMBRIDGE_WORKERS="${LLMBRIDGE_WORKERS:-$(nproc 2>/dev/null || echo 1)}"
 export BENCH_TOOLS_IMAGE
 
 AUTH="sk-bench-test-key"
@@ -388,6 +391,7 @@ cat > "$RESULTS_DIR/meta.json" <<JSON
   "concurrency": $C,
   "repeats": $REPEATS,
   "litellm_num_workers": $LITELLM_NUM_WORKERS,
+  "llmbridge_workers": $LLMBRIDGE_WORKERS,
   "warmup": $WARMUP,
   "resource_seconds": $RESOURCE_SECONDS,
   "rest_seconds": $REST_SECONDS,
