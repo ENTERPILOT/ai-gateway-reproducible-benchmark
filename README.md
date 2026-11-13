@@ -1,7 +1,7 @@
 # AI gateway reproducible benchmark
 
 One command that benchmarks **[GoModel](https://github.com/ENTERPILOT/GoModel), LiteLLM, Portkey, Bifrost,
-TensorZero, OmniRoute and [LLMGateway](https://github.com/theopenco/llmgateway)** on a fresh AWS box and records the numbers here, so the comparison can be
+TensorZero, OmniRoute, [LLMGateway](https://github.com/theopenco/llmgateway) and [llmbridge](https://github.com/kottos-ai/llmbridge)** on a fresh AWS box and records the numbers here, so the comparison can be
 tracked over time instead of trusted from a blog post.
 
 Every gateway runs from its latest public Docker image, one at a time, against the same
@@ -41,7 +41,7 @@ cd ai-gateway-reproducible-benchmark
 ./run.sh
 ```
 
-That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~2 h with seven gateways),
+That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~2 h with eight gateways),
 copies the results into `results/<timestamp>/`, regenerates the chart and tables, and
 destroys the instance. Commit the new `results/` directory to publish your run.
 
@@ -86,7 +86,7 @@ Useful knobs (all env vars):
 |---|---|---|
 | `N` / `C` / `REPEATS` | `20000` / `10` / `3` | requests per variant, concurrency, latency trials |
 | `GATEWAYS` | every folder under `remote/gateways/` | subset to run, e.g. `gomodel tensorzero` |
-| `<NAME>_IMAGE` (`GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE`, `TENSORZERO_IMAGE`, `OMNIROUTE_IMAGE`, `LLMGATEWAY_IMAGE`) | the public `latest` image of each gateway (see `remote/gateways/<name>/gateway.env`) | gateway versions to benchmark (tag or digest) |
+| `<NAME>_IMAGE` (`GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE`, `TENSORZERO_IMAGE`, `OMNIROUTE_IMAGE`, `LLMGATEWAY_IMAGE`, `LLMBRIDGE_IMAGE`) | the public `latest` image of each gateway (see `remote/gateways/<name>/gateway.env`) | gateway versions to benchmark (tag or digest) |
 | `GOMODEL_SOURCE` | – | path to a GoModel checkout: build and benchmark that instead of the published image |
 | `INSTANCE_TYPE` / `REGION` | `c7i.large` / `us-east-1` | hardware; `t2.micro` is free tier but burstable |
 | `KEEP` | `0` | `1` leaves the instance running |
@@ -102,8 +102,8 @@ N=300 REPEATS=1 SWEEP_CONCURRENCY="1 16" ./run-on-instance.sh
 python3 ../scripts/summarize.py --results-dir results
 ```
 
-The gateways are published on host ports 8080, 4000, 8787, 8089, 3000, 20128 and 4001 for
-readiness probes; if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
+The gateways are published on host ports 8080, 4000, 8787, 8089, 3000, 20128, 4001 and 8092
+for readiness probes; if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
 
 ## What is measured
 
@@ -117,23 +117,31 @@ readiness probes; if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
 - **Parity:** retries off everywhere, GoModel's circuit breaker and external model
   catalog off, OmniRoute's default per-provider request queue off (60 req/min with a
   350 ms minimum gap would otherwise serialize it at ~3 req/s), LiteLLM at its
-  recommended one worker per vCPU, LLMGateway's per-organization rate limits, spend caps
-  and tracing off, per-variant warm-up before measuring. Stored per-request logs are off on
+  recommended one worker per vCPU, llmbridge at one worker (an event loop) per vCPU,
+  LLMGateway's per-organization rate limits, spend caps
+  and tracing off, per-variant warm-up before measuring. Every gateway runs under
+  Docker's default seccomp profile, which blocks io_uring. llmbridge's image serves on
+  io_uring or not at all, so its profile is that default with `io_uring_setup`,
+  `io_uring_enter` and `io_uring_register` allowed and nothing else changed
+  (`remote/gateways/llmbridge/seccomp.json`). Stored per-request logs are off on
   every gateway (GoModel's audit log and usage tracking, Bifrost's request logs, LiteLLM's
   spend logs, OmniRoute's request logs, TensorZero's observability store, LLMGateway's log
-  worker). Prometheus
+  worker; llmbridge keeps none). Prometheus
   metrics are the one setting left at each gateway's own default rather than
-  equalized: off for GoModel (its default), on for Bifrost, TensorZero and
-  LLMGateway, which serve metrics out of the box. That is a counter update per request, far
+  equalized: off for GoModel (its default), absent from llmbridge, on for Bifrost,
+  TensorZero and LLMGateway, which serve metrics out of the box. That is a counter update per request, far
   below the differences reported here — but it is a difference, not parity.
 - **Console logs are not equal:** GoModel, Bifrost and LiteLLM print one line per request
-  and OmniRoute six, while Portkey, TensorZero and LLMGateway print none by default. In a
+  and OmniRoute six, while Portkey, TensorZero, LLMGateway and llmbridge print none by
+  default (llmbridge logs one warning per request it refuses, which here means only its
+  `/v1/messages` variants). In a
   local check pinned to 2 CPUs, the line cost GoModel about 17% of peak throughput and Bifrost
   about 10%.
 - **Coverage:** a gateway that does not serve a dialect gets that variant recorded as
   failed and a lower `Variants` count: Portkey has no Anthropic Messages endpoint in
   this single-provider setup, TensorZero exposes only Chat Completions on its
-  OpenAI-compatible surface (2/6).
+  OpenAI-compatible surface (2/6), and llmbridge has no Anthropic-to-OpenAI translation,
+  so with the mock as its one OpenAI-dialect venue it refuses `/v1/messages` (4/6).
 - **Read LLMGateway's row with care:** it is the one gateway here that cannot serve a
   request alone. It needs Postgres and Redis, so it runs from the "separate services"
   deployment in its docs, without the dashboards and the log worker. Peak RAM, CPU and image

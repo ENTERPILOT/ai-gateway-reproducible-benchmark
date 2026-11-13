@@ -16,6 +16,7 @@ include:
   - gateways/tensorzero/compose.yml
   - gateways/omniroute/compose.yml
   - gateways/llmgateway/compose.yml
+  - gateways/llmbridge/compose.yml
 
 networks:
   default:

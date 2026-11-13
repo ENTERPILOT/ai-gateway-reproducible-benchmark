@@ -30,13 +30,14 @@ MOVE_NOTE = ("> Moved here from the [GoModel repository](https://github.com/ENTE
              "> (`docs/2026-06-25_aws_gateway_benchmark`) on 20 August 2026. The runs from June and\n"
              "> July 2026 were made with that original harness and are part of the history.")
 
-GATEWAYS = ["gomodel", "bifrost", "portkey", "litellm", "tensorzero", "omniroute", "llmgateway"]
+GATEWAYS = ["gomodel", "bifrost", "portkey", "litellm", "tensorzero", "omniroute", "llmgateway", "llmbridge"]
 LABEL = {"gomodel": "GoModel", "bifrost": "Bifrost", "portkey": "Portkey", "litellm": "LiteLLM",
-         "tensorzero": "TensorZero", "omniroute": "OmniRoute", "llmgateway": "LLMGateway"}
+         "tensorzero": "TensorZero", "omniroute": "OmniRoute", "llmgateway": "LLMGateway",
+         "llmbridge": "llmbridge"}
 # Fixed categorical hue per gateway (never cycled), validated for CVD separation.
 COLOR = {"gomodel": "#2a78d6", "bifrost": "#eb6834", "portkey": "#1baf7a", "litellm": "#eda100",
-         "tensorzero": "#4a3aa7", "omniroute": "#e87ba4", "llmgateway": "#e34948"}
-EXTRA_COLORS = ["#008300", "#7a5c00", "#00838f"]
+         "tensorzero": "#4a3aa7", "omniroute": "#e87ba4", "llmgateway": "#e34948", "llmbridge": "#008300"}
+EXTRA_COLORS = ["#7a5c00", "#00838f"]
 
 
 def label(gw):
