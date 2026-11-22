@@ -56,7 +56,8 @@ BENCH_TOOLS_IMAGE="${BENCH_TOOLS_IMAGE:-bench-tools:local}"
 export LITELLM_NUM_WORKERS="${LITELLM_NUM_WORKERS:-$(nproc 2>/dev/null || echo 1)}"
 export BENCH_TOOLS_IMAGE
 
-AUTH="sk-bench-test-key"
+DEFAULT_AUTH="sk-bench-test-key"
+AUTH="$DEFAULT_AUTH"
 
 # The six benchmark variants: dialect|mode. Paths come from dialect_path.
 VARIANTS=("chat|nonstream" "chat|stream" "responses|nonstream" "responses|stream" "messages|nonstream" "messages|stream")
@@ -89,7 +90,8 @@ json_num() { grep -o "\"$2\": *[0-9.]*" "$1" 2>/dev/null | head -1 | grep -o '[0
 # Overrides: <NAME>_IMAGE and <NAME>_HOST_PORT env vars (uppercased name). They are
 # exported so the gateway's compose.yml sees the same values.
 gw_load() {
-  NAME="$1"; SERVICE="$1"; IMAGE=""; PORT=""; MODEL="gpt-4o-mini"; SIDECARS=()
+  NAME="$1"; SERVICE="$1"; IMAGE=""; PORT=""; MODEL="gpt-4o-mini"; SIDECARS=(); ONESHOTS=()
+  AUTH="$DEFAULT_AUTH"  # a gateway.env may set its own (one whose key format the shared key doesn't fit)
   CHAT_PATH="/v1/chat/completions"; RESPONSES_PATH="/v1/responses"; MESSAGES_PATH="/v1/messages"
   local HEADERS=(); HDR_ARGS=()
   if [[ "$NAME" == "baseline" ]]; then SERVICE="mock"; PORT=9999; HOST_PORT=9999; return 0; fi
@@ -124,7 +126,11 @@ probe() {
     -d "{\"model\":\"$MODEL\",\"messages\":[{\"role\":\"user\",\"content\":\"ping\"}]}" 2>/dev/null || echo 000
 }
 
-gw_up()   { "${COMPOSE[@]}" --profile "$NAME" up -d "$NAME" >/dev/null 2>&1 || true; }
+# A gateway.env's ONESHOTS are one-shot sidecars that configure the running gateway (they can't
+# finish before it starts); wait for them so no probe reaches it half set up. Their runtime is
+# part of cold start, as every one-shot sidecar's is.
+gw_up()   { "${COMPOSE[@]}" --profile "$NAME" up -d "$NAME" >/dev/null 2>&1 || true
+            local s; for s in ${ONESHOTS[@]+"${ONESHOTS[@]}"}; do docker wait "bench-${s}-1" >/dev/null 2>&1 || true; done; }
 # Remove only this gateway's containers — NOT `compose down`, which would also
 # tear down the profile-less mock and break the next baseline. Sidecars go too (with
 # their anonymous volumes), or they would keep using the box while the next gateway

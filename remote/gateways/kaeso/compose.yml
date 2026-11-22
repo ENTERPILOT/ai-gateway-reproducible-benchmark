@@ -1,0 +1,89 @@
+# Kaeso, from its documented Docker Compose deployment (deploy/compose.yaml in logicplanes/kaeso)
+# cut down to what serving a request needs: the gateway, PostgreSQL (users, projects, keys,
+# provider keys, usage) and Valkey (limit counters and shared caches). Left out: the console,
+# which serves no inference, Caddy (TLS and routing in front of the gateway), the updater, and
+# ClickHouse, which only stores request logs (per-request logging is off everywhere in this
+# benchmark).
+#
+# Kaeso is configured through its Platform API after it boots, so kaeso-init does what a new
+# install's first user does in the console: set up, create a project that allows the model,
+# add the provider key and create the API key the harness sends. Cold start therefore includes
+# that first-boot setup, i.e. time to the first routable request on a fresh install, like
+# LLMGateway's and OmniRoute's seeding.
+services:
+  kaeso:
+    profiles: ["kaeso"]
+    image: ${KAESO_IMAGE:?set by run-on-instance.sh}
+    depends_on:
+      mock:
+        condition: service_started
+      kaeso-postgres:
+        condition: service_healthy
+      kaeso-valkey:
+        condition: service_healthy
+      # Started, not completed: kaeso-init talks to the running gateway. The harness waits for
+      # it to finish (ONESHOTS in gateway.env) before the first probe.
+      kaeso-init:
+        condition: service_started
+    ports:
+      - "${KAESO_HOST_PORT:-8080}:8080"
+    environment:
+      # Kaeso takes http only for localhost; the harness reaches it on a published port anyway.
+      - KAESO_PUBLIC_URL=http://localhost:8080
+      - KAESO_POSTGRES_URL=postgres://kaeso:bench@kaeso-postgres:5432/kaeso
+      - KAESO_VALKEY_URL=redis://:bench@kaeso-valkey:6379
+      # Bench-only value: base64 of the 32 bytes "bench-only-master-key-not-secret".
+      - KAESO_MASTER_KEYS=bench:YmVuY2gtb25seS1tYXN0ZXIta2V5LW5vdC1zZWNyZXQ=
+      # No mail server in the benchmark; mail is written to the log instead of sent.
+      - KAESO_MAIL_TRANSPORT=log
+      # The upstream: the shared mock instead of api.openai.com.
+      - KAESO_PROVIDERS_OPENAI_BASE_URL=http://mock:9999
+    restart: "no"
+
+  kaeso-postgres:
+    profiles: ["kaeso"]
+    image: postgres:18.6-alpine
+    environment:
+      - POSTGRES_USER=kaeso
+      - POSTGRES_PASSWORD=bench
+      - POSTGRES_DB=kaeso
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "kaeso", "-d", "kaeso"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+    restart: "no"
+
+  kaeso-valkey:
+    profiles: ["kaeso"]
+    image: valkey/valkey:9.1.3-alpine
+    command: ["valkey-server", "--requirepass", "bench", "--maxmemory", "512mb", "--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "valkey-cli", "-a", "bench", "--no-auth-warning", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+    restart: "no"
+
+  # One-shot first-boot setup. Same image as kaeso-postgres, so nothing extra to pull: psql for
+  # the setup token and the key, BusyBox wget for the Platform API.
+  kaeso-init:
+    profiles: ["kaeso"]
+    image: postgres:18.6-alpine
+    depends_on:
+      kaeso-postgres:
+        condition: service_healthy
+    entrypoint: ["sh", "/bench/init.sh"]
+    volumes:
+      - ./init.sh:/bench/init.sh:ro
+    environment:
+      - PGHOST=kaeso-postgres
+      - PGUSER=kaeso
+      - PGPASSWORD=bench
+      - PGDATABASE=kaeso
+      - KAESO_URL=http://kaeso:8080
+      # The console's origin, which Kaeso checks on cookie-signed Platform API calls.
+      - KAESO_ORIGIN=http://localhost:8080
+      - BENCH_KEY=${KAESO_BENCH_KEY:?set by gateway.env}
+      - BENCH_MODEL=gpt-4o-mini
+    restart: "no"
