@@ -46,6 +46,7 @@ REST_SECONDS="${REST_SECONDS:-5}"           # settle gap between targets (cooldo
 # idle-bound streaming variants (e.g. Bifrost streams over a non-native backend
 # fall back to the 1.5s idle timeout → ~7 req/s, which would take ~50 min for N).
 MAX_VARIANT_SECONDS="${MAX_VARIANT_SECONDS:-60}"
+ONESHOT_TIMEOUT="${ONESHOT_TIMEOUT:-120}"   # longest a gateway.env's ONESHOTS may take before the gateway is skipped
 SWEEP_CONCURRENCY="${SWEEP_CONCURRENCY:-1 2 4 8 16 32 64 128 256}"  # capacity-sweep points
 SWEEP_DURATION="${SWEEP_DURATION:-8}"       # seconds of sustained load per sweep point
 GATEWAYS="${GATEWAYS:-$(ls "$GATEWAYS_DIR")}"  # every gateways/<name>/ unless narrowed
@@ -56,7 +57,8 @@ BENCH_TOOLS_IMAGE="${BENCH_TOOLS_IMAGE:-bench-tools:local}"
 export LITELLM_NUM_WORKERS="${LITELLM_NUM_WORKERS:-$(nproc 2>/dev/null || echo 1)}"
 export BENCH_TOOLS_IMAGE
 
-AUTH="sk-bench-test-key"
+DEFAULT_AUTH="sk-bench-test-key"
+AUTH="$DEFAULT_AUTH"
 
 # The six benchmark variants: dialect|mode. Paths come from dialect_path.
 VARIANTS=("chat|nonstream" "chat|stream" "responses|nonstream" "responses|stream" "messages|nonstream" "messages|stream")
@@ -89,7 +91,8 @@ json_num() { grep -o "\"$2\": *[0-9.]*" "$1" 2>/dev/null | head -1 | grep -o '[0
 # Overrides: <NAME>_IMAGE and <NAME>_HOST_PORT env vars (uppercased name). They are
 # exported so the gateway's compose.yml sees the same values.
 gw_load() {
-  NAME="$1"; SERVICE="$1"; IMAGE=""; PORT=""; MODEL="gpt-4o-mini"; SIDECARS=()
+  NAME="$1"; SERVICE="$1"; IMAGE=""; PORT=""; MODEL="gpt-4o-mini"; SIDECARS=(); ONESHOTS=()
+  AUTH="$DEFAULT_AUTH"  # a gateway.env may set its own (one whose key format the shared key doesn't fit)
   CHAT_PATH="/v1/chat/completions"; RESPONSES_PATH="/v1/responses"; MESSAGES_PATH="/v1/messages"
   local HEADERS=(); HDR_ARGS=()
   if [[ "$NAME" == "baseline" ]]; then SERVICE="mock"; PORT=9999; HOST_PORT=9999; return 0; fi
@@ -124,7 +127,39 @@ probe() {
     -d "{\"model\":\"$MODEL\",\"messages\":[{\"role\":\"user\",\"content\":\"ping\"}]}" 2>/dev/null || echo 000
 }
 
-gw_up()   { "${COMPOSE[@]}" --profile "$NAME" up -d "$NAME" >/dev/null 2>&1 || true; }
+# A gateway.env's ONESHOTS are one-shot sidecars that configure the running gateway (they can't
+# finish before it starts); wait for them so no probe reaches it half set up. Their runtime is
+# part of cold start, as every one-shot sidecar's is. Returns 1 when one exits non-zero or isn't
+# done within ONESHOT_TIMEOUT seconds: the gateway is then not measured, rather than measured
+# half configured. gw_down removes a one-shot that is still running.
+# Portable (no GNU `timeout`): polls the container every 0.1 s, prints its exit code once it has
+# exited, and returns 1 if it is still running after ONESHOT_TIMEOUT seconds.
+oneshot_wait() {
+  local st end=$((SECONDS + ONESHOT_TIMEOUT))
+  while ((SECONDS < end)); do
+    st="$(docker inspect -f '{{.State.Status}} {{.State.ExitCode}}' "$1" 2>/dev/null)"
+    [[ "$st" == exited* || "$st" == dead* ]] && { echo "${st#* }"; return 0; }
+    sleep 0.1
+  done
+  return 1
+}
+ONESHOT_SKIPS=()  # "<gateway>:<pass>" for each pass a gateway was skipped in (recorded in meta.json)
+gw_up() {
+  "${COMPOSE[@]}" --profile "$NAME" up -d "$NAME" >/dev/null 2>&1 || true
+  local s code rc=0
+  for s in ${ONESHOTS[@]+"${ONESHOTS[@]}"}; do
+    code="$(oneshot_wait "bench-${s}-1")" || code=""
+    [[ "$code" == "0" ]] && continue
+    if [[ -n "$code" ]]; then
+      echo "  WARN: one-shot $s of $NAME exited with $code; $NAME is not measured here" >&2
+    else
+      echo "  WARN: one-shot $s of $NAME did not finish within ${ONESHOT_TIMEOUT}s; $NAME is not measured here" >&2
+    fi
+    docker logs --tail 20 "bench-${s}-1" 2>&1 | sed 's/^/    /' >&2
+    rc=1
+  done
+  return "$rc"
+}
 # Remove only this gateway's containers — NOT `compose down`, which would also
 # tear down the profile-less mock and break the next baseline. Sidecars go too (with
 # their anonymous volumes), or they would keep using the box while the next gateway
@@ -252,11 +287,12 @@ record_image() {  # -> results/<gw>_image.json (size, digest, version) for the l
 }
 
 # Bring the loaded gateway up and time cold start (compose up -> first HTTP 200).
-# Leaves the gateway running. Writes results/<gw>_startup.json.
+# Leaves the gateway running. Writes results/<gw>_startup.json. Returns 1, writing nothing, when
+# a one-shot setup failed (see gw_up).
 measure_startup() {
   local t0 t1 ready=0
   t0="$(epoch)"
-  gw_up
+  gw_up || return 1
   for ((i=0;i<600;i++)); do  # up to ~120s, 0.2s resolution
     [[ "$(probe)" == "200" ]] && { ready=1; break; }
     sleep 0.2
@@ -344,7 +380,8 @@ for r in $(seq 1 "$REPEATS"); do
   for t in $ORDER; do
     gw_load "$t"
     if [[ "$t" != "baseline" ]]; then
-      gw_up; wait_ready || true; warmup_gateway
+      if ! gw_up; then ONESHOT_SKIPS+=("$t:trial$r"); gw_down; sleep "$REST_SECONDS"; continue; fi
+      wait_ready || true; warmup_gateway
     fi
     for spec in "${VARIANTS[@]}"; do
       run_variant "$spec" "$RUN_DIR/${t}_${spec%%|*}_${spec##*|}.json"
@@ -362,7 +399,9 @@ gw_load baseline; run_sweep   # capacity ceiling of the mock itself, no gateway 
 for gw in $(shuffle "$GATEWAYS"); do
   gw_load "$gw"
   log "Capacity: $NAME  (image: $IMAGE)"
-  measure_startup          # brings the gateway up + times cold start
+  if ! measure_startup; then  # brings the gateway up + times cold start
+    ONESHOT_SKIPS+=("$gw:capacity"); gw_down; sleep "$REST_SECONDS"; continue
+  fi
   record_image
   warmup_gateway
   run_sweep
@@ -391,6 +430,8 @@ cat > "$RESULTS_DIR/meta.json" <<JSON
   "warmup": $WARMUP,
   "resource_seconds": $RESOURCE_SECONDS,
   "rest_seconds": $REST_SECONDS,
+  "oneshot_timeout_s": $ONESHOT_TIMEOUT,
+  "oneshot_skips": "$(IFS=,; echo "${ONESHOT_SKIPS[*]+${ONESHOT_SKIPS[*]}}")",
   "sweep_concurrency": "$(echo "$SWEEP_CONCURRENCY" | tr ' ' ',')",
   "sweep_duration_s": $SWEEP_DURATION,
   "gateways": "$(echo $GATEWAYS | tr ' ' ',')",
