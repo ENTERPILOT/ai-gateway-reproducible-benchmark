@@ -38,7 +38,7 @@ LABEL = {"gomodel": "GoModel", "bifrost": "Bifrost", "portkey": "Portkey", "lite
 COLOR = {"gomodel": "#2a78d6", "bifrost": "#eb6834", "portkey": "#1baf7a", "litellm": "#eda100",
          "tensorzero": "#4a3aa7", "omniroute": "#e87ba4", "llmgateway": "#e34948",
          "kaeso": "#00838f"}
-EXTRA_COLORS = ["#008300", "#7a5c00", "#00838f"]
+EXTRA_COLORS = ["#008300", "#7a5c00"]  # minus the hues given out above
 
 
 def label(gw):

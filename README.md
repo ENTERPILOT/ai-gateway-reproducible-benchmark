@@ -4,7 +4,8 @@ One command that benchmarks **[GoModel](https://github.com/ENTERPILOT/GoModel), 
 TensorZero, OmniRoute, [LLMGateway](https://github.com/theopenco/llmgateway) and [Kaeso](https://github.com/logicplanes/kaeso)** on a fresh AWS box and records the numbers here, so the comparison can be
 tracked over time instead of trusted from a blog post.
 
-Every gateway runs from its latest public Docker image, one at a time, against the same
+Every gateway runs from its newest public Docker image (`latest`, or the newest release tag for
+a gateway that publishes no `latest`), one at a time, against the same
 in-memory mock backend. The numbers are therefore **gateway overhead** (routing, translation,
 streaming), not model or network latency.
 
@@ -41,7 +42,7 @@ cd ai-gateway-reproducible-benchmark
 ./run.sh
 ```
 
-That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~2 h with seven gateways),
+That provisions a `c7i.large` (2 vCPU, 4 GiB) in `us-east-1`, runs everything (~2¼ h with eight gateways),
 copies the results into `results/<timestamp>/`, regenerates the chart and tables, and
 destroys the instance. Commit the new `results/` directory to publish your run.
 
@@ -86,7 +87,8 @@ Useful knobs (all env vars):
 |---|---|---|
 | `N` / `C` / `REPEATS` | `20000` / `10` / `3` | requests per variant, concurrency, latency trials |
 | `GATEWAYS` | every folder under `remote/gateways/` | subset to run, e.g. `gomodel tensorzero` |
-| `<NAME>_IMAGE` (`GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE`, `TENSORZERO_IMAGE`, `OMNIROUTE_IMAGE`, `LLMGATEWAY_IMAGE`, `KAESO_IMAGE`) | the public `latest` image of each gateway (see `remote/gateways/<name>/gateway.env`) | gateway versions to benchmark (tag or digest) |
+| `<NAME>_IMAGE` (`GOMODEL_IMAGE`, `LITELLM_IMAGE`, `PORTKEY_IMAGE`, `BIFROST_IMAGE`, `TENSORZERO_IMAGE`, `OMNIROUTE_IMAGE`, `LLMGATEWAY_IMAGE`, `KAESO_IMAGE`) | the public `latest` image of each gateway; Kaeso, which publishes no `latest`, uses `:0.7`, its newest 0.7.x release (see `remote/gateways/<name>/gateway.env`) | gateway versions to benchmark (tag or digest) |
+| `ONESHOT_TIMEOUT` | `120` | seconds a gateway's one-shot setup (`ONESHOTS` in its `gateway.env`) may take before the gateway is skipped |
 | `GOMODEL_SOURCE` | – | path to a GoModel checkout: build and benchmark that instead of the published image |
 | `INSTANCE_TYPE` / `REGION` | `c7i.large` / `us-east-1` | hardware; `t2.micro` is free tier but burstable |
 | `KEEP` | `0` | `1` leaves the instance running |
@@ -149,10 +151,12 @@ readiness probes; if one is taken, override it, e.g. `GOMODEL_HOST_PORT=18080`.
 - **Read Kaeso's row with care:** like LLMGateway it needs companion services (PostgreSQL
   for projects, keys and usage, Valkey for limit counters and shared caches), so peak RAM, CPU
   and image size add up the whole stack; the gateway's own share is in
-  `results/<run>/kaeso_stack_mem.txt` (2026-11-22, 2 vCPU: 67 of 136 MB RAM). Its ClickHouse,
-  which only stores request logs, is left out, so per-request logs are off as everywhere else.
-  It accepts only its own project keys, so `kaeso-init` does a first user's setup (project,
-  provider key, allowed model, API key) and cold start includes it (2026-11-22: 2.9 of 7.6 s).
+  `results/<run>/kaeso_stack_mem.txt` and `gateway_compressed_mb` in `kaeso_image.json`. Its
+  ClickHouse, which only stores request logs, is left out, so per-request logs are off as
+  everywhere else. It accepts only its own project keys, so `kaeso-init` does a first user's
+  setup (project, provider key, allowed model, API key), and cold start includes it; its share
+  is `oneshot_setup_s` in `kaeso_startup.json`. If that setup fails or takes longer than
+  `ONESHOT_TIMEOUT` (120 s), Kaeso is skipped rather than measured half configured.
   Every request is checked against a real project key and the project's allowed models, and
   its usage goes into an in-memory batch written to daily rollups; neither has a switch.
 - **Read TensorZero's row with care:** its HTTP server leaves Nagle's algorithm on, so
@@ -187,7 +191,8 @@ and mock are in [`remote/bench-tools/`](remote/bench-tools).
    A gateway that only accepts keys of its own format sets `AUTH` there. A one-shot sidecar
    that configures the running gateway, so it can't finish before the gateway starts, also goes
    in `ONESHOTS`: the harness waits for it before the first probe, and its runtime counts
-   towards cold start.
+   towards cold start. If it exits non-zero or runs past `ONESHOT_TIMEOUT`, the gateway is
+   skipped for that trial and its output goes to the run log.
 2. Add `gateways/<name>/compose.yml` to the `include:` list in `remote/compose.yml`.
 
 `run-on-instance.sh` discovers the folder, and the tables and chart pick the gateway up on

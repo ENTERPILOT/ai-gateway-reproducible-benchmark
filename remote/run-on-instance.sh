@@ -46,6 +46,7 @@ REST_SECONDS="${REST_SECONDS:-5}"           # settle gap between targets (cooldo
 # idle-bound streaming variants (e.g. Bifrost streams over a non-native backend
 # fall back to the 1.5s idle timeout → ~7 req/s, which would take ~50 min for N).
 MAX_VARIANT_SECONDS="${MAX_VARIANT_SECONDS:-60}"
+ONESHOT_TIMEOUT="${ONESHOT_TIMEOUT:-120}"   # longest a gateway.env's ONESHOTS may take before the gateway is skipped
 SWEEP_CONCURRENCY="${SWEEP_CONCURRENCY:-1 2 4 8 16 32 64 128 256}"  # capacity-sweep points
 SWEEP_DURATION="${SWEEP_DURATION:-8}"       # seconds of sustained load per sweep point
 GATEWAYS="${GATEWAYS:-$(ls "$GATEWAYS_DIR")}"  # every gateways/<name>/ unless narrowed
@@ -128,9 +129,25 @@ probe() {
 
 # A gateway.env's ONESHOTS are one-shot sidecars that configure the running gateway (they can't
 # finish before it starts); wait for them so no probe reaches it half set up. Their runtime is
-# part of cold start, as every one-shot sidecar's is.
-gw_up()   { "${COMPOSE[@]}" --profile "$NAME" up -d "$NAME" >/dev/null 2>&1 || true
-            local s; for s in ${ONESHOTS[@]+"${ONESHOTS[@]}"}; do docker wait "bench-${s}-1" >/dev/null 2>&1 || true; done; }
+# part of cold start, as every one-shot sidecar's is. Returns 1 when one exits non-zero or isn't
+# done within ONESHOT_TIMEOUT seconds: the gateway is then not measured, rather than measured
+# half configured. gw_down removes a one-shot that is still running.
+gw_up() {
+  "${COMPOSE[@]}" --profile "$NAME" up -d "$NAME" >/dev/null 2>&1 || true
+  local s code rc=0
+  for s in ${ONESHOTS[@]+"${ONESHOTS[@]}"}; do
+    code="$(timeout "$ONESHOT_TIMEOUT" docker wait "bench-${s}-1" 2>/dev/null)" || code=""
+    [[ "$code" == "0" ]] && continue
+    if [[ -n "$code" ]]; then
+      echo "  WARN: one-shot $s of $NAME exited with $code; $NAME is not measured here" >&2
+    else
+      echo "  WARN: one-shot $s of $NAME did not finish within ${ONESHOT_TIMEOUT}s; $NAME is not measured here" >&2
+    fi
+    docker logs --tail 20 "bench-${s}-1" 2>&1 | sed 's/^/    /' >&2
+    rc=1
+  done
+  return "$rc"
+}
 # Remove only this gateway's containers — NOT `compose down`, which would also
 # tear down the profile-less mock and break the next baseline. Sidecars go too (with
 # their anonymous volumes), or they would keep using the box while the next gateway
@@ -258,11 +275,12 @@ record_image() {  # -> results/<gw>_image.json (size, digest, version) for the l
 }
 
 # Bring the loaded gateway up and time cold start (compose up -> first HTTP 200).
-# Leaves the gateway running. Writes results/<gw>_startup.json.
+# Leaves the gateway running. Writes results/<gw>_startup.json. Returns 1, writing nothing, when
+# a one-shot setup failed (see gw_up).
 measure_startup() {
   local t0 t1 ready=0
   t0="$(epoch)"
-  gw_up
+  gw_up || return 1
   for ((i=0;i<600;i++)); do  # up to ~120s, 0.2s resolution
     [[ "$(probe)" == "200" ]] && { ready=1; break; }
     sleep 0.2
@@ -350,7 +368,8 @@ for r in $(seq 1 "$REPEATS"); do
   for t in $ORDER; do
     gw_load "$t"
     if [[ "$t" != "baseline" ]]; then
-      gw_up; wait_ready || true; warmup_gateway
+      if ! gw_up; then gw_down; sleep "$REST_SECONDS"; continue; fi
+      wait_ready || true; warmup_gateway
     fi
     for spec in "${VARIANTS[@]}"; do
       run_variant "$spec" "$RUN_DIR/${t}_${spec%%|*}_${spec##*|}.json"
@@ -368,7 +387,9 @@ gw_load baseline; run_sweep   # capacity ceiling of the mock itself, no gateway 
 for gw in $(shuffle "$GATEWAYS"); do
   gw_load "$gw"
   log "Capacity: $NAME  (image: $IMAGE)"
-  measure_startup          # brings the gateway up + times cold start
+  if ! measure_startup; then  # brings the gateway up + times cold start
+    gw_down; sleep "$REST_SECONDS"; continue
+  fi
   record_image
   warmup_gateway
   run_sweep

@@ -18,7 +18,7 @@ done
 
 # `kaeso setup-link` prints a one-time link whose token Kaeso stores as a SHA-256 hash; this is
 # the same row, written directly, because the gateway image has no shell to run it from here.
-TOKEN="bench-setup-$(date +%s)"
+TOKEN="$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')"
 q "INSERT INTO sign_in_tokens (id, kind, token_hash, expires_at)
    VALUES (gen_random_uuid(), 'setup', decode('$(printf %s "$TOKEN" | sha256sum | cut -d' ' -f1)', 'hex'), now() + interval '1 hour')"
 wget -S -q -O /dev/null --header "$ORIGIN" --header 'Content-Type: application/json' \
