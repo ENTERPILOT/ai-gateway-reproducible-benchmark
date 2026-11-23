@@ -132,11 +132,23 @@ probe() {
 # part of cold start, as every one-shot sidecar's is. Returns 1 when one exits non-zero or isn't
 # done within ONESHOT_TIMEOUT seconds: the gateway is then not measured, rather than measured
 # half configured. gw_down removes a one-shot that is still running.
+# Portable (no GNU `timeout`): polls the container every 0.1 s, prints its exit code once it has
+# exited, and returns 1 if it is still running after ONESHOT_TIMEOUT seconds.
+oneshot_wait() {
+  local st end=$((SECONDS + ONESHOT_TIMEOUT))
+  while ((SECONDS < end)); do
+    st="$(docker inspect -f '{{.State.Status}} {{.State.ExitCode}}' "$1" 2>/dev/null)"
+    [[ "$st" == exited* || "$st" == dead* ]] && { echo "${st#* }"; return 0; }
+    sleep 0.1
+  done
+  return 1
+}
+ONESHOT_SKIPS=()  # "<gateway>:<pass>" for each pass a gateway was skipped in (recorded in meta.json)
 gw_up() {
   "${COMPOSE[@]}" --profile "$NAME" up -d "$NAME" >/dev/null 2>&1 || true
   local s code rc=0
   for s in ${ONESHOTS[@]+"${ONESHOTS[@]}"}; do
-    code="$(timeout "$ONESHOT_TIMEOUT" docker wait "bench-${s}-1" 2>/dev/null)" || code=""
+    code="$(oneshot_wait "bench-${s}-1")" || code=""
     [[ "$code" == "0" ]] && continue
     if [[ -n "$code" ]]; then
       echo "  WARN: one-shot $s of $NAME exited with $code; $NAME is not measured here" >&2
@@ -368,7 +380,7 @@ for r in $(seq 1 "$REPEATS"); do
   for t in $ORDER; do
     gw_load "$t"
     if [[ "$t" != "baseline" ]]; then
-      if ! gw_up; then gw_down; sleep "$REST_SECONDS"; continue; fi
+      if ! gw_up; then ONESHOT_SKIPS+=("$t:trial$r"); gw_down; sleep "$REST_SECONDS"; continue; fi
       wait_ready || true; warmup_gateway
     fi
     for spec in "${VARIANTS[@]}"; do
@@ -388,7 +400,7 @@ for gw in $(shuffle "$GATEWAYS"); do
   gw_load "$gw"
   log "Capacity: $NAME  (image: $IMAGE)"
   if ! measure_startup; then  # brings the gateway up + times cold start
-    gw_down; sleep "$REST_SECONDS"; continue
+    ONESHOT_SKIPS+=("$gw:capacity"); gw_down; sleep "$REST_SECONDS"; continue
   fi
   record_image
   warmup_gateway
@@ -418,6 +430,8 @@ cat > "$RESULTS_DIR/meta.json" <<JSON
   "warmup": $WARMUP,
   "resource_seconds": $RESOURCE_SECONDS,
   "rest_seconds": $REST_SECONDS,
+  "oneshot_timeout_s": $ONESHOT_TIMEOUT,
+  "oneshot_skips": "$(IFS=,; echo "${ONESHOT_SKIPS[*]+${ONESHOT_SKIPS[*]}}")",
   "sweep_concurrency": "$(echo "$SWEEP_CONCURRENCY" | tr ' ' ',')",
   "sweep_duration_s": $SWEEP_DURATION,
   "gateways": "$(echo $GATEWAYS | tr ' ' ',')",

@@ -192,7 +192,8 @@ and mock are in [`remote/bench-tools/`](remote/bench-tools).
    that configures the running gateway, so it can't finish before the gateway starts, also goes
    in `ONESHOTS`: the harness waits for it before the first probe, and its runtime counts
    towards cold start. If it exits non-zero or runs past `ONESHOT_TIMEOUT`, the gateway is
-   skipped for that trial and its output goes to the run log.
+   skipped for that trial, its output goes to the run log, and `meta.json` lists the skip under
+   `oneshot_skips` (with `oneshot_timeout_s`).
 2. Add `gateways/<name>/compose.yml` to the `include:` list in `remote/compose.yml`.
 
 `run-on-instance.sh` discovers the folder, and the tables and chart pick the gateway up on
